@@ -3,7 +3,6 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var fs = require('fs')
 const mime = require('mime')
-let read_file = true
 let games = {multi_snake:{}}
 
 const socket_commands = [
@@ -86,13 +85,18 @@ function make_id(length=5) {
 app.get('*', (req, res) => {
     let url = req.url
     let file
-    if (url.includes('.')) {
+    let read_file = true
+    if (url.includes('game')) {
+        read_file = false
+        res.redirect('https://youtu.be/dQw4w9WgXcQ')
+    }
+    else if (url.includes('.')) {
         file = './public' + url
     }
     else {
         file = './public' + url + '/index.html'
     }
-    if (read_file == true) {
+    if (read_file) {
         try {
             if (fs.existsSync(file)) {
                 res.statusCode = 200
@@ -109,11 +113,10 @@ app.get('*', (req, res) => {
             console.error(err)
         }
     }
-    read_file = true
   });
 
 
-const PORT = process.env.PORT || 80;
+const PORT = /*process.env.PORT ||*/ 80;
 http.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);
 });
