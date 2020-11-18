@@ -197,9 +197,8 @@
             }
         }
         async function end_game() {
-            if (!confirm('Would you like to save and upload your game?')) return
-            const username = await prompt('What is your username')
-            emits.emit('single_game_finish', {score:score, snake:snake, username:username})
+            alert('You Died!')
+            window.location.href = '/single/start'
         }
     </script>
 </body>

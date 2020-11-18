@@ -3,18 +3,10 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var fs = require('fs')
 const mime = require('mime')
-const enmap = require('enmap')
-const db = {
-    auth:new enmap({name:'auth'}),
-    score:new enmap({name:'score'})
-}
 let read_file = true
 let games = {multi_snake:{}}
 
 const socket_commands = [
-    ['single_game_finish', (body, emit, token) => {
-        db.score.set(token, {username:body.username, snake:body.snake, score:body.score})
-    }],
     ['multi_start_game', (body, emit, token) => {
         let game_id = make_id()
         games.multi_snake[game_id] = {
@@ -126,7 +118,7 @@ app.get('*', (req, res) => {
   });
 
 
-const PORT = /*process.env.PORT || */80;
+const PORT = process.env.PORT || 80;
 http.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);
 });
