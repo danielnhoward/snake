@@ -93,31 +93,27 @@ app.get('*', (req, res) => {
         file = './public' + url + '/index.html'
     }
     if (read_file == true) {
-        fs.readFile(file, 'utf8', function(error, data) {
-            if (error) {
-                res.statusCode = 404
-                res.redirect('/')
-            }
-            else {
+        try {
+            if (fs.existsSync(file)) {
                 res.statusCode = 200
-                if (file.includes('.css')) {
-                    res.setHeader('Content-Type', 'text/css')
-                }
-                else if (file.includes('.js')) {
-                    res.setHeader('Content-Type', 'application/javascript')
-                }
-                else {
-                    res.setHeader('Content-Type', mime.getType(__dirname + String(file).replace('.', '')))
-                }
+                res.setHeader('Content-Type', mime.getType(__dirname + String(file).replace('.', '')))
                 res.sendFile(__dirname + String(file).replace('.', ''))
             }
-        })
+            else {
+                res.redirect('/')
+            }
+        }
+        catch (err) {
+            res.statusCode = 500
+            res.send('Major error: Please contact site owner')
+            console.error(err)
+        }
     }
     read_file = true
   });
 
 
-const PORT = process.env.PORT || 80;
+const PORT = /*process.env.PORT || */80;
 http.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);
 });
