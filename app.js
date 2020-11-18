@@ -84,7 +84,6 @@ function make_id(length=5) {
  }
 
 app.get('*', (req, res) => {
-    console.log(req.device.type)
     let url = req.url
     let file
     if (url.includes('.')) {
