@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Trispace'>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.18.1/tsparticles.min.js" integrity="sha512-PYHWDEuXOTJ9MZ+/QHqkbgiEYZ+LImQv3i/9NyYOABFvK37e4q4Wg7aQDN1JpoGiEu1TYZh6JMrZluZox2gbDA==" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/token_script.js"></script>
+    <title>Snake</title>
+    <style>
+      #game_canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      #score {
+        text-align: center;
+        font-size: 140px;
+        font-family: 'Antic Slab', serif;
+      }
+    </style>
+</head>
+<body style="margin: 0px;">
+    <div id="particles-js"></div>
+    <div id="score">0</div>
+    <canvas id="game_canvas" width="300" height="300"></canvas>
+    <script>
+        let snake = [
+            {x: 150, y: 150},
+            {x: 140, y: 150},
+            {x: 130, y: 150},
+            {x: 120, y: 150},
+            {x: 110, y: 150}
+        ]
+        let food = {
+            x:'',
+            y:''
+        }
+        let score = 0
+        let changeing_direction = false
+        let d = {
+            x:10,
+            y:0
+        }
+        let required_settings = [
+            ['game_speed', 250],
+            ['canvas_border_colour', '#000000'],
+            ['canvas_background_colour', '#ffffff'],
+            ['snake_colour', '#90ee90'],
+            ['snake_border_colour', '#013220'],
+            ['food_colour', '#ff0000'],
+            ['food_border_colour', '#8b0000'],
+            ['up', 38],
+            ['down', 40],
+            ['left', 37],
+            ['right', 39],
+            ['up_key', 'ArrowUp'],
+            ['down_key', 'ArrowDown'],
+            ['left_key', 'ArrowLeft'],
+            ['right_key', 'ArrowRight']
+        ]
+        let settings = {
+            game_speed:250,
+            canvas_border_colour:'#000000',
+            canvas_background_colour:'#ffffff',
+            snake_colour:'#90ee90',
+            snake_border_colour:'#013220',
+            food_colour:'#ff0000',
+            food_border_colour:'#8b0000',
+            up:38,
+            down:40,
+            left:37,
+            right:39,
+            up_key:'ArrowUp',
+            down_key:'ArrowDown',
+            left_key:'ArrowLeft',
+            right_key:'ArrowRight'
+        }
+        for (const x of required_settings) {
+            if (!localStorage.getItem(x[0])) {
+                localStorage.setItem(x[0], x[1])
+            }
+            else {
+                settings[x[0]] = localStorage.getItem(x[0])
+            }
+        }
+        function add_score(amount) {
+            score += amount
+            document.getElementById('score').innerHTML = score
+        }
+        const canvas = document.getElementById('game_canvas')
+        const ctx = canvas.getContext("2d")
+
+        run_game()
+        create_food()
+        document.addEventListener('keydown', change_direction)
+
+        function run_game() {
+            if (did_game_end()) return end_game()
+            setTimeout(() => {
+                changeing_direction = false
+                clear_canvas()
+                draw_food()
+                advance_snake()
+                draw_snake()
+                run_game()
+            }, settings.game_speed)
+        }
+        function clear_canvas() {
+            ctx.fillStyle = settings.canvas_background_colour
+            ctx.strokeStyle = settings.canvas_border_colour
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+            ctx.strokeRect(0, 0, canvas.width, canvas.height)
+        }
+        function draw_food() {
+            ctx.fillStyle = settings.food_colour
+            ctx.strokeStyle = settings.food_border_colour
+            ctx.fillRect(food.x, food.y, 10, 10)
+            ctx.strokeRect(food.x, food.y, 10, 10)
+        }
+        function advance_snake() {
+            snake.unshift({x:snake[0].x + d.x, y:snake[0].y + d.y})
+            if (snake[0].x === food.x && snake[0].y === food.y) {
+                add_score(10)
+                create_food()
+            }
+            else {
+                snake.pop()
+            }
+        }
+        function did_game_end() {
+            for (let i = 4; i < snake.length; i++) {
+                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+                    return true
+                }
+                const hit = {
+                    left_wall: snake[0].x < 0,
+                    right_wall: snake[0].x > canvas.width - 10,
+                    top_wall: snake[0].y < 0,
+                    bottom_wall: snake[0].y > canvas.height - 10
+                }
+                return hit.left_wall || hit.right_wall || hit.top_wall || hit.bottom_wall
+            }
+        }
+        function random(min, max) {
+            return Math.round((Math.random() * (max-min) + min) / 10) * 10;
+        }
+        function create_food() {
+            food.x = random(0, canvas.width - 10)
+            food.y = random(0, canvas.height - 10)
+            snake.forEach((part) => {
+                if (part.x === food.x && part.y === food.y) create_food()
+            })
+        }
+        function draw_snake() {
+            snake.forEach(draw_snake_part)
+        }
+        function draw_snake_part(part) {
+            ctx.fillStyle = settings.snake_colour
+            ctx.strokeStyle = settings.snake_border_colour
+            ctx.fillRect(part.x, part.y, 10, 10)
+            ctx.strokeRect(part.x, part.y, 10, 10)
+        }
+        function change_direction(event) {
+            if (changeing_direction) return;
+            changeing_direction = true
+            if (event.keyCode == settings.up && d.y != 10) {
+                d = {
+                    x:0,
+                    y:-10
+                }
+            }
+            if (event.keyCode == settings.down && d.y != -10) {
+                d = {
+                    x:0,
+                    y:10
+                }
+            }
+            if (event.keyCode == settings.left && d.x != 10) {
+                d = {
+                    x:-10,
+                    y:0
+                }
+            }
+            if (event.keyCode == settings.right && d.x != -10) {
+                d = {
+                    x:10,
+                    y:0
+                }
+            }
+        }
+        async function end_game() {
+            if (!confirm('Would you like to save and upload your game?')) return
+            const username = await prompt('What is your username')
+            emits.emit('single_game_finish', {score:score, snake:snake, username:username})
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Trispace'>
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.18.1/tsparticles.min.js" integrity="sha512-PYHWDEuXOTJ9MZ+/QHqkbgiEYZ+LImQv3i/9NyYOABFvK37e4q4Wg7aQDN1JpoGiEu1TYZh6JMrZluZox2gbDA==" crossorigin="anonymous"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/token_script.js"></script>
+        <title>Snake</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <div id="particles-js"></div>
+        <div class="center">
+            <div class="container">
+                <div class="content">
+                    <button type="button" class="btn btn-info" style="min-width: 100px; height: 100px; margin: 15px;" id="up">Up</button><br>
+                    <button type="button" class="btn btn-info" style="min-width: 100px; height: 100px; margin: 15px;" id="left">Left</button>
+                    <button type="button" class="btn btn-info" style="min-width: 100px; height: 100px; margin: 15px;" id="right">Right</button><br>
+                    <button type="button" class="btn btn-info" style="min-width: 100px; height: 100px; margin: 15px;" id="down">Down</button><br>
+                    <a href="/options"><button type="button" class="btn btn-info">Apply</button></a>
+                </div>
+            </div>
+        </div>
+        <script>
+            const up = document.getElementById('up')
+            const left = document.getElementById('left')
+            const right = document.getElementById('right')
+            const down = document.getElementById('down')
+            up.innerHTML += ' (' + localStorage.getItem('up_key') + ')'
+            down.innerHTML += ' (' + localStorage.getItem('down_key') + ')'
+            left.innerHTML += ' (' + localStorage.getItem('left_key') + ')'
+            right.innerHTML += ' (' + localStorage.getItem('right_key') + ')'
+            up.addEventListener('keydown', (key) => {
+                localStorage.setItem('up', key.keyCode)
+                localStorage.setItem('up_key', key.key)
+                up.innerHTML = 'Up (' + key.key + ')'
+            })
+            left.addEventListener('keydown', (key) => {
+                localStorage.setItem('left', key.keyCode)
+                localStorage.setItem('left_key', key.key)
+                left.innerHTML = 'Left (' + key.key + ')'
+            })
+            right.addEventListener('keydown', (key) => {
+                localStorage.setItem('right', key.keyCode)
+                localStorage.setItem('right_key', key.key)
+                right.innerHTML = 'Right (' + key.key + ')'
+            })
+            down.addEventListener('keydown', (key) => {
+                localStorage.setItem('down', key.keyCode)
+                localStorage.setItem('down_key', key.key)
+                down.innerHTML = 'Down (' + key.key + ')'
+            })
+        </script>
+    </body>
+</html>

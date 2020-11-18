@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Trispace'>
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.18.1/tsparticles.min.js" integrity="sha512-PYHWDEuXOTJ9MZ+/QHqkbgiEYZ+LImQv3i/9NyYOABFvK37e4q4Wg7aQDN1JpoGiEu1TYZh6JMrZluZox2gbDA==" crossorigin="anonymous"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/token_script.js"></script>
+        <title>Snake</title>
+    </head>
+    <body>
+        <div id="particles-js"></div>
+        <div class="container">
+            <div class="center">
+                <div class="content">
+                    <div class="form-group">
+                        <label for="game_speed">Game Speed (ms):</label>
+                        <input type="number" class="form-control" id="game_speed">
+                    </div><br>
+                    <button type="button" class="btn btn-primary" onclick="start_game()">Start</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            function page_onload() {
+                emits.on('multi_game_create', (body, token) => {
+                    window.location.href = '/multi#' + body.game_id
+                })
+            }
+            function start_game() {
+                emits.emit('multi_start_game', {game_speed:document.getElementById('game_speed').value || 250})
+            }
+            document.getElementById('game_speed').placeholder = localStorage.getItem('game_speed') || 250
+        </script>
+    </body>
+</html>
