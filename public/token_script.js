@@ -154,6 +154,9 @@ $(document).ready(() => {
     server_token = load_token(socket)
     emits = set_emit_on(socket, server_token)
     document.getElementsByTagName("BODY")[0].style.animationPlayState = 'running'
+    $('button').on('click', () => {
+      document.getElementsByTagName("BODY")[0].classList.add('leaving')
+    })
     if (localStorage.getItem('particles') != 'off') {
       start_particles()
     }
