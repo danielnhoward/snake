@@ -35,7 +35,7 @@
             document.getElementById('game_time').value = ''
             document.getElementById('game_speed').placeholder = localStorage.getItem('game_speed') || 250
             function start() {
-                localStorage.setItem('game_speed', document.getElementById('game_speed').value || localStorage.getItem('game_speed'))
+                localStorage.setItem('game_speed', document.getElementById('game_speed').value || localStorage.getItem('game_speed') || 250)
                 window.location = '/single'
             }
         </script>
