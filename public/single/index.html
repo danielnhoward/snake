@@ -13,18 +13,6 @@
     <script src="/token_script.js"></script>
     <title>Snake</title>
     <style>
-        #game_canvas {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        }
-
-        #score {
-        text-align: center;
-        font-size: 140px;
-        font-family: 'Antic Slab', serif;
-        }
         body {
             overscroll-behavior: contain;
         }
@@ -32,9 +20,24 @@
 </head>
 <body style="margin: 0px;">
     <div id="particles-js"></div>
-    <div id="score">0</div>
-    <canvas id="game_canvas" width="300" height="300"></canvas>
+    <div class="center"> 
+        <div class="game">
+            <div style="margin: 20px; margin-bottom: 35px;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
+            <canvas id="game_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+        </div>
+    </div>
     <script>
+        let timeCount = 0
+        let timerID = setInterval(() => {
+            if (settings.game_time <= timeCount) {
+                alert(`You survived for ${settings.game_time} seconds with a score of ${score}`)
+                window.location.href = '/single/start'
+            }
+            timeCount++
+            timer = new Date(settings.game_time * 1000 - timeCount * 1000)
+            document.getElementById('time').innerHTML = `0${timer.getMinutes()}`.slice(-2) + ':' + `0${timer.getSeconds()}`.slice(-2)
+        }, 1000)
+
         let origMouse
         document.addEventListener('touchstart', (e) => {mouseDown(e.touches[0].clientX, e.touches[0].clientY)})
         document.addEventListener('touchend', (e) => {mouseUp(e.changedTouches[0].clientX, e.changedTouches[0].clientY)})
@@ -52,22 +55,18 @@
             if (Math.abs(mouseDiff.x) > Math.abs(mouseDiff.y)) {
                 if (Math.abs(mouseDiff.x) < screenX/10) return
                 if (Math.sign(mouseDiff.x) == 1) {
-                    //Left
                     change_direction({keyCode:localStorage.getItem('left')})
                 }
                 else if (Math.sign(mouseDiff.x) == -1) {
-                    //Right
                     change_direction({keyCode:localStorage.getItem('right')})
                 }
             }
             else if (Math.abs(mouseDiff.x) < Math.abs(mouseDiff.y)) {
                 if (Math.abs(mouseDiff.y) < screenY/10) return
                 if (Math.sign(mouseDiff.y) == 1) {
-                    //Up
                     change_direction({keyCode:localStorage.getItem('up')})
                 }
                 else if (Math.sign(mouseDiff.y) == -1) {
-                    //Down
                     change_direction({keyCode:localStorage.getItem('down')})
                 }
             }
@@ -104,7 +103,8 @@
             ['up_key', 'ArrowUp'],
             ['down_key', 'ArrowDown'],
             ['left_key', 'ArrowLeft'],
-            ['right_key', 'ArrowRight']
+            ['right_key', 'ArrowRight'],
+            ['game_time', 120]
         ]
         let settings = {
             game_speed:250,
@@ -121,7 +121,8 @@
             up_key:'ArrowUp',
             down_key:'ArrowDown',
             left_key:'ArrowLeft',
-            right_key:'ArrowRight'
+            right_key:'ArrowRight',
+            game_time:120
         }
         for (const x of required_settings) {
             if (!localStorage.getItem(x[0])) {
@@ -131,6 +132,8 @@
                 settings[x[0]] = localStorage.getItem(x[0])
             }
         }
+        let timer = new Date(settings.game_time * 1000)
+        document.getElementById('time').innerHTML = `0${timer.getMinutes()}`.slice(-2) + ':' + `0${timer.getSeconds()}`.slice(-2)
         function add_score(amount) {
             score += amount
             document.getElementById('score').innerHTML = score
@@ -138,6 +141,7 @@
         const canvas = document.getElementById('game_canvas')
         const ctx = canvas.getContext("2d")
 
+        clear_canvas()
         run_game()
         create_food()
         document.addEventListener('keydown', change_direction)
@@ -237,7 +241,7 @@
             }
         }
         async function end_game() {
-            alert('You Died!')
+            alert(`You died and survived for ${timeCount} seconds with a score of ${score}`)
             window.location.href = '/single/start'
         }
     </script>

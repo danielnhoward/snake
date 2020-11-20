@@ -117,7 +117,7 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 80;
 http.listen(PORT, () => {
-    console.log(`Our app is running on port ${ PORT }`);
+    console.log(`App is running on port ${PORT}`);
 });
 
 io.on('connection', (socket) => {

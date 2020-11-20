@@ -13,14 +13,8 @@
     <script src="/token_script.js"></script>
     <title>Snake</title>
     <style>
-        #client_canvas, #server_canvas {
-            text-align: center;
-        }
-
-        #client_score, #server_score {
-            text-align: center;
-            font-size: 140px;
-            font-family: 'Antic Slab', serif;
+        body {
+            overscroll-behavior: contain;
         }
     </style>
 </head>
@@ -37,15 +31,19 @@
         </div>
     </div>
     <div id="game">
-        <div class="container">
+        <div class="center">
             <div class="row">
                 <div style="text-align: center;" class="col-md-6">
-                    <div id="client_score">0</div>
-                    <canvas id="client_canvas" width="300" height="300"></canvas>
+                    <div class="game" style="height: auto;">
+                        <div style="margin: 20px; margin-bottom: 35px;"><div style="float: left;">Score: <x id="client_score">0</x></div><div style="float: right;">Time: <x id="client_time">00:00</x></div></div><br>
+                        <canvas id="client_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+                    </div>
                 </div>
                 <div style="text-align: center;" class="col-md-6">
-                    <div id="server_score">0</div>
-                    <canvas id="server_canvas" width="300" height="300"></canvas>
+                    <div class="game">
+                        <div style="margin: 20px; margin-bottom: 35px;"><div style="float: left;">Score: <x id="server_score">0</x></div><div style="float: right;">Time: <x id="server_time">00:00</x></div></div><br>
+                        <canvas id="server_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+                    </div>
                 </div>
             </div>
         </div>
