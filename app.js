@@ -55,11 +55,16 @@ const socket_commands = [
         }
     }],
     ['multi_game_tick', (body, emit, token) => {
-        if (games.multi_snake[body.game_id].p1.token == token) {
-            games.multi_snake[body.game_id].p2.emit('multi_server_player_move', {snake:body.game.snake, food:body.game.food, score:body.game.score})
+        try {
+            if (games.multi_snake[body.game_id].p1.token == token) {
+                games.multi_snake[body.game_id].p2.emit('multi_server_player_move', {snake:body.game.snake, food:body.game.food, score:body.game.score})
+            }
+            else if (games.multi_snake[body.game_id].p2.token == token) {
+                games.multi_snake[body.game_id].p1.emit('multi_server_player_move', {snake:body.game.snake, food:body.game.food, score:body.game.score})
+            }
         }
-        else if (games.multi_snake[body.game_id].p2.token == token) {
-            games.multi_snake[body.game_id].p1.emit('multi_server_player_move', {snake:body.game.snake, food:body.game.food, score:body.game.score})
+        catch(error) {
+            return;
         }
     }],
     ['client_game_end', (body, emit, token) => {
@@ -88,7 +93,7 @@ function make_id(length=5) {
     }
     if (result in games.multi_snake) return make_id(length)
     return result;
- }
+}
 
 app.get('*', (req, res) => {
     let url = req.url
@@ -121,7 +126,7 @@ app.get('*', (req, res) => {
             console.error(err)
         }
     }
-  });
+});
 
 const PORT = process.env.PORT || 80;
 http.listen(PORT, () => {

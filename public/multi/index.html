@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Trispace'>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mobile-detect@1.4.4/mobile-detect.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.18.1/tsparticles.min.js" integrity="sha512-PYHWDEuXOTJ9MZ+/QHqkbgiEYZ+LImQv3i/9NyYOABFvK37e4q4Wg7aQDN1JpoGiEu1TYZh6JMrZluZox2gbDA==" crossorigin="anonymous"></script>
@@ -34,13 +35,13 @@
         <div class="center">
             <div class="row">
                 <div style="text-align: center;" class="col-md-6">
-                    <div class="game">
+                    <div class="game" id="client">
                         <div style="padding: 20px; padding-bottom: 17px;"><div style="float: left;">Score: <x id="client_score">0</x></div><div style="float: right;">Time: <x id="client_time">00:00</x></div></div><br>
                         <canvas id="client_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
                     </div>
                 </div>
                 <div style="text-align: center;" class="col-md-6">
-                    <div class="game">
+                    <div class="game" id="server">
                         <div style="padding: 20px; padding-bottom: 17px;"><div style="float: left;">Score: <x id="server_score">0</x></div><div style="float: right;">Time: <x id="server_time">00:00</x></div></div><br>
                         <canvas id="server_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
                     </div>
@@ -49,9 +50,13 @@
         </div>
     </div>
     <script>
+        document.addEventListener('click', () => {
+            document.documentElement.requestFullscreen()
+        })
         let origMouse
         document.addEventListener('touchstart', (e) => {mouseDown(e.touches[0].clientX, e.touches[0].clientY)})
         document.addEventListener('touchend', (e) => {mouseUp(e.changedTouches[0].clientX, e.changedTouches[0].clientY)})
+        document.addEventListener('touchmove', () => {document.documentElement.requestFullscreen()})
         function mouseDown(x, y) {
             origMouse = {
                 X:x,
@@ -105,6 +110,12 @@
             emits.on('invalid_code', (body, token) => {
                 window.location.href = '/multi/start'
             })
+            let mobile = new MobileDetect(window.navigator.userAgent)
+            if (mobile.phone()) { 
+                document.getElementById('server_canvas').style.height = screen.availHeight/7 + 'px'
+                document.getElementById('client_canvas').style.height = screen.availHeight/4 + 'px'
+
+            }
         }
         async function set_start() {
             await emits.on('start_game', (body, token) => {
