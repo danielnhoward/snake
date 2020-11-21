@@ -23,7 +23,8 @@ const socket_commands = [
             },
             status:'waiting_for_p1_connection',
             game_id:game_id,
-            game_speed:body.game_speed
+            game_speed:body.game_speed,
+            game_time:body.game_time
         }
         emit('multi_game_create', games.multi_snake[game_id])
     }],
@@ -45,8 +46,11 @@ const socket_commands = [
                     emit:emit_func
                 }
                 games.multi_snake[body.game_id].status = 'starting_game'
-                games.multi_snake[body.game_id].p1.emit('start_game', games.multi_snake[body.game_id].game_speed)
-                games.multi_snake[body.game_id].p2.emit('start_game', games.multi_snake[body.game_id].game_speed)
+                games.multi_snake[body.game_id].p1.emit('start_game', {game_speed:games.multi_snake[body.game_id].game_speed, game_time:games.multi_snake[body.game_id].game_time})
+                games.multi_snake[body.game_id].p2.emit('start_game', {game_speed:games.multi_snake[body.game_id].game_speed, game_time:games.multi_snake[body.game_id].game_time})
+            break;
+            case 'starting_game':
+                emit_func('invalid_code', null);
             break;
         }
     }],
@@ -68,6 +72,10 @@ const socket_commands = [
             games.multi_snake[body].p1.emit('server_game_end', 'Won')
         }
         delete games.multi_snake[body]
+    }],
+    ['client_game_end', (body, emit, token) => {
+        games.multi_snake[body].p2.emit('server_game_end', 'ran out of time!')
+        games.multi_snake[body].p1.emit('server_game_end', 'ran out of time!')
     }]
 ]
 

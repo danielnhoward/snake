@@ -34,14 +34,14 @@
         <div class="center">
             <div class="row">
                 <div style="text-align: center;" class="col-md-6">
-                    <div class="game" style="height: auto;">
-                        <div style="margin: 20px; margin-bottom: 35px;"><div style="float: left;">Score: <x id="client_score">0</x></div><div style="float: right;">Time: <x id="client_time">00:00</x></div></div><br>
+                    <div class="game">
+                        <div style="padding: 20px; padding-bottom: 17px;"><div style="float: left;">Score: <x id="client_score">0</x></div><div style="float: right;">Time: <x id="client_time">00:00</x></div></div><br>
                         <canvas id="client_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
                     </div>
                 </div>
                 <div style="text-align: center;" class="col-md-6">
                     <div class="game">
-                        <div style="margin: 20px; margin-bottom: 35px;"><div style="float: left;">Score: <x id="server_score">0</x></div><div style="float: right;">Time: <x id="server_time">00:00</x></div></div><br>
+                        <div style="padding: 20px; padding-bottom: 17px;"><div style="float: left;">Score: <x id="server_score">0</x></div><div style="float: right;">Time: <x id="server_time">00:00</x></div></div><br>
                         <canvas id="server_canvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
                     </div>
                 </div>
@@ -49,7 +49,41 @@
         </div>
     </div>
     <script>
-        let game_speed = 400
+        let origMouse
+        document.addEventListener('touchstart', (e) => {mouseDown(e.touches[0].clientX, e.touches[0].clientY)})
+        document.addEventListener('touchend', (e) => {mouseUp(e.changedTouches[0].clientX, e.changedTouches[0].clientY)})
+        function mouseDown(x, y) {
+            origMouse = {
+                X:x,
+                Y:y
+            }
+        }
+        function mouseUp(x, y) {
+            const mouseDiff = {
+                x:origMouse.X - x,
+                y:origMouse.Y - y
+            }
+            if (Math.abs(mouseDiff.x) > Math.abs(mouseDiff.y)) {
+                if (Math.abs(mouseDiff.x) < screenX/10) return
+                if (Math.sign(mouseDiff.x) == 1) {
+                    change_direction({keyCode:localStorage.getItem('left')})
+                }
+                else if (Math.sign(mouseDiff.x) == -1) {
+                    change_direction({keyCode:localStorage.getItem('right')})
+                }
+            }
+            else if (Math.abs(mouseDiff.x) < Math.abs(mouseDiff.y)) {
+                if (Math.abs(mouseDiff.y) < screenY/10) return
+                if (Math.sign(mouseDiff.y) == 1) {
+                    change_direction({keyCode:localStorage.getItem('up')})
+                }
+                else if (Math.sign(mouseDiff.y) == -1) {
+                    change_direction({keyCode:localStorage.getItem('down')})
+                }
+            }
+        }
+        let game_speed
+        let game_time
         let game_id
         async function page_onload() {
             $('#game').hide()
@@ -74,13 +108,38 @@
         }
         async function set_start() {
             await emits.on('start_game', (body, token) => {
-                game_speed = body
+                game_speed = body.game_speed
+                game_time = body.game_time
                 $('#game').show()
                 $('#loading').hide()
                 start_game()
                 server_start()
+                start_countdown()
+                server_countdown()
             })
             return true
+        }
+        function start_countdown() {
+            let timeCount = 0
+            let timerID = setInterval(() => {
+                if (game_time <= timeCount) {
+                    emits.emit('client_game_end_time', game_id)
+                }
+                timeCount++
+                timer = new Date(game_time * 1000 - timeCount * 1000)
+                document.getElementById('client_time').innerHTML = `0${timer.getMinutes()}`.slice(-2) + ':' + `0${timer.getSeconds()}`.slice(-2)
+            }, 1000)
+        }
+        function server_countdown() {
+            let timeCount = 0
+            let timerID = setInterval(() => {
+                if (game_time <= timeCount) {
+                    emits.emit('client_game_end_time', game_id)
+                }
+                timeCount++
+                timer = new Date(game_time * 1000 - timeCount * 1000)
+                document.getElementById('server_time').innerHTML = `0${timer.getMinutes()}`.slice(-2) + ':' + `0${timer.getSeconds()}`.slice(-2)
+            }, 1000)
         }
         function server_start() {
             setTimeout(() => {
@@ -126,7 +185,7 @@
             ['down_key', 'ArrowDown'],
             ['left_key', 'ArrowLeft'],
             ['right_key', 'ArrowRight'],
-            ['game_time', 60]
+            ['game_time', 120]
         ]
         let settings = {
             game_speed:250,
@@ -143,7 +202,8 @@
             up_key:'ArrowUp',
             down_key:'ArrowDown',
             left_key:'ArrowLeft',
-            right_key:'ArrowRight'
+            right_key:'ArrowRight',
+            game_time:120
         }
         for (const x of required_settings) {
             if (!localStorage.getItem(x[0])) {
@@ -161,6 +221,8 @@
         const ctx = canvas.getContext("2d")
 
         function start_game() {
+            clear_canvas()
+            server.clear_canvas()
             run_game()
             create_food()
             document.addEventListener('keydown', change_direction)

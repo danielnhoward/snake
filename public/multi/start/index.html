@@ -22,6 +22,10 @@
                         <label for="game_speed">Game Speed (ms):</label>
                         <input type="number" class="form-control" id="game_speed">
                     </div><br>
+                    <div class="form-group">
+                        <label for="game_time">Game Time (s):</label>
+                        <input type="number" class="form-control" id="game_time">
+                    </div><br>
                     <button type="button" class="btn btn-primary" onclick="start_game()">Start</button>
                 </div>
             </div>
@@ -34,9 +38,11 @@
             }
             function start_game() {
                 localStorage.setItem('game_speed', document.getElementById('game_speed').value || localStorage.getItem('game_speed') || 250)
-                emits.emit('multi_start_game', {game_speed:document.getElementById('game_speed').value || localStorage.getItem('game_speed') || 250})
+                localStorage.setItem('game_time', document.getElementById('game_time').value || localStorage.getItem('game_time') || 120)
+                emits.emit('multi_start_game', {game_speed:document.getElementById('game_speed').value || localStorage.getItem('game_speed') || 250, game_time:document.getElementById('game_time').value || localStorage.getItem('game_time') || 120})
             }
             document.getElementById('game_speed').placeholder = localStorage.getItem('game_speed') || 250
+            document.getElementById('game_time').placeholder = localStorage.getItem('game_time') || 120
         </script>
     </body>
 </html>
