@@ -73,7 +73,7 @@ const socket_commands = [
         }
         delete games.multi_snake[body]
     }],
-    ['client_game_end', (body, emit, token) => {
+    ['client_game_end_time', (body, emit, token) => {
         games.multi_snake[body].p2.emit('server_game_end', 'ran out of time!')
         games.multi_snake[body].p1.emit('server_game_end', 'ran out of time!')
     }]
