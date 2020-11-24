@@ -27,6 +27,136 @@
         </div>
     </div>
     <script>
+        class Snake {
+            constructor(id, startLength, blockSize, settings, scoreId) {
+                this.canvas = document.getElementById(id).getContext('2d')
+                this.id = id
+                this.startLength = startLength
+                this.settings = settings
+                this.snake = [{x:document.getElementById(id).width / 2 - (startLength * blockSize), y:document.getElementById(id).height / 2}]
+                this.food = {x:0, y:0}
+                this.velocety = {x:0, y:0}
+                this.blockSize = blockSize
+                this.changingDirection = false
+                this.score = 0
+                this.scoreId = scoreId
+                this.running = false
+            }
+            async start() {
+                this.running = true
+                for (let x = 1; x < this.startLength; x++) {
+                    this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y})
+                }
+                document.addEventListener('keydown', this.keyPress.bind(this))
+                this.clearCanvas()
+                this.createFood()
+                this.drawFood()
+                this.drawSnake()
+                this.velocety.x = this.blockSize
+                setInterval(() => {
+                    if (!this.running) return
+                    if (this.gameEnded()) {
+                        alert('You lost!')
+                        window.location.href = '/single/start'
+                    }
+                    this.changingDirection = false
+                    this.clearCanvas()
+                    this.advanceSnake()
+                    this.drawSnake()
+                    this.drawFood()
+                }, this.settings.game_speed)
+            }
+            random(min, max) {
+                return Math.round(Math.random() * (max-min) + min);
+            }
+            clearCanvas() {
+                this.canvas.fillStyle = this.settings.canvas_background_colour
+                this.canvas.strokeStyle = this.settings.canvas_border_colour
+                this.canvas.fillRect(0, 0, document.getElementById(this.id).width, document.getElementById(this.id).height)
+                this.canvas.strokeRect(0, 0, document.getElementById(this.id).width, document.getElementById(this.id).height)
+            }
+            drawFood() {
+                this.canvas.fillStyle = this.settings.food_colour
+                this.canvas.strokeStyle = this.settings.food_border_colour
+                this.canvas.fillRect(this.food.x, this.food.y, this.blockSize, this.blockSize)
+                this.canvas.strokeRect(this.food.x, this.food.y, this.blockSize, this.blockSize)
+            }
+            createFood() {
+                this.food.x = this.random(0, document.getElementById(this.id).width - this.blockSize)
+                this.food.y = this.random(0, document.getElementById(this.id).height - this.blockSize)
+                this.snake.forEach((part) => {
+                    if (part.x === this.food.x && part.y === this.food.y) this.createFood()
+                })
+            }
+            drawSnake() {
+                this.canvas.fillStyle = this.settings.snake_colour
+                this.canvas.strokeStyle = this.settings.snake_border_colour
+                this.snake.forEach((part) => {
+                    this.canvas.fillRect(part.x, part.y, this.blockSize, this.blockSize)
+                    this.canvas.strokeRect(part.x, part.y, this.blockSize, this.blockSize)
+                })
+            }
+            advanceSnake() {
+                this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y})
+                if (this.snake[0].x === this.food.x && this.snake[0].y === this.food.y) {
+                    this.addScore(10)
+                    this.createFood()
+                }
+                else {
+                    this.snake.pop()
+                }
+            }
+            gameEnded() {
+                for (let i = 1; i < this.snake.length; i++) {
+                    if (this.snake[i].x === this.snake[0].x && this.snake[i].y === this.snake[0].y) {
+                        return true
+                    }
+                    const hit = {
+                        left_wall: this.snake[0].x < 0,
+                        right_wall: this.snake[0].x > document.getElementById(this.id).width - this.blockSize,
+                        top_wall: this.snake[0].y < 0,
+                        bottom_wall: this.snake[0].y > document.getElementById(this.id).height - this.blockSize
+                    }
+                    return hit.left_wall || hit.right_wall || hit.top_wall || hit.bottom_wall
+                }
+            }
+            keyPress(event) {
+                if (this.changingDirection) {
+                    return
+                }
+                this.changingDirection = true
+                if (event.keyCode == this.settings.up && this.velocety.y != -10) {
+                    this.velocety =  {
+                        x:0,
+                        y:-10
+                    }
+                }
+                else if (event.keyCode == this.settings.down && this.velocety.y != 10) {
+                    this.velocety =  {
+                        x:0,
+                        y:10
+                    }
+                }
+                else if (event.keyCode == this.settings.left && this.velocety.x != -10) {
+                    this.velocety =  {
+                        x:-10,
+                        y:0
+                    }
+                }
+                else if (event.keyCode == this.settings.right && this.velocety.x != 10) {
+                    this.velocety =  {
+                        x:10,
+                        y:0
+                    }
+                }
+            }
+            addScore(amount) {
+                this.score += amount
+                document.getElementById(this.scoreId).innerHTML = this.score
+            }
+        }
+    </script>
+    <script>
         document.addEventListener('click', () => {
             document.documentElement.requestFullscreen()
         })
@@ -74,7 +204,7 @@
                 }
             }
         }
-        let snake = [
+        /*let snake = [
             {x: 150, y: 150},
             {x: 140, y: 150},
             {x: 130, y: 150},
@@ -90,7 +220,7 @@
         let d = {
             x:10,
             y:0
-        }
+        }*/
         let required_settings = [
             ['game_speed', '250'],
             ['canvas_border_colour', '#000000'],
@@ -141,7 +271,7 @@
             score += amount
             document.getElementById('score').innerHTML = score
         }
-        const canvas = document.getElementById('game_canvas')
+        /*const canvas = document.getElementById('game_canvas')
         const ctx = canvas.getContext("2d")
 
         clear_canvas()
@@ -197,7 +327,7 @@
             }
         }
         function random(min, max) {
-            return Math.round((Math.random() * (max-min) + min) / 10) * 10;
+            return Math.round(Math.random() * (max-min) + min);
         }
         function create_food() {
             food.x = random(0, canvas.width - 10)
@@ -246,7 +376,7 @@
         async function end_game() {
             alert(`You died and survived for ${timeCount} seconds with a score of ${score}`)
             window.location.href = '/single/start'
-        }
+        }*/
     </script>
 </body>
 </html>
