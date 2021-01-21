@@ -3,32 +3,77 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8" />
+        <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Trispace'>
-        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.18.1/tsparticles.min.js" integrity="sha512-PYHWDEuXOTJ9MZ+/QHqkbgiEYZ+LImQv3i/9NyYOABFvK37e4q4Wg7aQDN1JpoGiEu1TYZh6JMrZluZox2gbDA==" crossorigin="anonymous"></script>
         <script src="/socket.io/socket.io.js"></script>
-        <script src="/token_script.js"></script>
+        <script src="/static/js/utils.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
         <title>Snake</title>
     </head>
-    <body>
-        <div id="particles-js"></div>
+    <body class="back">
         <div class="container">
             <div class="center">
-                <div class="content">
-                    <div class="title animate__animated animate__zoomIn">Snake</div>
+                <div id="home" class="content">
+                    <div class="title">Snake</div>
                     <br>
-                    <div id="buttons" class="animate__animated animate__rollIn">
-                        <a href="./single/start"><button class="btn btn-primary margin button-anim" type="button">Play Singleplayer Game</button></a><br>
-                        <a href="./multi/start"><button class="btn btn-primary margin button-anim" type="button">Play Multiplayer Game</button></a><br>
-                        <a href="./options"><button class="btn btn-primary margin button-anim" type="button">Options</button></a><br>
+                    <div id="buttons" style="animation: back-text 10s ease infinite;"> 
+                        <a href="#single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br>
+                        <a href="#multi"><button class="main-btn" type="button"><span>Play Multiplayer Game</span></button></a><br>
+                        <a href="#options"><button class="main-btn" type="button"><span>Options</span></button></a><br>
                     </div>
+                </div>
+                <div id="single" class="content">
+                    <div class="title">Single Player</div>
+                </div>
+                <div id="multi" class="content">
+                    <div class="title">Multi Player</div>
+                </div>
+                <div id="options" class="content">
+                    <div class="title">Options</div>
                 </div>
             </div>
         </div>
+        <script>
+            const pages = ['home', 'single', 'multi', 'options'];
+            function onload() {
+                hideAll();
+                if (location.hash) {
+                    $(`${location.hash}`).show();
+                }
+                else {
+                    $('#home').show();
+                };
+                const mouse = document.getElementById('mouse');
+                document.querySelectorAll('.main-btn').forEach((el) => {
+                    el.addEventListener('mouseover', () => {
+                        mouse.style.transform = 'scale(2)'
+                    })
+                    el.addEventListener('mouseleave', () => {
+                        mouse.style.transform = 'scale(1) translate(-50%, -50%)'
+                    })
+                });
+            };
+            $('a').click((ev) => {
+                ev.preventDefault();
+                history.pushState(null, null, ev.currentTarget.href)
+                hideAll();
+                if (location.hash) {
+                    $(`${location.hash}`).show();
+                }
+                else {
+                    $('#home').show();
+                };
+            });
+            function hideAll() {
+                pages.forEach((el) => {
+                    $(`#${el}`).hide();
+                });
+            };
+            addEventListener('popstate', onload);
+        </script>
     </body>
 </html>

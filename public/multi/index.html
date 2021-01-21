@@ -105,7 +105,7 @@
             })
             emits.on('server_game_end', (body, token) => {
                 alert(`You ${body}!`)
-                return window.location.href = '/multi/start'
+                window.location.href = '/multi/start'
             })
             emits.on('invalid_code', (body, token) => {
                 window.location.href = '/multi/start'

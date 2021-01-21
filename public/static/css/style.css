@@ -1,0 +1,148 @@
+@-webkit-keyframes back {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes back {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes back {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+* {
+    font-family: 'Raleway', sans-serif;
+    color: #AACCFF;
+    overflow: hidden;
+    cursor: none;
+}
+.back {
+    background-image: linear-gradient(to right, #243949 0%, #517fa4 100%);
+    background-size: 400% 400%;
+    -webkit-animation: back 10s ease infinite;
+    -moz-animation: back 10s ease infinite;
+    animation: back 10s ease infinite;
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+}
+button.full-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    float: left;
+}
+.game {
+    background: lightgray;
+    padding: 20px;
+    padding-top: 0px;
+    height: auto;
+    max-width: 100%;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: smaller;
+}
+.content {
+    padding: 20px;
+    height: auto;
+    max-width: 100%;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.margin {
+    margin: 5px;
+}
+.title {
+    font-size: 75px;
+    font-weight: 300;
+}
+
+/* Buttons */
+button:hover::before, button:hover::after{
+    width: 100%;
+}
+button:hover span::before, button:hover span::after{
+    height: 100%;
+}
+
+
+.main-btn::after{
+    right:0;
+    bottom: 0;
+    transition-duration: 0.4s;
+}
+.main-btn span::after{
+    right:0;
+    bottom: 0;
+    transition-duration: 0.4s;
+}
+.main-btn::before{
+    left: 0;
+    top: 0;
+    transition-duration: 0.4s;
+}
+.main-btn span::before{
+    left: 0;
+    top: 0;
+    transition-duration: 0.4s;
+}
+span{
+    display: block;
+}
+button::before, button::after{
+    content:"";
+    width: 0;
+    height: 2px;
+    position: absolute;
+    transition: all 0.2s linear;
+    background: #fff;
+}
+
+span::before, span::after{
+    content:"";
+    width:2px;
+    height:0;
+    position: absolute;
+    transition: all 0.2s linear;
+    background: #fff;
+}
+
+
+button {
+    display: inline-block;
+    position: relative;
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin: 2px 30px;
+    height: 30px;
+}
+#mouse {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid;
+    border-radius: 50%;
+    position: absolute;
+    transition: all 0.3s ease;
+    transition-property: transform;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+    transform-origin: 100% 100%;
+    mix-blend-mode: difference;
+}
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    cursor: none;
+}
