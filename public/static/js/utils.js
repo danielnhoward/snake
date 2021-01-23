@@ -29,7 +29,7 @@ $(document).ready(() => {
         mouse.style.top = `${ev.clientY}px`;
         mouse.style.left = `${ev.clientX}px`;
     })
-    if (typeof(onload) != 'undefined') {
+    if (typeof(onload) == 'function') {
         onload()
     }
 })

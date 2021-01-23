@@ -6,18 +6,18 @@
         <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/static/css/style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/css/style.css">
         <script src="/socket.io/socket.io.js"></script>
         <script src="/static/js/utils.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <script src="/static/js/settings.js"></script>
         <title>Snake</title>
     </head>
     <body class="back">
         <div class="container">
             <div class="center">
-                <div id="home" class="content">
+                <div style="display: none;" id="home" class="content">
                     <div class="title">Snake</div>
                     <br>
                     <div id="buttons" style="animation: back-text 10s ease infinite;"> 
@@ -27,36 +27,170 @@
                     </div>
                 </div>
                 <div id="single" class="content">
-                    <div class="title">Single Player</div>
+                    <div class="title">Play Single Player</div>
+                    <form id="singlePlay" style="text-align: center;">
+                        <label for="game_speed">Game Speed: <x id="clientGameSpeed"></x>ms</label>
+                        <input class="main-btn" style="width: 200px; margin: auto;" type="range" class="form-range" id="gameSpeed" min="20" max="500">
+                        <br>
+                        <label for="game_time">Game Time: <x id="clientGameTime"></x>s</label>
+                        <input class="main-btn" style="width: 200px; margin: auto;" type="range" min="30" max="300" id="gameTime">
+                        <br><br>
+                        <button class="main-btn" type="submit"><span><b>Play!</b></span></button>
+                    </form>
                 </div>
-                <div id="multi" class="content">
+                <div style="display: none;" id="multi" class="content">
                     <div class="title">Multi Player</div>
                 </div>
-                <div id="options" class="content">
-                    <div class="title">Options</div>
+                <div style="display: none;" id="options" class="content">
+                    <div class="title">Colours</div>
+
+                    <div id="backClrClick">
+                        Backgound Colour:<br>
+                        <x id="backClr" class="baseColor"></x>
+                        <input type="color" id="backClrInp">
+                    </div>
+                    <div id="backBordClrClick">
+                        Background Border Colour:<br>
+                        <x id="backBordClr" class="baseColor"></x>
+                        <input type="color" id="backBordClrInp">
+                    </div>
+                    <br><br>
+                    <div id="foodClrClick">
+                        Food Colour:<br>
+                        <x id="foodClr" class="baseColor"></x>
+                        <input type="color" id="foodClrInp">
+                    </div>
+                    <div id="foodBordClrClick">
+                        Food Border Colour:<br>
+                        <x id="foodBordClr" class="baseColor"></x>
+                        <input type="color" id="foodBordClrInp">
+                    </div>
+                    <br><br>
+                    <div id="snakeClrClick">
+                        Snake Colour:<br>
+                        <x id="snakeClr" class="baseColor"></x>
+                        <input type="color" id="snakeClrInp">
+                    </div>
+                    <div id="snakeBordClrClick">
+                        Snake Border Colour:<br>
+                        <x id="snakeBordClr" class="baseColor"></x>
+                        <input type="color" id="snakeBordClrInp">
+                    </div>
+
+
+                    <div id="selectClear" class="title" onkeydown="return">Controls</div>
+                    <button id="upKey" class="main-btn"><span>Up (<x id="upKeyDis"></x>)</span></button>
+                    <br>
+                    <button id="leftKey" class="main-btn"><span>Left (<x id="leftKeyDis"></x>)</span></button>
+                    <button id="rightKey" class="main-btn"><span>Right (<x id="rightKeyDis"></x>)</span></button>
+                    <br>
+                    <button id="downKey" class="main-btn"><span>Down (<x id="downKeyDis"></x>)</span></button>
+                    <br><br><br>
+                    <a href="#home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
                 </div>
             </div>
         </div>
         <script>
-            const pages = ['home', 'single', 'multi', 'options'];
+            const pages = ['#home', '#single', '#multi', '#options', ''];
             function onload() {
                 hideAll();
-                if (location.hash) {
-                    $(`${location.hash}`).show();
+                if (pages.includes(location.hash)) {
+                    if (location.hash == '') {
+                        $('#home').show();
+                    }
+                    else {
+                        $(`${location.hash}`).show();
+                    };
                 }
                 else {
-                    $('#home').show();
+                    location.replace('/');
                 };
                 const mouse = document.getElementById('mouse');
                 document.querySelectorAll('.main-btn').forEach((el) => {
                     el.addEventListener('mouseover', () => {
-                        mouse.style.transform = 'scale(2)'
+                        mouse.style.width = '5rem';
+                        mouse.style.height = '5rem';
+                        mouse.style.zIndex = '-1';
                     })
                     el.addEventListener('mouseleave', () => {
-                        mouse.style.transform = 'scale(1) translate(-50%, -50%)'
+                        mouse.style.width = '3rem';
+                        mouse.style.height = '3rem';
+                        mouse.style.zIndex = '1';
                     })
                 });
+
+                let settings = getConfig();
+
+                /* Single Player */
+                document.getElementById('gameSpeed').oninput = () => {
+                    document.getElementById('clientGameSpeed').innerHTML = document.getElementById('gameSpeed').value;
+                };
+                settings.gameSpeed ? (() => {
+                    document.getElementById('clientGameSpeed').innerHTML = settings.gameSpeed;
+                    document.getElementById('gameSpeed').value = settings.gameSpeed;
+                })() : (() => {
+                    document.getElementById('clientGameSpeed').innerHTML = '100';
+                    document.getElementById('gameSpeed').value = 100;
+                })();
+                document.getElementById('gameTime').oninput = () => {
+                    document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
+                };
+                settings.gameTime ? (() => {
+                    document.getElementById('clientGameTime').innerHTML = settings.gameTime;
+                    document.getElementById('gameTime').value = settings.gameTime;
+                })() : (() => {
+                    document.getElementById('clientGameTime').innerHTML = '120';
+                    document.getElementById('gameTime').value = 120;
+                })();
+
+                document.getElementById('singlePlay').onsubmit = (ev) => {
+                    ev.preventDefault();
+                    let playSettings = getConfig();
+                    playSettings.gameSpeed = document.getElementById('gameSpeed').value;
+                    playSettings.gameTime = document.getElementById('gameTime').value;
+                    setConfig(playSettings);
+                };
+
+
+
+                /* Options */
+                const clrInps = [
+                    {color: document.getElementById('backClr'), click: document.getElementById('backClrClick'), inp: document.getElementById('backClrInp'), settingName: 'canvasBackgroundColour'},
+                    {color: document.getElementById('backBordClr'), click: document.getElementById('backBordClrClick'), inp: document.getElementById('backBordClrInp'), settingName: 'canvasBorderColour'},
+                    {color: document.getElementById('foodClr'), click: document.getElementById('foodClrClick'), inp: document.getElementById('foodClrInp'), settingName: 'snakeColour'},
+                    {color: document.getElementById('foodBordClr'), click: document.getElementById('foodBordClrClick'), inp: document.getElementById('foodBordClrInp'), settingName: 'snakeBorderColour'},
+                    {color: document.getElementById('snakeClr'), click: document.getElementById('snakeClrClick'), inp: document.getElementById('snakeClrInp'), settingName: 'foodColour'},
+                    {color: document.getElementById('snakeBordClr'), click: document.getElementById('snakeBordClrClick'), inp: document.getElementById('snakeBordClrInp'), settingName: 'foodBorderColour'}
+                ];
+                clrInps.forEach((el) => {
+                    el.click.onclick = () => {
+                        el.inp.click();
+                    };
+                    el.inp.oninput = () => {
+                        el.color.style.background = el.inp.value;
+                        setConfigItem(el.settingName, el.inp.value)
+                    };
+                    el.inp.value = settings[el.settingName];
+                    el.color.style.background = settings[el.settingName];
+                })
+
+                const keyInps = [
+                    {button: document.getElementById('upKey'), dis: document.getElementById('upKeyDis'), name: 'up'},
+                    {button: document.getElementById('leftKey'), dis: document.getElementById('leftKeyDis'), name: 'left'},
+                    {button: document.getElementById('rightKey'), dis: document.getElementById('rightKeyDis'), name: 'right'},
+                    {button: document.getElementById('downKey'), dis: document.getElementById('downKeyDis'), name: 'down'}
+                ]
+                keyInps.forEach((el) => {
+                    el.button.addEventListener('keydown', (ev) => {
+                        setConfigItem(el.name, ev.keyCode);
+                        setConfigItem(`${el.name}Key`, ev.key);
+                        el.dis.innerHTML = ev.key;
+                        document.getElementById('selectClear').click();
+                    })
+                    el.dis.innerHTML = settings[`${el.name}Key`];
+                })
             };
+
             $('a').click((ev) => {
                 ev.preventDefault();
                 history.pushState(null, null, ev.currentTarget.href)
@@ -70,7 +204,7 @@
             });
             function hideAll() {
                 pages.forEach((el) => {
-                    $(`#${el}`).hide();
+                    $(`${el}`).hide();
                 });
             };
             addEventListener('popstate', onload);

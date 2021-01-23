@@ -30,7 +30,7 @@
             </div>
         </div>
         <script>
-            function page_onload() {
+            function onload() {
                 serverErr = JSON.parse(atob(window.location.hash.replace('#', '')))
                 document.getElementById('error').innerHTML = serverErr.err
                 document.getElementById('message').innerHTML = serverErr.mes
