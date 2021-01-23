@@ -9,6 +9,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/static/js/utils.js"></script>
         <script src="/static/js/settings.js"></script>
@@ -28,20 +30,29 @@
                 </div>
 
                 <div id="single" class="content">
+                    <div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup();">
+                        <img src="/static/img/help-icon.svg" width="50" height="50">
+                    </div>
                     <div class="title">Play Single Player</div>
                     <form id="singlePlay" style="text-align: center;">
                         <div class="slider-hover">
-                            <label for="game_speed">Game Speed: <x id="clientGameSpeed"></x>ms</label><div style="height: 5px;"></div>
+                            <label for="gameSpeed">Game Speed: <x id="clientGameSpeed"></x>ms</label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto;" type="range" class="slider" id="gameSpeed" min="20" max="500">
                         </div>
                         <br>
-                        <div class="slider-hover">
-                            <label for="game_time">Game Time: <x id="clientGameTime"></x>s</label><div style="height: 5px;"></div>
+                        <label style="margin: 0px;" for="timed">Timed</label><br>
+                        <input id="timed" type="checkbox">
+                        <br><br>
+                        <div class="slider-hover" id="gameTimeArea">
+                            <label for="gameTime">Game Time: <x id="clientGameTime"></x>s</label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto;" type="range" min="30" max="300" id="gameTime" class="slider">
                         </div>
                         <br><br>
                         <x href="/single"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
                     </form>
+                    <div id="pop-up">
+
+                    </div>
                 </div>
 
                 <div style="display: none;" id="multi" class="content">
@@ -85,7 +96,7 @@
                     </div>
 
 
-                    <div id="selectClear" class="title" onkeydown="return">Controls</div>
+                    <div class="title">Controls</div>
                     <button id="upKey" class="main-btn"><span>Up (<x id="upKeyDis"></x>)</span></button>
                     <br>
                     <button id="leftKey" class="main-btn"><span>Left (<x id="leftKeyDis"></x>)</span></button>
@@ -113,19 +124,6 @@
                 else {
                     location.replace('/');
                 };
-                const mouse = document.getElementById('mouse');
-                document.querySelectorAll('.main-btn').forEach((el) => {
-                    el.addEventListener('mouseover', () => {
-                        mouse.style.width = '5rem';
-                        mouse.style.height = '5rem';
-                        mouse.style.zIndex = '-1';
-                    })
-                    el.addEventListener('mouseleave', () => {
-                        mouse.style.width = '3rem';
-                        mouse.style.height = '3rem';
-                        mouse.style.zIndex = '1';
-                    })
-                });
 
                 let settings = getConfig();
 
@@ -143,19 +141,43 @@
                 document.getElementById('gameTime').oninput = () => {
                     document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
                 };
-                settings.gameTime ? (() => {
-                    document.getElementById('clientGameTime').innerHTML = settings.gameTime;
-                    document.getElementById('gameTime').value = settings.gameTime;
-                })() : (() => {
+                if (settings.gameTime) {
+                    if (settings.gameTime == 'off') {
+                        document.getElementById('gameTime').disabled = true;
+                        document.getElementById('timed').checked = true;
+                        document.getElementById('gameTimeArea').style.opacity = 0.5;
+                        document.getElementById('clientGameTime').innerHTML = '120';
+                        document.getElementById('gameTime').value = 120;
+                    }
+                    else {
+                        document.getElementById('clientGameTime').innerHTML = settings.gameTime;
+                        document.getElementById('gameTime').value = settings.gameTime;
+                    }
+                }
+                else {
                     document.getElementById('clientGameTime').innerHTML = '120';
                     document.getElementById('gameTime').value = 120;
-                })();
+                }
+
+                document.getElementById('timed').oninput = () => {
+                    document.getElementById('timed').checked ? (() => {
+                        document.getElementById('gameTime').disabled = true;
+                        document.getElementById('gameTimeArea').style.opacity = 0.5;
+                        document.getElementById('clientGameTime').innerHTML = '120'; 
+                        document.getElementById('gameTime').value = 120;  
+                    })() : (() => {
+                        document.getElementById('gameTime').disabled = false;
+                        document.getElementById('gameTimeArea').style.opacity = 1;
+                        document.getElementById('clientGameTime').innerHTML = '120';
+                        document.getElementById('gameTime').value = 120;
+                    })();
+                }
 
                 document.getElementById('singlePlay').onsubmit = (ev) => {
                     ev.preventDefault();
                     let playSettings = getConfig();
                     playSettings.gameSpeed = document.getElementById('gameSpeed').value;
-                    playSettings.gameTime = document.getElementById('gameTime').value;
+                    playSettings.gameTime = document.getElementById('timed').checked ? 'off' : document.getElementById('gameTime').value;
                     setConfig(playSettings);
                     location.href = '/single';
                 };
@@ -190,12 +212,12 @@
                     {button: document.getElementById('downKey'), dis: document.getElementById('downKeyDis'), name: 'down'}
                 ]
                 keyInps.forEach((el) => {
-                    el.button.addEventListener('keydown', (ev) => {
+                    function keyDown(ev) {
                         setConfigItem(el.name, ev.keyCode);
                         setConfigItem(`${el.name}Key`, ev.key);
                         el.dis.innerHTML = ev.key;
-                        document.getElementById('selectClear').click();
-                    })
+                    }
+                    el.button.addEventListener('keydown', keyDown)
                     el.dis.innerHTML = settings[`${el.name}Key`];
                 })
             };
@@ -217,6 +239,14 @@
                 });
             };
             addEventListener('popstate', onload);
+
+            function showPopup () {
+                Swal.fire({
+                    target: '#pop-up',
+                    icon: 'info',
+                    html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: black;">Game Time</b><br>Game is how long the game will last for.</div>'
+                });
+            }
         </script>
     </body>
 </html>

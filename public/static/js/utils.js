@@ -4,7 +4,15 @@ $(document).ready(() => {
         socket.on('init', (data) => {
             if (socket.id === data) {
                 socket.on(`${socket.id}error`, (data) => {
-                    location.replace(`/error#${btoa(JSON.stringify(data))}`);
+                    Swal.fire({
+                        icon: 'error',
+                        html: `<div style="font-size: small; color: grey;"><b style="font-size: medium; color: black;">Looks like we have encouted an error on our side! This error should be fixed soon, Sorry for any inconvinience caused.</b><br><small style="color: grey;">Type: ${data.err}<br>Message: ${data.mes}</small></div>`,
+                        backdrop: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                        showConfirmButton: false
+                    });
                 })
                 window.emits = ((socket, id) => {
                     return {
@@ -21,14 +29,6 @@ $(document).ready(() => {
             }
         })
     })()
-    let mouse = document.createElement('div');
-    mouse.id = 'mouse';
-    document.querySelector('body').appendChild(mouse);
-    mouse = document.getElementById('mouse');
-    addEventListener('mousemove', (ev) => {
-        mouse.style.top = `${ev.clientY}px`;
-        mouse.style.left = `${ev.clientX}px`;
-    })
     if (typeof(onload) == 'function') {
         onload()
     }

@@ -60,7 +60,6 @@ module.exports = {
         console.log(token)
     },
     yes: (body) => {
-        console.log('yes')
         console.log(sadwadsadwadsawdsa.wdsa.dwad)
     }
 }

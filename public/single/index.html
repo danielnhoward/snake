@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/static/js/utils.js"></script>
     <script src="/static/js/settings.js"></script>
@@ -21,12 +23,42 @@
 </head>
 <body class="back">
     <div class="center"> 
-        <div class="game">
-            <div style="margin: 20px; margin-bottom: 35px; color: black;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
-            <canvas id="gameCanvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+        <div class="center-inner">
+            <div class="game">
+                <div style="margin: 20px; margin-bottom: 35px; color: black;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
+                <canvas id="gameCanvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+            </div>
+            <div class="pause" onclick="pause();">
+                <img title="Pause" src="/static/img/pause-icon.svg" width="50" height="50">
+            </div>
+            <div onclick="restart();" class="restart">
+                <img title="Restart" src="/static/img/restart-icon.svg" width="50" height="50">
+            </div>
         </div>
     </div>
     <script>
+        let snake = new Snake('gameCanvas', 5, 10, getConfig(), 'score');
+
+        function pause() {
+            snake.setState(false);
+            Swal.fire({
+                title: `<h1>Paused</h1>`,
+                html: `<button onclick="play();"><img title="Play" src="/static/img/play-icon.svg" width="50" height="50"></button><button onclick="restart();"><img title="Restart" src="/static/img/restart-icon.svg" width="50" height="50"></button><button onclick="location.href = '/#single';"><img title="Exit" src="/static/img/exit-icon.svg" width="50" height="50"></button><br><br><br>`,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false
+            })
+        }
+        function play() {
+            Swal.close();
+            snake.setState(true);
+        }
+        function restart() {
+            Swal.close();
+            snake.restart();
+        }
+
         /*
         let timeCount = 0
         let timerID = setInterval(() => {

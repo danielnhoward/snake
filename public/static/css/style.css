@@ -19,13 +19,12 @@
     75% {background-position: 100% 0%;}
     100% {background-position:0% 0%}
 }
-* {
+body {
     font-family: 'Raleway', sans-serif;
     color: #AACCFF;
-    cursor: none;
 }
 .back {
-    background: linear-gradient(to bottom, #243949, #517fa4);
+    background: linear-gradient(to top left, #243949, #517fa4);
     background-size: 400% 400%;
     -webkit-animation: back 10s ease infinite;
     -moz-animation: back 10s ease infinite;
@@ -38,6 +37,9 @@
     align-items: center;
     text-align: center;
     min-height: 100vh;
+}
+.center-inner {
+    display: inline-block;
 }
 button.full-screen {
     display: flex;
@@ -55,7 +57,7 @@ button.full-screen {
     margin: auto;
     margin-top: 50px;
     margin-bottom: 50px;
-    font-size: smaller;
+    font-size: small;
 }
 .content {
     padding: 20px;
@@ -74,10 +76,10 @@ button.full-screen {
 }
 
 /* Buttons */
-button:hover::before, button:hover::after{
+button[class="main-btn"]:hover::before, button[class="main-btn"]:hover::after{
     width: 100%;
 }
-button:hover span::before, button:hover span::after{
+button[class="main-btn"]:hover span::before, button[class="main-btn"]:hover span::after{
     height: 100%;
 }
 
@@ -133,30 +135,28 @@ button {
     margin: 2px 30px;
     height: 30px;
 }
-#mouse {
-    width: 3rem;
-    height: 3rem;
-    border: 2px solid #DFF0D8;
-    border-radius: 50%;
-    position: fixed;
-    transition: all 0.3s ease;
-    transition-property: width, height, z-index;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 1;
-    transform-origin: 100% 100%;
-    overflow: hidden;
-}
-button, html input[type="button"], input[type="reset"], input[type="submit"] {
-    cursor: none;
-}
 input[type="button"], button{
     outline:none;
 }
 input[type="button"]::-moz-focus-inner {
     border: 0;
 }
+a:hover, a {
+    color: inherit;
+}
 
+.pause {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    margin: 10px;
+}
+.restart {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin: 10px;
+}
 .clr-input {
     border-radius: 50%;
     height: 60px;

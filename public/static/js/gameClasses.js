@@ -1,5 +1,5 @@
 class Snake {
-    constructor(id, startLength, blockSize, settings, scoreId) {
+    constructor(id, startLength, blockSize, settings, scoreId, timeId) {
         this.canvas = document.getElementById(id);
         this.ctx = this.canvas.getContext('2d');
         this.id = id;
@@ -12,23 +12,30 @@ class Snake {
         this.changingDirection = false;
         this.score = 0;
         this.scoreId = scoreId;
+        this.timeId = timeId;
         this.running = false;
+        this.ready = false;
+        this.init();
     }
     async start() {
+        this.ready = false;
         this.running = true;
-        for (let x = 1; x < this.startLength; x++) {
-            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y})
-        };
-        document.addEventListener('keydown', this.keyPress.bind(this));
-        this.clearCanvas();
-        this.createFood();
-        this.drawFood();
-        this.drawSnake();
         this.velocety.x = this.blockSize;
-        setInterval(() => {
+        document.addEventListener('keydown', this.keyPress.bind(this));
+        this.interval = setInterval(() => {
+            this.intervalRunning = true;
             if (!this.running) return;
             if (this.gameEnded()) {
+                if (this.intervalRunning) {
+                    clearInterval(this.interval);
+                    this.intervalRunning = false;
+                }
                 this.running = false;
+                this.ready = false;
+                Swal.fire({
+                    html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${this.score}<br>You lasted for</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); snake.restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
+                    showConfirmButton: false
+                });
             };
             this.changingDirection = false;
             this.clearCanvas();
@@ -124,5 +131,35 @@ class Snake {
     addScore(amount) {
         this.score += amount;
         document.getElementById(this.scoreId).innerHTML = this.score;
+    }
+    init() {
+        this.ready = true;
+        for (let x = 1; x < this.startLength; x++) {
+            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y});
+        };
+        this.clearCanvas();
+        this.createFood();
+        this.drawFood();
+        this.drawSnake();
+        document.addEventListener('keydown', (ev) => {
+            if (this.ready) {
+                this.start();
+                this.keyPress(ev);
+            };
+        });
+    }
+    restart() {
+        if (this.intervalRunning) {
+            clearInterval(this.interval);
+            this.intervalRunning = false;
+        }
+        this.snake = [{x:this.canvas.width / 2 - (this.startLength * this.blockSize), y:this.canvas.height / 2}];
+        this.food = {x:0, y:0};
+        this.velocety = {x:0, y:0};
+        this.score = 0;
+        this.init();
+    }
+    setState(state) {
+        this.running = state;
     }
 }
