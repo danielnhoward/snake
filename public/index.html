@@ -26,53 +26,60 @@
                         <a href="#options"><button class="main-btn" type="button"><span>Options</span></button></a><br>
                     </div>
                 </div>
+
                 <div id="single" class="content">
                     <div class="title">Play Single Player</div>
                     <form id="singlePlay" style="text-align: center;">
-                        <label for="game_speed">Game Speed: <x id="clientGameSpeed"></x>ms</label>
-                        <input class="main-btn" style="width: 200px; margin: auto;" type="range" class="form-range" id="gameSpeed" min="20" max="500">
+                        <div class="slider-hover">
+                            <label for="game_speed">Game Speed: <x id="clientGameSpeed"></x>ms</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto;" type="range" class="slider" id="gameSpeed" min="20" max="500">
+                        </div>
                         <br>
-                        <label for="game_time">Game Time: <x id="clientGameTime"></x>s</label>
-                        <input class="main-btn" style="width: 200px; margin: auto;" type="range" min="30" max="300" id="gameTime">
+                        <div class="slider-hover">
+                            <label for="game_time">Game Time: <x id="clientGameTime"></x>s</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto;" type="range" min="30" max="300" id="gameTime" class="slider">
+                        </div>
                         <br><br>
-                        <button class="main-btn" type="submit"><span><b>Play!</b></span></button>
+                        <x href="/single"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
                     </form>
                 </div>
+
                 <div style="display: none;" id="multi" class="content">
                     <div class="title">Multi Player</div>
                 </div>
+
                 <div style="display: none;" id="options" class="content">
                     <div class="title">Colours</div>
 
                     <div id="backClrClick">
-                        Backgound Colour:<br>
+                        Backgound Colour<br>
                         <x id="backClr" class="baseColor"></x>
                         <input type="color" id="backClrInp">
                     </div>
                     <div id="backBordClrClick">
-                        Background Border Colour:<br>
+                        Background Border Colour<br>
                         <x id="backBordClr" class="baseColor"></x>
                         <input type="color" id="backBordClrInp">
                     </div>
-                    <br><br>
+                    <br>
                     <div id="foodClrClick">
-                        Food Colour:<br>
+                        Food Colour<br>
                         <x id="foodClr" class="baseColor"></x>
                         <input type="color" id="foodClrInp">
                     </div>
                     <div id="foodBordClrClick">
-                        Food Border Colour:<br>
+                        Food Border Colour<br>
                         <x id="foodBordClr" class="baseColor"></x>
                         <input type="color" id="foodBordClrInp">
                     </div>
-                    <br><br>
+                    <br>
                     <div id="snakeClrClick">
-                        Snake Colour:<br>
+                        Snake Colour<br>
                         <x id="snakeClr" class="baseColor"></x>
                         <input type="color" id="snakeClrInp">
                     </div>
                     <div id="snakeBordClrClick">
-                        Snake Border Colour:<br>
+                        Snake Border Colour<br>
                         <x id="snakeBordClr" class="baseColor"></x>
                         <input type="color" id="snakeBordClrInp">
                     </div>
@@ -86,13 +93,14 @@
                     <br>
                     <button id="downKey" class="main-btn"><span>Down (<x id="downKeyDis"></x>)</span></button>
                     <br><br><br>
-                    <a href="#home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
+                    <a><button onclick="resetConfig(); reset();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="#home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
                 </div>
             </div>
         </div>
         <script>
             const pages = ['#home', '#single', '#multi', '#options', ''];
-            function onload() {
+            let onload = reset;
+            function reset() {
                 hideAll();
                 if (pages.includes(location.hash)) {
                     if (location.hash == '') {
@@ -149,6 +157,7 @@
                     playSettings.gameSpeed = document.getElementById('gameSpeed').value;
                     playSettings.gameTime = document.getElementById('gameTime').value;
                     setConfig(playSettings);
+                    location.href = '/single';
                 };
 
 

@@ -55,3 +55,8 @@ function setConfigItem(key, value) {
     setConfig(settings);
     getConfig();
 }
+
+function resetConfig() {
+    localStorage.clear();
+    getConfig();
+}

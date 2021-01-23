@@ -150,6 +150,13 @@ button {
 button, html input[type="button"], input[type="reset"], input[type="submit"] {
     cursor: none;
 }
+input[type="button"], button{
+    outline:none;
+}
+input[type="button"]::-moz-focus-inner {
+    border: 0;
+}
+
 .clr-input {
     border-radius: 50%;
     height: 60px;
@@ -176,4 +183,46 @@ input[type="color"] {
     background: black;
     border: black 2px solid;
     border-radius: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    background: #d3d3d3;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s, height 0.2s;
+}
+.slider-hover:hover .slider {
+    opacity: 1;
+    height: 25px;
+}
+.slider-hover:hover .slider::-webkit-slider-thumb {
+    height: 23px;
+}
+.slider-hover:hover .slider::-moz-range-thumb {
+    height: 23px;
+}
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 3px;
+    height: 5px;
+    background: black;
+    border: none;
+    border-radius: 5px;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s, height 0.2s;
+}
+.slider::-moz-range-thumb {
+    width: 3px;
+    height: 5px;
+    background: black;
+    border: none;
+    border-radius: 5px;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s, height 0.2s;
 }
