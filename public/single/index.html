@@ -14,7 +14,7 @@
         <script src="/static/js/utils.js"></script>
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/gameClasses.js"></script>
-        <title>Snake</title>
+        <title>Single-player Game | Snake</title>
         <style>
             body {
                 overscroll-behavior: contain;
@@ -31,7 +31,7 @@
                 <div class="pause" onclick="pause();" nontouch>
                     <img title="Pause" src="/static/img/pause-icon.svg" width="50" height="50" nontouch>
                 </div>
-                <div onclick="document.documentElement.requestFullscreen();" class="fullscreen" nontouch>
+                <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
                     <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
                 </div>
             </div>
@@ -57,6 +57,14 @@
             function restart() {
                 Swal.close();
                 snake.restart();
+            };
+            function toggleFullScreen() {
+                if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
+                    document.exitFullscreen();
+                }
+                else {
+                    document.documentElement.requestFullscreen();
+                };
             };
         </script>
     </body>
