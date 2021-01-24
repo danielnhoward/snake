@@ -1,21 +1,21 @@
 function getConfig() {
     let settings = {
-        gameSpeed:100,
-        gameTime:120,
-        canvasBorderColour:'#000000',
-        canvasBackgroundColour:'#ffffff',
-        snakeColour:'#90ee90',
-        snakeBorderColour:'#013220',
-        foodColour:'#ff0000',
-        foodBorderColour:'#8b0000',
-        up:38,
-        down:40,
-        left:37,
-        right:39,
-        upKey:'ArrowUp',
-        downKey:'ArrowDown',
-        leftKey:'ArrowLeft',
-        rightKey:'ArrowRight'
+        "gameSpeed":"65",
+        "gameTime":"30",
+        "canvasBorderColour":"#464646",
+        "canvasBackgroundColour":"#737373",
+        "snakeColour":"#271cff",
+        "snakeBorderColour":"#000377",
+        "foodColour":"#ff0000",
+        "foodBorderColour":"#8b0000",
+        "up":87,
+        "down":83,
+        "left":65,
+        "right":68,
+        "upKey":"w",
+        "downKey":"s",
+        "leftKey":"a",
+        "rightKey":"d"
     };
     let config = {};
     if (localStorage.config) {
