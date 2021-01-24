@@ -26,9 +26,9 @@ body {
 .back {
     background: linear-gradient(to top left, #243949, #517fa4);
     background-size: 400% 400%;
-    -webkit-animation: back 10s ease infinite;
-    -moz-animation: back 10s ease infinite;
-    animation: back 10s ease infinite;
+    -webkit-animation: back 20s ease infinite;
+    -moz-animation: back 20s ease infinite;
+    animation: back 20s ease infinite;
 }
 .center {
     display: flex;
@@ -226,4 +226,3 @@ input[type="color"] {
     -webkit-transition: 0.2s;
     transition: opacity 0.2s, height 0.2s;
 }
-

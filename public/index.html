@@ -112,10 +112,12 @@
         </div>
         <script>
             const pages = ['#home', '#single', '#multi', '#options', ''];
+            const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Snake'];
             let onload = reset;
             function reset() {
                 hideAll();
                 if (pages.includes(location.hash)) {
+                    document.title = titles[pages.indexOf(location.hash)];
                     if (location.hash == '') {
                         $('#home').show();
                     }
@@ -225,6 +227,7 @@
                 ev.preventDefault();
                 history.pushState(null, null, ev.currentTarget.href)
                 hideAll();
+                document.title = titles[pages.indexOf(location.hash)];
                 if (location.hash) {
                     $(`${location.hash}`).show();
                 }
@@ -237,7 +240,7 @@
                     $(`${el}`).hide();
                 });
             };
-            addEventListener('popstate', onload);
+            addEventListener('popstate', reset);
 
             function showPopup () {
                 Swal.fire({
