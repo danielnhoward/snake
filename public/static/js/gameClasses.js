@@ -80,6 +80,42 @@ class Snake {
                 this.timeElement.innerHTML = this.time;
             }, 1000);
         };
+        document.addEventListener('touchstart', (ev) => {
+            this.touch = {
+                x: ev.touches[0].clientX,
+                y: ev.touches[0].clientY
+            };
+        });
+        document.addEventListener('touchend', (ev) => {
+            this.touchEnd(this.touch, {
+                x: ev.changedTouches[0].clientX,
+                y: ev.changedTouches[0].clientY
+            });
+        });
+    };
+    touchEnd(from, to) {
+        const mouseDiff = {
+            x: from.x - to.x,
+            y: from.y - to.y
+        };
+        if (Math.abs(mouseDiff.x) > Math.abs(mouseDiff.y)) {
+            if (Math.abs(mouseDiff.x) < screenX/10) return;
+            if (Math.sign(mouseDiff.x) == 1) {
+                this.keyPress({keyCode:this.settings.left});
+            }
+            else if (Math.sign(mouseDiff.x) == -1) {
+                this.keyPress({keyCode:this.settings.right});
+            };
+        }
+        else if (Math.abs(mouseDiff.x) < Math.abs(mouseDiff.y)) {
+            if (Math.abs(mouseDiff.y) < screenY/10) return;
+            if (Math.sign(mouseDiff.y) == 1) {
+                this.keyPress({keyCode:this.settings.up});
+            }
+            else if (Math.sign(mouseDiff.y) == -1) {
+                this.keyPress({keyCode:this.settings.down});
+            };
+        };
     };
     random(min, max) {
         return Math.round(Math.random() * (max-min) + min);
@@ -189,6 +225,23 @@ class Snake {
             if (this.ready) {
                 this.start();
                 this.keyPress(ev);
+            };
+        });
+        document.addEventListener('touchstart', (ev) => {
+            if (this.ready) {
+                this.touch = {
+                    x: ev.touches[0].clientX,
+                    y: ev.touches[0].clientY
+                };
+            };
+        });
+        document.addEventListener('touchend', (ev) => {
+            if (this.ready) {
+                this.start();
+                this.touchEnd(this.touch, {
+                    x: ev.changedTouches[0].clientX,
+                    y: ev.changedTouches[0].clientY
+                });
             };
         });
     }
