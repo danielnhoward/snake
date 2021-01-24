@@ -28,11 +28,11 @@
                     <div style="margin: 20px; margin-bottom: 35px; color: black;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
                     <canvas id="gameCanvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
                 </div>
-                <div class="pause" onclick="pause();">
-                    <img title="Pause" src="/static/img/pause-icon.svg" width="50" height="50">
+                <div class="pause" onclick="pause();" nontouch>
+                    <img title="Pause" src="/static/img/pause-icon.svg" width="50" height="50" nontouch>
                 </div>
-                <div onclick="restart();" class="restart">
-                    <img title="Restart" src="/static/img/restart-icon.svg" width="50" height="50">
+                <div onclick="document.documentElement.requestFullscreen();" class="fullscreen" nontouch>
+                    <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
                 </div>
             </div>
         </div>
@@ -58,11 +58,6 @@
                 Swal.close();
                 snake.restart();
             };
-
-            $(window).scroll(function(){
-                document.webkitExitFullscreen();
-                document.exitFullscreen();
-            });
         </script>
     </body>
 </html>

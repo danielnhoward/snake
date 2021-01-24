@@ -87,6 +87,7 @@ class Snake {
             };
         });
         document.addEventListener('touchend', (ev) => {
+            if (ev.target.hasAttribute('nontouch')) return;
             this.touchEnd(this.touch, {
                 x: ev.changedTouches[0].clientX,
                 y: ev.changedTouches[0].clientY
@@ -150,7 +151,7 @@ class Snake {
     advanceSnake() {
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y});
         if (this.snake[0].x === this.food.x && this.snake[0].y === this.food.y) {
-            this.addScore(10);
+            this.addScore(1);
             this.createFood();
         }
         else {
@@ -229,6 +230,7 @@ class Snake {
         });
         document.addEventListener('touchstart', (ev) => {
             if (this.ready) {
+                document.documentElement.requestFullscreen();
                 this.touch = {
                     x: ev.touches[0].clientX,
                     y: ev.touches[0].clientY
@@ -237,6 +239,7 @@ class Snake {
         });
         document.addEventListener('touchend', (ev) => {
             if (this.ready) {
+                if (ev.target.hasAttribute('nontouch')) return;
                 this.start();
                 this.touchEnd(this.touch, {
                     x: ev.changedTouches[0].clientX,
