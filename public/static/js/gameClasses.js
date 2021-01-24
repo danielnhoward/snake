@@ -13,8 +13,10 @@ class Snake {
         this.score = 0;
         this.scoreId = scoreId;
         this.timeId = timeId;
+        this.timeElement = document.getElementById(timeId);
         this.running = false;
         this.ready = false;
+        this.time = '00:00';
         this.init();
     }
     async start() {
@@ -28,12 +30,13 @@ class Snake {
             if (this.gameEnded()) {
                 if (this.intervalRunning) {
                     clearInterval(this.interval);
+                    clearInterval(this.timeInterval);
                     this.intervalRunning = false;
                 }
                 this.running = false;
                 this.ready = false;
                 Swal.fire({
-                    html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${this.score}<br>You lasted for</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); snake.restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
+                    html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${this.score}<br>You lasted for ${this.time}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); snake.restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
                     showConfirmButton: false
                 });
             };
@@ -43,6 +46,40 @@ class Snake {
             this.drawSnake();
             this.drawFood();
         }, this.settings.gameSpeed);
+        if (Number.isInteger(parseInt(this.settings.gameTime))) {
+            this.timeCount = 0;
+            this.timeInterval = setInterval(() => {
+                if (this.settings.gameTime <= this.timeCount) {
+                    if (this.intervalRunning) {
+                        clearInterval(this.interval);
+                        clearInterval(this.timeInterval);
+                        this.intervalRunning = false;
+                    }
+                    this.running = false;
+                    this.ready = false;
+                    Swal.fire({
+                        html: `<div style="font-size: large; color: white;"><b>You ran out of time!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${this.score}<br>You lasted for ${this.time}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); snake.restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
+                        showConfirmButton: false
+                    });
+                }
+                else {
+                    this.timeCount++;
+                    let timeGone = new Date(this.timeCount * 1000);
+                    this.time = createTime(timeGone.getMinutes(), timeGone.getSeconds());
+                    const timer = new Date(this.settings.gameTime * 1000 - this.timeCount * 1000);
+                    this.timeElement.innerHTML = createTime(timer.getMinutes(), timer.getSeconds());
+                };
+            }, 1000);
+        }
+        else {
+            this.timeCount = 0;
+            this.timeInterval = setInterval(() => {
+                this.timeCount++;
+                let timeGone = new Date(this.timeCount * 1000);
+                this.time = createTime(timeGone.getMinutes(), timeGone.getSeconds());
+                this.timeElement.innerHTML = this.time;
+            }, 1000);
+        };
     };
     random(min, max) {
         return Math.round(Math.random() * (max-min) + min);
@@ -141,6 +178,13 @@ class Snake {
         this.createFood();
         this.drawFood();
         this.drawSnake();
+        if (Number.isInteger(parseInt(this.settings.gameTime))) {
+            const timer = new Date(this.settings.gameTime * 1000);
+            this.timeElement.innerHTML = createTime(timer.getMinutes(), timer.getSeconds());
+        }
+        else {
+            this.timeElement.innerHTML = '00:00';
+        };
         document.addEventListener('keydown', (ev) => {
             if (this.ready) {
                 this.start();
@@ -151,6 +195,7 @@ class Snake {
     restart() {
         if (this.intervalRunning) {
             clearInterval(this.interval);
+            clearInterval(this.timeInterval);
             this.intervalRunning = false;
         }
         this.snake = [{x:this.canvas.width / 2 - (this.startLength * this.blockSize), y:this.canvas.height / 2}];
@@ -162,4 +207,8 @@ class Snake {
     setState(state) {
         this.running = state;
     }
+}
+
+function createTime(minutes, seconds) {
+    return `${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}`;
 }

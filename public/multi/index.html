@@ -138,7 +138,7 @@
                 }
                 timeCount++
                 timer = new Date(game_time * 1000 - timeCount * 1000)
-                document.getElementById('client_time').innerHTML = `0${timer.getMinutes()}`.slice(-2) + ':' + `0${timer.getSeconds()}`.slice(-2)
+                document.getElementById('client_time').innerHTML = `${`0${timer.getMinutes()}`.slice(-2)}:${`0${timer.getSeconds()}`.slice(-2)}`
             }, 1000)
         }
         function server_countdown() {

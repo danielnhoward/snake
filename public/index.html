@@ -37,15 +37,17 @@
                     <form id="singlePlay" style="text-align: center;">
                         <div class="slider-hover">
                             <label for="gameSpeed">Game Speed: <x id="clientGameSpeed"></x>ms</label><div style="height: 5px;"></div>
-                            <input style="width: 200px; margin: auto;" type="range" class="slider" id="gameSpeed" min="20" max="500">
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSpeed" min="20" max="500">
                         </div>
                         <br>
-                        <label style="margin: 0px;" for="timed">Timed</label><br>
-                        <input id="timed" type="checkbox">
-                        <br><br>
+                        <div>
+                            <label>Timed</label><br>
+                            <input id="timed" type="checkbox">
+                        </div>
+                        <br>
                         <div class="slider-hover" id="gameTimeArea">
                             <label for="gameTime">Game Time: <x id="clientGameTime"></x>s</label><div style="height: 5px;"></div>
-                            <input style="width: 200px; margin: auto;" type="range" min="30" max="300" id="gameTime" class="slider">
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" min="30" max="300" id="gameTime" class="slider">
                         </div>
                         <br><br>
                         <x href="/single"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
@@ -130,6 +132,7 @@
                 /* Single Player */
                 document.getElementById('gameSpeed').oninput = () => {
                     document.getElementById('clientGameSpeed').innerHTML = document.getElementById('gameSpeed').value;
+                    setConfigItem('gameSpeed', document.getElementById('gameSpeed').value);
                 };
                 settings.gameSpeed ? (() => {
                     document.getElementById('clientGameSpeed').innerHTML = settings.gameSpeed;
@@ -140,36 +143,32 @@
                 })();
                 document.getElementById('gameTime').oninput = () => {
                     document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
+                    setConfigItem('gameTime', document.getElementById('gameTime').value);
                 };
-                if (settings.gameTime) {
-                    if (settings.gameTime == 'off') {
-                        document.getElementById('gameTime').disabled = true;
-                        document.getElementById('timed').checked = true;
-                        document.getElementById('gameTimeArea').style.opacity = 0.5;
-                        document.getElementById('clientGameTime').innerHTML = '120';
-                        document.getElementById('gameTime').value = 120;
-                    }
-                    else {
-                        document.getElementById('clientGameTime').innerHTML = settings.gameTime;
-                        document.getElementById('gameTime').value = settings.gameTime;
-                    }
-                }
-                else {
+                if (settings.gameTime == 'off') {
+                    document.getElementById('gameTime').disabled = true;
+                    document.getElementById('timed').checked = false;
+                    document.getElementById('gameTimeArea').style.opacity = 0.5;
                     document.getElementById('clientGameTime').innerHTML = '120';
                     document.getElementById('gameTime').value = 120;
                 }
+                else {
+                    document.getElementById('clientGameTime').innerHTML = settings.gameTime;
+                    document.getElementById('gameTime').value = settings.gameTime;
+                    document.getElementById('timed').checked = true;
+                };
 
                 document.getElementById('timed').oninput = () => {
                     document.getElementById('timed').checked ? (() => {
-                        document.getElementById('gameTime').disabled = true;
-                        document.getElementById('gameTimeArea').style.opacity = 0.5;
-                        document.getElementById('clientGameTime').innerHTML = '120'; 
-                        document.getElementById('gameTime').value = 120;  
-                    })() : (() => {
                         document.getElementById('gameTime').disabled = false;
                         document.getElementById('gameTimeArea').style.opacity = 1;
-                        document.getElementById('clientGameTime').innerHTML = '120';
-                        document.getElementById('gameTime').value = 120;
+                        document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
+                        document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
+                    })() : (() => {
+                        document.getElementById('gameTime').disabled = true;
+                        document.getElementById('gameTimeArea').style.opacity = 0.5;
+                        document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120; 
+                        document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;  
                     })();
                 }
 
@@ -177,7 +176,7 @@
                     ev.preventDefault();
                     let playSettings = getConfig();
                     playSettings.gameSpeed = document.getElementById('gameSpeed').value;
-                    playSettings.gameTime = document.getElementById('timed').checked ? 'off' : document.getElementById('gameTime').value;
+                    playSettings.gameTime = document.getElementById('timed').checked ? document.getElementById('gameTime').value : 'off';
                     setConfig(playSettings);
                     location.href = '/single';
                 };
