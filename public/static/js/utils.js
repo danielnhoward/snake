@@ -13,7 +13,7 @@ $(document).ready(() => {
                         allowEnterKey: false,
                         showConfirmButton: false
                     });
-                })
+                });
                 window.emits = ((socket, id) => {
                     return {
                         emit: (event, data) => {
@@ -25,11 +25,11 @@ $(document).ready(() => {
                             });
                         }
                     };
-                })(socket, socket.id)
-            }
-        })
-    })()
-    if (typeof(onload) == 'function') {
-        onload()
-    }
-})
+                })(socket, socket.id);
+            };
+            if (typeof(onload) == 'function') {
+                onload();
+            };
+        });
+    })();
+});

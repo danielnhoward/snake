@@ -1,11 +1,17 @@
+const { parse } = require('url');
+
 module.exports = (express, http_, socket_io, fs, commands) => {
     var app = express(), http = http_.createServer(app), io = socket_io(http);
     app.get('/*', (req, res) => {
         let readFile = true, url = req.url.split('?')[0], file;
         if (req.url.includes('start')) {
             if (req.url.includes('snake')) {
-                readFile = false;
-                res.redirect(`/play/${require('./commands.js').makeSnakeGame()}`);
+                if (Number.isInteger(parseInt(req.url.split('/')[3]))) {
+                    if (req.url.split('/')[3] >= 20 && req.url.split('/')[3] <= 500) {
+                        readFile = false;
+                        res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3])}`);
+                    };
+                };
             };
         }
         else if (req.url.includes('play')) {
@@ -25,7 +31,7 @@ module.exports = (express, http_, socket_io, fs, commands) => {
             socket.on(`${socket.id}${command}`, (data) => {
                 try {
                     commands[command](data.body, (event, data) => {
-                        socket.emit(`${socket.id}${event}`, data);
+                        socket.emit(`${socket.id}${event}`, {body: data, id: socket.id});
                     }, socket.id);
                 }
                 catch(err) {

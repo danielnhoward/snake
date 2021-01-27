@@ -52,13 +52,21 @@
                         <br><br>
                         <x href="/single"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
                     </form>
-                    <div id="pop-up">
-
-                    </div>
                 </div>
 
                 <div style="display: none;" id="multi" class="content">
-                    <div class="title">Multi Player</div>
+                    <div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup(true);">
+                        <img src="/static/img/help-icon.svg" width="50" height="50">
+                    </div>
+                    <div class="title">Play Multi Player</div>
+                    <form id="multiPlay" style="text-align: center;">
+                        <div class="slider-hover">
+                            <label for="gameSpeedMulti">Game Speed: <x id="clientGameSpeedMulti"></x>ms</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSpeedMulti" min="20" max="500">
+                        </div>
+                        <br><br>
+                        <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
+                    </form>
                 </div>
 
                 <div style="display: none;" id="options" class="content">
@@ -184,6 +192,24 @@
                 };
 
 
+                /* Multi player */
+                document.getElementById('gameSpeedMulti').oninput = () => {
+                    document.getElementById('clientGameSpeedMulti').innerHTML = document.getElementById('gameSpeedMulti').value;
+                    setConfigItem('gameSpeed', document.getElementById('gameSpeedMulti').value);
+                };
+                settings.gameSpeed ? (() => {
+                    document.getElementById('clientGameSpeedMulti').innerHTML = settings.gameSpeed;
+                    document.getElementById('gameSpeedMulti').value = settings.gameSpeed;
+                })() : (() => {
+                    document.getElementById('clientGameSpeedMulti').innerHTML = '100';
+                    document.getElementById('gameSpeedMulti').value = 100;
+                })();
+
+                document.getElementById('multiPlay').onsubmit = (ev) => {
+                    ev.preventDefault();
+                    location.href = `/start/snake/${document.getElementById('gameSpeedMulti').value}`;
+                };
+
 
                 /* Options */
                 const clrInps = [
@@ -242,12 +268,18 @@
             };
             addEventListener('popstate', reset);
 
-            function showPopup () {
-                Swal.fire({
-                    target: '#pop-up',
-                    icon: 'info',
-                    html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: black;">Game Time</b><br>Game is how long the game will last for.</div>'
-                });
+            function showPopup (param) {
+                param ? (() => {
+                    Swal.fire({
+                        icon: 'info',
+                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.</div>'
+                    });
+                })() : (() => {
+                    Swal.fire({
+                        icon: 'info',
+                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: black;">Game Time</b><br>Game is how long the game will last for.</div>'
+                    });
+                })();
             }
         </script>
     </body>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/utils.js"></script>
+        <script src="/static/js/settings.js"></script>
+        <script src="/static/js/multiGameClass.js"></script>
+        <title>Multi-player Game | Snake</title>
+    </head>
+    <body style="overflow-x: hidden;" class="back">
+        <div class="container">
+            <div class="center">
+                <div class="center-inner">
+                    <div class="game">
+                        <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh">Your browser doesn't support canvases!</canvas>
+                    </div>
+                    <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
+                        <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            async function onload() {
+                let gameId = location.pathname.split('/')[2];
+                emits.on('gameExists', async (body) => {
+                    const {value: username} = await Swal.fire({
+                        title: 'Please enter a username',
+                        input: 'text',
+                        inputLabel: 'Username',
+                        showCancelButton: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to write something!';
+                            };
+                        }
+                    });
+                    emits.emit('snakeJoinWithName', {
+                        gameId: gameId,
+                        name: username
+                    });
+                    let canvas = new MultiCanvas('gameCanvas', getConfig());
+                });
+                emits.on('redirect', (body) => {
+                    body ? (() => {
+                        location.replace(body);
+                    })() : (() => {
+                        location.replace('/#multi');
+                    })();
+                });
+                emits.emit('snakeJoin', gameId);
+            };
+            function toggleFullScreen() {
+                if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
+                    document.exitFullscreen();
+                }
+                else {
+                    document.documentElement.requestFullscreen();
+                };
+            };
+        </script>
+    </body>
+</html>

@@ -3,11 +3,17 @@ let games = {};
 
 module.exports = {
     commands: {
-
+        snakeJoin(body, emit, id) {
+            if (!(body in games)) return emit('redirect');
+            emit('gameExists');
+        },
+        snakeJoinWithName(body, emit, id) {
+            games[body.gameId].addPlayer(id, emit, body.name);
+        }
     },
-    makeSnakeGame: () => {
+    makeSnakeGame(speed) {
         const gameId = makeId();
-        games[gameId] = new Game('snake');
+        games[gameId] = new Game('snake', speed);
         return gameId;
     },
     getGamesList() {
