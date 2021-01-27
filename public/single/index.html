@@ -25,8 +25,8 @@
         <div class="center"> 
             <div class="center-inner">
                 <div class="game">
-                    <div style="margin: 20px; margin-bottom: 35px; color: black;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
-                    <canvas id="gameCanvas" width="300" height="300">Your browser doesn't support canvases!</canvas>
+                    <div style="margin: 20px; padding: 5px;"><div style="float: left;">Score: <x id="score">0</x></div><div style="float: right;">Time: <x id="time">00:00</x></div></div><br>
+                    <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh">Your browser doesn't support canvases!</canvas>
                 </div>
                 <div class="pause" onclick="pause();" nontouch>
                     <img title="Pause" src="/static/img/pause-icon.svg" width="50" height="50" nontouch>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <script>
-            let snake = new Snake('gameCanvas', 5, 10, getConfig(), 'score', 'time');
+            let snake = new Snake('gameCanvas', 5, 20, getConfig(), 'score', 'time');
 
             function pause() {
                 snake.setState(false);

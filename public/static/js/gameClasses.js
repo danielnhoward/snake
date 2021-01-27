@@ -5,9 +5,9 @@ class Snake {
         this.id = id;
         this.startLength = startLength;
         this.settings = settings;
-        this.snake = [{x:this.canvas.width / 2 - (startLength * blockSize), y:this.canvas.height / 2}];
-        this.food = {x:0, y:0};
-        this.velocety = {x:0, y:0};
+        this.snake = [{x: Math.round((this.canvas.width / 2 - (startLength * blockSize))/blockSize) * blockSize, y: Math.round((this.canvas.height / 2 - (startLength * blockSize))/blockSize) * blockSize}];
+        this.food = {x: 0, y: 0};
+        this.velocety = {x: 0, y: 0};
         this.blockSize = blockSize;
         this.changingDirection = false;
         this.score = 0;
@@ -118,9 +118,6 @@ class Snake {
             };
         };
     };
-    random(min, max) {
-        return Math.round(Math.random() * (max-min) + min);
-    };
     clearCanvas() {
         this.ctx.fillStyle = this.settings.canvasBackgroundColour;
         this.ctx.strokeStyle = this.settings.canvasBorderColour;
@@ -134,17 +131,17 @@ class Snake {
         this.ctx.strokeRect(this.food.x, this.food.y, this.blockSize, this.blockSize);
     };
     createFood() {
-        this.food.x = Math.round(this.random(0, this.canvas.width - this.blockSize)/this.blockSize) * this.blockSize;
-        this.food.y = Math.round(this.random(0, this.canvas.height - this.blockSize)/this.blockSize) * this.blockSize;
+        this.food.x = Math.round(random(0, this.canvas.width - this.blockSize)/this.blockSize) * this.blockSize;
+        this.food.y = Math.round(random(0, this.canvas.height - this.blockSize)/this.blockSize) * this.blockSize;
         this.snake.forEach((part) => {
             if (part.x === this.food.x && part.y === this.food.y) this.createFood();
         });
     };
     drawSnake() {
         this.snake.forEach((part, index) => {
-            this.ctx.fillStyle = shadeColor(this.settings.snakeColour, -(50 / (this.snake.length - 1)) * index);
-            this.ctx.strokeStyle = shadeColor(this.settings.snakeBorderColour, -(50 / (this.snake.length - 1)) * index);
-            this.ctx.fillRect(part.x, part.y, this.blockSize + 1, this.blockSize);
+            this.ctx.fillStyle = shadeColor(this.settings.snakeColour, -(15 / (this.snake.length - 1)) * index);
+            this.ctx.strokeStyle = shadeColor(this.settings.snakeBorderColour, -(15 / (this.snake.length - 1)) * index);
+            this.ctx.fillRect(part.x, part.y, this.blockSize, this.blockSize);
             this.ctx.strokeRect(part.x, part.y, this.blockSize, this.blockSize);
         });
     };
@@ -177,27 +174,27 @@ class Snake {
             return;
         };
         this.changingDirection = true;
-        if (event.keyCode == this.settings.up && this.velocety.y != 10) {
+        if (event.keyCode == this.settings.up && this.velocety.y != this.blockSize) {
             this.velocety =  {
                 x:0,
-                y:-10
+                y:-this.blockSize
             };
         }
-        else if (event.keyCode == this.settings.down && this.velocety.y != -10) {
+        else if (event.keyCode == this.settings.down && this.velocety.y != -this.blockSize) {
             this.velocety =  {
                 x:0,
-                y:10
+                y:this.blockSize
             };
         }
-        else if (event.keyCode == this.settings.left && this.velocety.x != 10) {
+        else if (event.keyCode == this.settings.left && this.velocety.x != this.blockSize) {
             this.velocety =  {
-                x:-10,
+                x:-this.blockSize,
                 y:0
             };
         }
-        else if (event.keyCode == this.settings.right && this.velocety.x != -10) {
+        else if (event.keyCode == this.settings.right && this.velocety.x != -this.blockSize) {
             this.velocety =  {
-                x:10,
+                x:this.blockSize,
                 y:0
             };
         };
@@ -287,4 +284,9 @@ function shadeColor(color, percent) {
     var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
 
     return "#"+RR+GG+BB;
+};
+
+
+function random(min, max) {
+    return Math.round(Math.random() * (max-min) + min);
 };
