@@ -37,7 +37,8 @@ module.exports = (express, http_, socket_io, fs, commands) => {
                 catch(err) {
                     ((event, data) => {
                         socket.emit(`${socket.id}${event}`, data);
-                    })('error', {err: err.name, mes: err.message})
+                    })('error', {err: err.name, mes: err.message});
+                    console.error(err)
                 }
             });
         };

@@ -17,7 +17,7 @@
         <script src="/static/js/multiGameClass.js"></script>
         <title>Multi-player Game | Snake</title>
     </head>
-    <body style="overflow-x: hidden;" class="back">
+    <body style="overflow-x: hidden;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
         <div class="center">
             <div class="center-inner">
                 <div class="game">
@@ -25,6 +25,10 @@
                 </div>
                 <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
                     <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
+                </div>
+                <div class="player-count">
+                    Player Count: <x id="playerCount">0</x><br>
+                    Size: <x id="size">0</x>
                 </div>
             </div>
         </div>
@@ -60,6 +64,9 @@
                     })() : (() => {
                         location.replace('/#multi');
                     })();
+                });
+                emits.on('playerCount', (body) => {
+                    document.getElementById('playerCount').innerHTML = body;
                 });
                 emits.emit('snakeJoin', gameId);
             };

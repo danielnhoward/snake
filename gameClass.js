@@ -21,8 +21,9 @@ module.exports = class {
                     name: name
                 };
                 this.playerIds[0] = id;
-                this.playerCount++;
+                this.playerCount = this.players.length;
                 emit('admin');
+                this.emit('playerCount', this.playerCount);
                 this.state = 1;
             break;
             case 1:
@@ -32,7 +33,19 @@ module.exports = class {
                     name: name
                 });
                 this.playerIds.push(id);
-                this.playerCount++;
+                this.playerCount = this.players.length;
+                this.emit('playerCount', this.playerCount);
         };
+    };
+    playerDisconnect(id) {
+        this.players.forEach((player, index) => {
+            if (player.id == id) {
+                this.players = this.players.filter((value, filterIndex) => {
+                    return filterIndex != index;
+                });
+                this.playerCount = this.players.length;
+                this.emit('playerCount', this.playerCount);
+            };
+        });
     };
 };

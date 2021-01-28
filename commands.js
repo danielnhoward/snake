@@ -9,6 +9,9 @@ module.exports = {
         },
         snakeJoinWithName(body, emit, id) {
             games[body.gameId].addPlayer(id, emit, body.name);
+        },
+        playerDisconnect(body, emit, id) {
+            games[body].playerDisconnect(id);
         }
     },
     makeSnakeGame(speed) {
