@@ -1,5 +1,23 @@
 const Game = require('./gameClass.js');
 let games = {};
+const veloceties = {
+    up: {
+        x:0,
+        y:-40
+    },
+    down: {
+        x:0,
+        y:40
+    },
+    left: {
+        x:-40,
+        y:0
+    },
+    right: {
+        x:40,
+        y:0
+    }
+};
 
 module.exports = {
     commands: {
@@ -12,6 +30,49 @@ module.exports = {
         },
         playerDisconnect(body, emit, id) {
             games[body].playerDisconnect(id);
+        },
+        snakeRejoin(body, emit, id) {
+            games[body].rejoin(id);
+        },
+        snakeUp(body, emit, id) {
+            games[body].players.forEach((player, index) => {
+                if (player.id == id) {
+                    if (!games[body].players[index].snake.turning) {
+                        games[body].players[index].snake.turning = true;
+                        if (games[body].players[index].snake.velocety != veloceties.down) games[body].players[index].snake.velocety = veloceties.up;
+                    };
+                };
+            });
+        },
+        snakeDown(body, emit, id) {
+            games[body].players.forEach((player, index) => {
+                if (player.id == id) {
+                    if (!games[body].players[index].snake.turning) {
+                        games[body].players[index].snake.turning = true;
+                        if (games[body].players[index].snake.velocety != veloceties.up) games[body].players[index].snake.velocety = veloceties.down;
+                    };
+                };
+            });
+        },
+        snakeLeft(body, emit, id) {
+            games[body].players.forEach((player, index) => {
+                if (player.id == id) {
+                    if (!games[body].players[index].snake.turning) {
+                        games[body].players[index].snake.turning = true;
+                        if (games[body].players[index].snake.velocety != veloceties.right) games[body].players[index].snake.velocety = veloceties.left;
+                    };
+                };
+            });
+        },
+        snakeRight(body, emit, id) {
+            games[body].players.forEach((player, index) => {
+                if (player.id == id) {
+                    if (!games[body].players[index].snake.turning) {
+                        games[body].players[index].snake.turning = true;
+                        if (games[body].players[index].snake.velocety != veloceties.left) games[body].players[index].snake.velocety = veloceties.right;
+                    };
+                };
+            });
         }
     },
     makeSnakeGame(speed) {

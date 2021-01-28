@@ -3,12 +3,26 @@ module.exports = class {
         this.type = gameType;
         this.players = [];
         this.playerIds = [];
+        this.spectators = [];
         this.playerCount = 0;
         this.gameSpeed = gameSpeed;
         this.canvas = [];
     };
-    emit(func, data) {
+    allEmit(func, data) {
         this.players.forEach((el) => {
+            el.emit(func, data);
+        });
+        this.spectators.forEach((el) => {
+            el.emit(func, data);
+        });
+    };
+    aliveEmit(func, data) {
+        this.players.forEach((el) => {
+            el.emit(func, data);
+        });
+    };
+    specEmit(func, data) {
+        this.spectators.forEach((el) => {
             el.emit(func, data);
         });
     };
@@ -23,7 +37,7 @@ module.exports = class {
         });
         this.playerIds.push = id;
         this.playerCount = this.players.length;
-        this.emit('playerCount', this.playerCount);
+        this.allEmit('playerCount', this.playerCount);
     };
     playerDisconnect(id) {
         this.players.forEach((player, index) => {
@@ -32,25 +46,28 @@ module.exports = class {
                     return filterIndex != index;
                 });
                 this.playerCount = this.players.length;
-                this.emit('playerCount', this.playerCount);
+                this.allEmit('playerCount', this.playerCount);
             };
         });
         if (this.players.length == 0) {
             clearInterval(this.interval);
-            delete this;
         };
     };
     playerDie(id) {
         this.players.forEach((player, index) => {
             if (player.id == id) {
                 player.emit('snakeDeath');
+                this.spectators.push(player);
                 this.players = this.players.filter((value, filterIndex) => {
                     return filterIndex != index;
                 });
                 this.playerCount = this.players.length;
-                this.emit('playerCount', this.playerCount);
+                this.allEmit('playerCount', this.playerCount);
             };
         });
+        if (this.players.length == 0) {
+            clearInterval(this.interval);
+        };
     };
     run() {
         this.interval = setInterval(() => {
@@ -58,8 +75,27 @@ module.exports = class {
             for (const player of this.players) {
                 this.canvas = [...this.canvas, ...player.snake.moveSnake()];
             }
-            this.emit('snakePing', this.canvas);
+            this.allEmit('snakePing', this.canvas);
         }, this.gameSpeed);
+    };
+    rejoin(id) {
+        this.spectators.forEach((player, index) => {
+            if (player.id == id) {
+                this.spectators = this.spectators.filter((value, filterIndex) => {
+                    return filterIndex != index;
+                });
+                if (this.players.length == 0) this.run();
+                this.players.push({
+                    id: player.id,
+                    emit: player.emit,
+                    name: player.name,
+                    settings: player.settings,
+                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)})
+                });
+                this.playerCount = this.players.length;
+                this.allEmit('playerCount', this.playerCount);
+            };
+        })
     };
 };
 
@@ -67,6 +103,7 @@ class Snake {
     constructor(settings, initCanvas, onDie) {
         this.settings = settings;
         this.onDie = onDie;
+        this.turning = false;
         this.velocety = {x: 40, y: 0};
         this.initSnake(initCanvas);
     };
@@ -88,6 +125,7 @@ class Snake {
             this.onDie();
             return [];
         };
+        this.turning = false;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         this.snake.pop();
         return this.snake;
