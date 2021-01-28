@@ -16,6 +16,11 @@
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/multiGameClass.js"></script>
         <title>Multi-player Game | Snake</title>
+        <style>
+            body {
+                overscroll-behavior: contain;
+            }
+        </style>
     </head>
     <body style="overflow-x: hidden;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
         <div class="center">
@@ -77,6 +82,10 @@
                     emits.on('playerCount', (body) => {
                         document.getElementById('playerCount').innerHTML = body;
                     });
+                    emits.on('playerSize', (body) => {
+                        document.getElementById('size').innerHTML = body;
+                    });
+                    
                     function move(key) {
                         const settings = getConfig();
                         if (key.keyCode == settings.up) {

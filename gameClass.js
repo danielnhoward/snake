@@ -7,6 +7,7 @@ module.exports = class {
         this.playerCount = 0;
         this.gameSpeed = gameSpeed;
         this.canvas = [];
+        this.food = new Food(this.canvas);
     };
     allEmit(func, data) {
         this.players.forEach((el) => {
@@ -75,7 +76,12 @@ module.exports = class {
             for (const player of this.players) {
                 this.canvas = [...this.canvas, ...player.snake.moveSnake()];
             }
+            this.canvas = [...this.canvas, ...this.food.food];
             this.allEmit('snakePing', this.canvas);
+
+            this.players.forEach((player) => {
+                player.emit('playerSize', player.snake.snake.length);
+            });
         }, this.gameSpeed);
     };
     rejoin(id) {
@@ -115,7 +121,7 @@ class Snake {
         for (const part of initCanvas) {
             for (const snakePart of this.snake) {
                 if (snakePart.x == part.x && snakePart.y == part.y) {
-                    return initCanvas();
+                    return this.initCanvas(initCanvas);
                 };
             };
         };
@@ -144,4 +150,20 @@ class Snake {
         };
         return hits.leftWall || hits.rightWall || hits.topWall || hits.bottomWall;
     };
-}
+};
+
+class Food {
+    constructor(initCanvas) {
+        this.init(initCanvas);
+    };
+    init(canvas) {
+        this.food = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: '#2b9348', body: '#4BB500'}}];
+        for (const part of canvas) {
+            for (const foodPart of this.food) {
+                if (foodPart.x == part.x && foodPart.y == part.y) {
+                    return init(canvas);
+                };
+            };
+        };
+    };
+};
