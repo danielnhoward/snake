@@ -13,8 +13,9 @@ class MultiCanvas {
         this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
     };
     drawGame(game) {
+        this.clearCanvas();
         for (const part of game) {
-            this.ctx.fillStyle = part.colour.fill;
+            this.ctx.fillStyle = part.colour.body;
             this.ctx.strokeStyle = part.colour.border;
             this.ctx.fillRect(part.x, part.y, 40, 40);
             this.ctx.strokeRect(part.x, part.y, 40, 40);

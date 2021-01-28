@@ -21,7 +21,7 @@
         <div class="center">
             <div class="center-inner">
                 <div class="game">
-                    <canvas id="gameCanvas" width="1000" height="1000" style="max-width: 50vh; max-height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
+                    <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
                 </div>
                 <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
                     <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
@@ -39,7 +39,6 @@
                     const {value: username} = await Swal.fire({
                         title: 'Please enter a username',
                         input: 'text',
-                        inputLabel: 'Username',
                         showCancelButton: false,
                         allowOutsideClick: false,
                         allowEscapeKey: false,
@@ -51,8 +50,20 @@
                     });
                     emits.emit('snakeJoinWithName', {
                         gameId: gameId,
-                        name: username
+                        name: username,
+                        settings: getConfig()
                     });
+                    onresize = () => {
+                        if (innerHeight > innerWidth) {
+                            document.getElementById('gameCanvas').style.width = '80vw';
+                            document.getElementById('gameCanvas').style.height = '80vw';
+                        }
+                        else {
+                            document.getElementById('gameCanvas').style.width = '80vh';
+                            document.getElementById('gameCanvas').style.height = '80vh';
+                        }
+                    };
+                    onresize();
                     let canvas = new MultiCanvas('gameCanvas', getConfig());
                     emits.on('snakePing', (body) => {
                         canvas.drawGame(body);

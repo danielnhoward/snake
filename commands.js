@@ -8,7 +8,7 @@ module.exports = {
             emit('gameExists');
         },
         snakeJoinWithName(body, emit, id) {
-            games[body.gameId].addPlayer(id, emit, body.name);
+            games[body.gameId].addPlayer(id, emit, body.name, body.settings);
         },
         playerDisconnect(body, emit, id) {
             games[body].playerDisconnect(id);
