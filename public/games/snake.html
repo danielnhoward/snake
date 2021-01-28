@@ -68,6 +68,12 @@
                     emits.on('snakePing', (body) => {
                         canvas.drawGame(body);
                     });
+                    emits.on('snakeDeath', () => {
+                        Swal.fire({
+                            html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${0}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); snake.restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
+                            showConfirmButton: false
+                        });
+                    });
                 });
                 emits.on('redirect', (body) => {
                     body ? (() => {
