@@ -23,7 +23,7 @@ module.exports = {
     commands: {
         snakeJoin(body, emit, id) {
             if (!(body in games)) return emit('redirect');
-            emit('gameExists');
+            emit('gameExists', body);
         },
         snakeJoinWithName(body, emit, id) {
             games[body.gameId].addPlayer(id, emit, body.name, body.settings);

@@ -34,7 +34,7 @@ module.exports = class {
             emit: emit,
             name: name,
             settings: settings,
-            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)})
+            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id)
         });
         this.playerIds.push = id;
         this.playerCount = this.players.length;
@@ -109,12 +109,13 @@ module.exports = class {
 };
 
 class Snake {
-    constructor(settings, initCanvas, onDie) {
+    constructor(settings, initCanvas, onDie, id) {
         this.settings = settings;
         this.onDie = onDie;
         this.turning = false;
         this.velocety = {x: 40, y: 0};
         this.initSnake(initCanvas);
+        this.id = id;
     };
     initSnake(initCanvas) {
         this.snake = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}}];
@@ -164,7 +165,7 @@ class Food {
         for (const part of canvas) {
             for (const foodPart of this.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {
-                    return this.init(canvas);
+                    return this.redraw(canvas);
                 };
             };
         };
@@ -178,5 +179,5 @@ class Food {
                 };
             };
         };
-    }
+    };
 };

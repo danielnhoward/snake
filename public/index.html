@@ -25,6 +25,7 @@
                     <div id="buttons" style="animation: back-text 10s ease infinite;"> 
                         <a href="#single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br>
                         <a href="#multi"><button class="main-btn" type="button"><span>Play Multiplayer Game</span></button></a><br>
+                        <button onclick="joinGame();" class="main-btn" type="button"><span>Join a Game</span></button><br>
                         <a href="#options"><button class="main-btn" type="button"><span>Options</span></button></a><br>
                     </div>
                 </div>
@@ -247,6 +248,17 @@
                     el.button.addEventListener('keydown', keyDown)
                     el.dis.innerHTML = settings[`${el.name}Key`];
                 })
+
+                
+                emits.on('redirect', () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'The Game ID is inncorrect'
+                    })
+                });
+                emits.on('gameExists', (body) => {
+                    location.href = `/play/${body}`;
+                });
             };
 
             $('a').click((ev) => {
@@ -272,15 +284,36 @@
                 param ? (() => {
                     Swal.fire({
                         icon: 'info',
-                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.</div>'
+                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: white;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.</div>'
                     });
                 })() : (() => {
                     Swal.fire({
                         icon: 'info',
-                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: black;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: black;">Game Time</b><br>Game is how long the game will last for.</div>'
+                        html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: white;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: white;">Game Time</b><br>Game is how long the game will last for.</div>'
                     });
                 })();
-            }
+            };
+            async function joinGame() {
+                const {value: gameId} = await Swal.fire({
+                    title: 'Enter your Game ID',
+                    input: 'text',
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Please enter a Game ID';
+                        }
+                        else if (!Number.isInteger(parseInt(value))) {
+                            return 'Please enter a Game ID';
+                        }
+                        else if (value.length != 4) {
+                            return 'Please enter a Game ID';
+                        };
+                    }
+                });
+                if (gameId) {
+                    emits.emit('snakeJoin', gameId)
+                };
+            };
         </script>
     </body>
 </html>

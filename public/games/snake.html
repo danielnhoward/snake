@@ -32,14 +32,22 @@
                     <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
                 </div>
                 <div class="player-count">
+                    Game ID: <x id="gameId">0000</x><br>
                     Player Count: <x id="playerCount">0</x><br>
                     Size: <x id="size">0</x>
+                </div>
+                <div class="copy">
+                    <button style="margin: 0px;" type="button" class="main-btn" onclick="copy(location.href); copied();"><span>Copy Link</span></button>
+                </div>
+                <div id="restart" onclick="restart();" class="multi-reset" style="display: none;">
+                    <img width="50" height="50" src="/static/img/restart-icon.svg">
                 </div>
             </div>
         </div>
         <script>
             async function onload() {
                 let gameId = location.pathname.split('/')[2];
+                document.getElementById('gameId').innerHTML = gameId;
                 emits.on('gameExists', async (body) => {
                     const {value: username} = await Swal.fire({
                         title: 'Please enter a username',
@@ -49,7 +57,7 @@
                         allowEscapeKey: false,
                         inputValidator: (value) => {
                             if (!value) {
-                                return 'You need to write something!';
+                                return 'Please enter a username';
                             };
                         }
                     });
@@ -75,8 +83,11 @@
                     });
                     emits.on('snakeDeath', () => {
                         Swal.fire({
-                            html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${document.getElementById('size').innerHTML}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
-                            showConfirmButton: false
+                            html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${document.getElementById('size').innerHTML}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); $('#restart').show();">No</button>`,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false
                         });
                     });
                     emits.on('playerCount', (body) => {
@@ -161,7 +172,18 @@
                 };
             };
             function restart() {
+                $('#restart').hide();
                 emits.emit('snakeRejoin', location.pathname.split('/')[2]);
+            };
+            function copied() {
+                Swal.fire({
+                    position: 'bottom-start',
+                    icon: 'success',
+                    title: 'Copied to clipboard',
+                    showConfirmButton: false,
+                    timer: 1000,
+                    backdrop: false
+                });
             };
         </script>
     </body>

@@ -160,6 +160,27 @@ a:hover, a {
     color: black;
     text-align: left;
 }
+
+.copy {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    margin: 10px;
+    font-size: medium;
+    color: black;
+    text-align: left;
+}
+
+.multi-reset {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    margin: 10px;
+    font-size: medium;
+    color: black;
+    text-align: left;
+}
+
 .fullscreen {
     position: absolute;
     top: 10px;
