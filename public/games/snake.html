@@ -75,7 +75,7 @@
                     });
                     emits.on('snakeDeath', () => {
                         Swal.fire({
-                            html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${0}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
+                            html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${document.getElementById('size').innerHTML}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close();">No</button>`,
                             showConfirmButton: false
                         });
                     });

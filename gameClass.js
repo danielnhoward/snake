@@ -130,12 +130,12 @@ class Snake {
         };
     };
     moveSnake(food) {
+        this.turning = false;
+        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         if (this.gameEnded()) {
             this.onDie();
             return [];
         };
-        this.turning = false;
-        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         if (!(this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y)) this.snake.pop();
         return this.snake;
     };
@@ -164,7 +164,7 @@ class Food {
         for (const part of canvas) {
             for (const foodPart of this.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {
-                    return init(canvas);
+                    return this.init(canvas);
                 };
             };
         };
@@ -174,7 +174,7 @@ class Food {
         for (const part of canvas) {
             for (const foodPart of this.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {
-                    return redraw(canvas);
+                    return this.redraw(canvas);
                 };
             };
         };

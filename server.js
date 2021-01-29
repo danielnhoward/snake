@@ -1,5 +1,3 @@
-const { parse } = require('url');
-
 module.exports = (express, http_, socket_io, fs, commands) => {
     var app = express(), http = http_.createServer(app), io = socket_io(http);
     app.get('/*', (req, res) => {
