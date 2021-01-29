@@ -13,6 +13,7 @@
     "@sweetalert2/theme-dark": "^4.0.1",
     "circular-json": "^0.5.9",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
