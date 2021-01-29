@@ -73,9 +73,12 @@ module.exports = class {
     run() {
         this.interval = setInterval(() => {
             this.canvas = [];
+            let redraw = false
             for (const player of this.players) {
-                this.canvas = [...this.canvas, ...player.snake.moveSnake()];
-            }
+                this.canvas = [...this.canvas, ...player.snake.moveSnake(this.food)];
+                if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
+            };
+            if (redraw) this.food.redraw(this.canvas);
             this.canvas = [...this.canvas, ...this.food.food];
             this.allEmit('snakePing', this.canvas);
 
@@ -126,14 +129,14 @@ class Snake {
             };
         };
     };
-    moveSnake() {
+    moveSnake(food) {
         if (this.gameEnded()) {
             this.onDie();
             return [];
         };
         this.turning = false;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
-        this.snake.pop();
+        if (!(this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y)) this.snake.pop();
         return this.snake;
     };
     gameEnded() {
@@ -166,4 +169,14 @@ class Food {
             };
         };
     };
+    redraw(canvas) {
+        this.food = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: '#2b9348', body: '#4BB500'}}];
+        for (const part of canvas) {
+            for (const foodPart of this.food) {
+                if (foodPart.x == part.x && foodPart.y == part.y) {
+                    return redraw(canvas);
+                };
+            };
+        };
+    }
 };
