@@ -8,6 +8,7 @@ module.exports = class {
         this.gameSpeed = gameSpeed;
         this.canvas = [];
         this.food = new Food(this.canvas);
+        this.running = false;
     };
     allEmit(func, data) {
         this.players.forEach((el) => {
@@ -52,6 +53,7 @@ module.exports = class {
         });
         if (this.players.length == 0) {
             clearInterval(this.interval);
+            this.running = false;
         };
     };
     playerDie(id) {
@@ -68,9 +70,11 @@ module.exports = class {
         });
         if (this.players.length == 0) {
             clearInterval(this.interval);
+            this.running = false;
         };
     };
     run() {
+        this.running = true;
         this.interval = setInterval(() => {
             this.canvas = [];
             let redraw = false
@@ -146,7 +150,7 @@ class Snake {
         for (const part of initCanvas) {
             for (const snakePart of this.snake) {
                 if (snakePart.x == part.x && snakePart.y == part.y) {
-                    return this.initCanvas(initCanvas);
+                    return this.initSnake(initCanvas);
                 };
             };
         };
