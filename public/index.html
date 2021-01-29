@@ -138,6 +138,18 @@
                     location.replace('/');
                 };
 
+                if (location.search) {
+                    history.replaceState(null, null, '/');
+                    Swal.fire({
+                        icon: 'error',
+                        title: '<h1>404 Error</h1>',
+                        html: '<div style="color: white;">Looks like we couldn\'t find the file you wanted, instead we\'ve put you back on the homepage.</div>',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false
+                    });
+                };
+
                 let settings = getConfig();
 
                 /* Single Player */
@@ -254,7 +266,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'The Game ID is inncorrect'
-                    })
+                    });
                 });
                 emits.on('gameExists', (body) => {
                     location.href = `/play/${body}`;

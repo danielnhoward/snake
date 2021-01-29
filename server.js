@@ -22,7 +22,7 @@ module.exports = (express, http_, socket_io, fs, commands) => {
             };
         };
         /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
-        readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/')) : false;
+        readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/?a')) : false;
     });
     io.on('connection', (socket) => {
         for (const command of Object.keys(commands)) {

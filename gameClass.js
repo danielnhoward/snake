@@ -75,7 +75,20 @@ module.exports = class {
             this.canvas = [];
             let redraw = false
             for (const player of this.players) {
-                this.canvas = [...this.canvas, ...player.snake.moveSnake(this.food)];
+                player.snake.moveSnake(this.food);
+            };
+            this.players.forEach((player, index, players) => {
+                if (player.snake.gameEnded()) return player.snake.onDie();
+                let collisionCanvas = [];
+                players.forEach((el, innerIndex) => {
+                    if (innerIndex != index) collisionCanvas = [...collisionCanvas, ...el.snake.snake];
+                });
+                for (const el of collisionCanvas) {
+                    if (player.snake.snake[0].x == el.x && player.snake.snake[0].y == el.y) return player.snake.onDie();
+                };
+            });
+            for (const player of this.players) {
+                this.canvas = [...this.canvas, ...player.snake.snake];
                 if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
             };
             if (redraw) this.food.redraw(this.canvas);
@@ -133,12 +146,7 @@ class Snake {
     moveSnake(food) {
         this.turning = false;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
-        if (this.gameEnded()) {
-            this.onDie();
-            return [];
-        };
         if (!(this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y)) this.snake.pop();
-        return this.snake;
     };
     gameEnded() {
         for (let i = 1; i < this.snake.length; i++) {

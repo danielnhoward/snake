@@ -91,5 +91,5 @@ function makeId() {
         run = false;
         id = Math.round(Math.random() * 10000);
     }
-    return id;
+    return id.toLocaleString('en-US', {minimumIntegerDigits: 4, useGrouping:false});
 }

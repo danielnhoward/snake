@@ -155,11 +155,7 @@
                     });
                 });
                 emits.on('redirect', (body) => {
-                    body ? (() => {
-                        location.replace(body);
-                    })() : (() => {
-                        location.replace('/#multi');
-                    })();
+                    location.replace('/?a');
                 });
                 emits.emit('snakeJoin', gameId);
             };
