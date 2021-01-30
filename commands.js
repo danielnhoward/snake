@@ -22,21 +22,25 @@ const veloceties = {
 module.exports = {
     commands: {
         snakeJoin(body, emit, id) {
-            if (!(body in games)) return emit('redirect');
+            if (!(body in games)) return emit('redirect', '/?b');
             emit('gameExists', body);
         },
         snakeJoinWithName(body, emit, id) {
+            if (!(body.gameId in games)) return emit('redirect', '/?c');
             games[body.gameId].addPlayer(id, emit, body.name, body.settings);
         },
         playerDisconnect(body, emit, id) {
+            if (!(body in games)) return;
             games[body].playerDisconnect(id);
         },
         snakeRejoin(body, emit, id) {
+            if (!(body in games)) return emit('redirect', '/?c');
             games[body].rejoin(id);
         },
         snakeUp(body, emit, id) {
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
+                    games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
                         if (games[body].players[index].snake.velocety != veloceties.down) games[body].players[index].snake.velocety = veloceties.up;
@@ -47,6 +51,7 @@ module.exports = {
         snakeDown(body, emit, id) {
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
+                    games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
                         if (games[body].players[index].snake.velocety != veloceties.up) games[body].players[index].snake.velocety = veloceties.down;
@@ -57,6 +62,7 @@ module.exports = {
         snakeLeft(body, emit, id) {
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
+                    games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
                         if (games[body].players[index].snake.velocety != veloceties.right) games[body].players[index].snake.velocety = veloceties.left;
@@ -67,6 +73,7 @@ module.exports = {
         snakeRight(body, emit, id) {
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
+                    games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
                         if (games[body].players[index].snake.velocety != veloceties.left) games[body].players[index].snake.velocety = veloceties.right;
@@ -77,7 +84,7 @@ module.exports = {
     },
     makeSnakeGame(speed) {
         const gameId = makeId();
-        games[gameId] = new Game('snake', speed);
+        games[gameId] = new Game('snake', speed, () => {delete games[gameId]});
         return gameId;
     },
     getGamesList() {

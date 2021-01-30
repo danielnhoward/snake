@@ -48,6 +48,9 @@
             async function onload() {
                 let gameId = location.pathname.split('/')[2];
                 document.getElementById('gameId').innerHTML = gameId;
+                emits.on('redirect', (body) => {
+                    location.replace(body);
+                });
                 emits.on('gameExists', async (body) => {
                     const {value: username} = await Swal.fire({
                         title: 'Please enter a username',
@@ -153,9 +156,6 @@
                             y: ev.changedTouches[0].clientY
                         });
                     });
-                });
-                emits.on('redirect', (body) => {
-                    location.replace('/?a');
                 });
                 emits.emit('snakeJoin', gameId);
             };

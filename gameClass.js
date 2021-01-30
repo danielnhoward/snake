@@ -1,5 +1,5 @@
 module.exports = class {
-    constructor(gameType, gameSpeed) {
+    constructor(gameType, gameSpeed, onTimeout) {
         this.type = gameType;
         this.players = [];
         this.playerIds = [];
@@ -9,6 +9,15 @@ module.exports = class {
         this.canvas = [];
         this.food = new Food(this.canvas);
         this.running = false;
+        this.onTimeout = onTimeout;
+        this.resetTimeout();
+    };
+    resetTimeout() {
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+            this.allEmit('redirect', '/?c');
+            this.onTimeout();
+        }, 300000);
     };
     allEmit(func, data) {
         this.players.forEach((el) => {

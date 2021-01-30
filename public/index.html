@@ -139,15 +139,27 @@
                 };
 
                 if (location.search) {
+                    let error = location.search;
                     history.replaceState(null, null, '/');
-                    Swal.fire({
-                        icon: 'error',
-                        title: '<h1>404 Error</h1>',
-                        html: '<div style="color: white;">Looks like we couldn\'t find the file you wanted, instead we\'ve put you back on the homepage.</div>',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        allowEnterKey: false
-                    });
+                    if (error == '?a') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '<h1>404 Error</h1>',
+                            html: '<div style="color: white;">Looks like we couldn\'t find the file you wanted, instead we\'ve put you back on the homepage.</div>'
+                        });
+                    }
+                    else if (error == '?b') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'The Game ID is inncorrect'
+                        });
+                    }
+                    else if (error == '?c') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'The Game has timed out'
+                        });
+                    };
                 };
 
                 let settings = getConfig();
@@ -260,9 +272,7 @@
                     el.button.addEventListener('keydown', keyDown)
                     el.dis.innerHTML = settings[`${el.name}Key`];
                 })
-
-                
-                emits.on('redirect', () => {
+                emits.on('redirect', (body) => {
                     Swal.fire({
                         icon: 'error',
                         title: 'The Game ID is inncorrect'
