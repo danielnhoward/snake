@@ -24,7 +24,7 @@ body {
     color: #2E5984;
 }
 .back {
-    background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    background: linear-gradient(120deg, #5092fb 0%, #c2e9fb 100%);
     background-size: 400% 400%;
     -webkit-animation: back 20s ease infinite;
     -moz-animation: back 20s ease infinite;
