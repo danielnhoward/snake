@@ -276,14 +276,14 @@
                     };
                     el.inp.value = settings[el.settingName];
                     el.color.style.background = settings[el.settingName];
-                })
+                });
 
                 const keyInps = [
                     {button: document.getElementById('upKey'), dis: document.getElementById('upKeyDis'), name: 'up'},
                     {button: document.getElementById('leftKey'), dis: document.getElementById('leftKeyDis'), name: 'left'},
                     {button: document.getElementById('rightKey'), dis: document.getElementById('rightKeyDis'), name: 'right'},
                     {button: document.getElementById('downKey'), dis: document.getElementById('downKeyDis'), name: 'down'}
-                ]
+                ];
                 keyInps.forEach((el) => {
                     function keyDown(ev) {
                         setConfigItem(el.name, ev.keyCode);
@@ -292,15 +292,6 @@
                     }
                     el.button.addEventListener('keydown', keyDown)
                     el.dis.innerHTML = settings[`${el.name}Key`];
-                })
-                emits.on('redirect', (body) => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'The Game ID is inncorrect'
-                    });
-                });
-                emits.on('gameExists', (body) => {
-                    location.href = `/play/${body}`;
                 });
             };
 
@@ -330,46 +321,6 @@
                 })();
             };
             function joinGame() {
-
-                /*Swal.fire({
-                    title: 'Enter your Game ID',
-                    input: 'text',
-                    inputAttributes: {
-                        autocapitalize: 'off'
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: 'Join',
-                    showLoaderOnConfirm: true,
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'Please enter a Game ID';
-                        }
-                        else if (!Number.isInteger(parseInt(value))) {
-                            return 'Please enter a Game ID';
-                        }
-                        else if (value.length != 4) {
-                            return 'Please enter a Game ID';
-                        };
-                    },
-                    preConfirm: (id) => {
-                        console.log(id)
-                        return fetch(`/api?${id}`)
-                        .then(res => {
-                            return res.json();
-                        })
-                        .catch((error) => {
-                            Swal.showValidationMessage( `Request failed: ${error}`);
-                            console.error(error);
-                        })
-                    },
-                    allowOutsideClick: () => {!Swal.isLoading();}
-                })
-                .then((res) => {
-                    if (result.isConfirmed) {
-                        console.log(res)
-                    }
-                })*/
-
                 Swal.fire({
                     title: 'Enter your Game ID',
                     input: 'text',
