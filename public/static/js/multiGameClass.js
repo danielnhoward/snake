@@ -1,7 +1,8 @@
 class MultiCanvas {
-    constructor(id, settings) {
+    constructor(id, settings, gameSize) {
         this.id = id;
         this.settings = settings;
+        this.gameSize = gameSize;
         this.canvas = document.getElementById(id);
         this.ctx = this.canvas.getContext('2d');
         this.clearCanvas();
@@ -17,8 +18,8 @@ class MultiCanvas {
         for (const part of game) {
             this.ctx.fillStyle = part.colour.body;
             this.ctx.strokeStyle = part.colour.border;
-            this.ctx.fillRect(part.x, part.y, 40, 40);
-            this.ctx.strokeRect(part.x, part.y, 40, 40);
-        }
-    }
-}
+            this.ctx.fillRect(part.x, part.y, this.gameSize, this.gameSize);
+            this.ctx.strokeRect(part.x, part.y, this.gameSize, this.gameSize);
+        };
+    };
+};

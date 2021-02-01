@@ -23,10 +23,10 @@
                     <div class="title">Snake</div>
                     <br>
                     <div id="buttons" style="animation: back-text 10s ease infinite;"> 
-                        <a href="#single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br>
-                        <a href="#multi"><button class="main-btn" type="button"><span>Play Multiplayer Game</span></button></a><br>
+                        <a href="/single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br>
+                        <a href="/multi"><button class="main-btn" type="button"><span>Play Multiplayer Game</span></button></a><br>
                         <button onclick="joinGame();" class="main-btn" type="button"><span>Join a Game</span></button><br>
-                        <a href="#options"><button class="main-btn" type="button"><span>Options</span></button></a><br>
+                        <a href="/options"><button class="main-btn" type="button"><span>Options</span></button></a><br>
                     </div>
                 </div>
 
@@ -51,7 +51,7 @@
                             <input style="width: 200px; margin: auto; cursor: auto;" type="range" min="30" max="300" id="gameTime" class="slider">
                         </div>
                         <br><br>
-                        <x href="/single"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
+                        <x href="/singleSnake"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
                     </form>
                 </div>
 
@@ -65,6 +65,10 @@
                             <label for="gameSpeedMulti">Game Speed: <x id="clientGameSpeedMulti"></x>ms</label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSpeedMulti" min="20" max="500">
                         </div>
+                        <br><div class="slider-hover">
+                            <label for="gameSpeedMulti">Game Size: <x id="clientGameSizeMulti"></x>px</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSizeMulti" min="10" max="100">
+                        </div>
                         <br><br>
                         <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
                     </form>
@@ -76,34 +80,34 @@
                     <div id="backClrClick">
                         Backgound Colour<br>
                         <x id="backClr" class="baseColor"></x>
-                        <input type="color" id="backClrInp">
+                        <input type="color" id="backClrInp" style="height: 0; width: 0;">
                     </div>
                     <div id="backBordClrClick">
                         Background Border Colour<br>
                         <x id="backBordClr" class="baseColor"></x>
-                        <input type="color" id="backBordClrInp">
+                        <input type="color" id="backBordClrInp" style="height: 0; width: 0;">
                     </div>
                     <br>
                     <div id="foodClrClick">
                         Food Colour<br>
                         <x id="foodClr" class="baseColor"></x>
-                        <input type="color" id="foodClrInp">
+                        <input type="color" id="foodClrInp" style="height: 0; width: 0;">
                     </div>
                     <div id="foodBordClrClick">
                         Food Border Colour<br>
                         <x id="foodBordClr" class="baseColor"></x>
-                        <input type="color" id="foodBordClrInp">
+                        <input type="color" id="foodBordClrInp" style="height: 0; width: 0;">
                     </div>
                     <br>
                     <div id="snakeClrClick">
                         Snake Colour<br>
                         <x id="snakeClr" class="baseColor"></x>
-                        <input type="color" id="snakeClrInp">
+                        <input type="color" id="snakeClrInp" style="height: 0; width: 0;">
                     </div>
                     <div id="snakeBordClrClick">
                         Snake Border Colour<br>
                         <x id="snakeBordClr" class="baseColor"></x>
-                        <input type="color" id="snakeBordClrInp">
+                        <input type="color" id="snakeBordClrInp" style="height: 0; width: 0;">
                     </div>
 
 
@@ -115,23 +119,24 @@
                     <br>
                     <button id="downKey" class="main-btn"><span>Down (<x id="downKeyDis"></x>)</span></button>
                     <br><br><br>
-                    <a><button onclick="resetConfig(); reset();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="#home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
+                    <a><button onclick="resetConfig(); reset();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="/home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
                 </div>
             </div>
         </div>
         <script>
-            const pages = ['#home', '#single', '#multi', '#options', ''];
+            const pages = ['/home', '/single', '/multi', '/options'];
             const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Snake'];
             let onload = reset;
             function reset() {
                 hideAll();
-                if (pages.includes(location.hash)) {
-                    document.title = titles[pages.indexOf(location.hash)];
-                    if (location.hash == '') {
+                if (pages.includes(location.pathname) || location.pathname == '/') {
+                    if (location.pathname == '/') {
+                        document.title = 'Snake';
                         $('#home').show();
                     }
                     else {
-                        $(`${location.hash}`).show();
+                    document.title = titles[pages.indexOf(location.pathname)];
+                        $(`${location.pathname.replace('/', '#')}`).show();
                     };
                 }
                 else {
@@ -213,7 +218,7 @@
                     playSettings.gameSpeed = document.getElementById('gameSpeed').value;
                     playSettings.gameTime = document.getElementById('timed').checked ? document.getElementById('gameTime').value : 'off';
                     setConfig(playSettings);
-                    location.href = '/single';
+                    location.href = '/singleSnake';
                 };
 
 
@@ -230,10 +235,26 @@
                     document.getElementById('gameSpeedMulti').value = 100;
                 })();
 
+
+                document.getElementById('gameSizeMulti').oninput = () => {
+                    document.getElementById('clientGameSizeMulti').innerHTML = document.getElementById('gameSizeMulti').value;
+                    setConfigItem('gameSize', document.getElementById('gameSizeMulti').value);
+                };
+                settings.gameSize ? (() => {
+                    document.getElementById('clientGameSizeMulti').innerHTML = settings.gameSize;
+                    document.getElementById('gameSizeMulti').value = settings.gameSize;
+                })() : (() => {
+                    document.getElementById('clientGameSizeMulti').innerHTML = '70';
+                    document.getElementById('gameSizeMulti').value = 70;
+                })();
+
+                
+
                 document.getElementById('multiPlay').onsubmit = (ev) => {
                     ev.preventDefault();
-                    location.href = `/start/snake/${document.getElementById('gameSpeedMulti').value}`;
+                    location.href = `/start/snake/${document.getElementById('gameSpeedMulti').value}/${document.getElementById('gameSizeMulti').value}`;
                 };
+
 
 
                 /* Options */
@@ -285,19 +306,12 @@
 
             $('a').click((ev) => {
                 ev.preventDefault();
-                history.pushState(null, null, ev.currentTarget.href)
-                hideAll();
-                document.title = titles[pages.indexOf(location.hash)];
-                if (location.hash) {
-                    $(`${location.hash}`).show();
-                }
-                else {
-                    $('#home').show();
-                };
+                history.pushState(null, null, ev.currentTarget.href);
+                reset();
             });
             function hideAll() {
                 pages.forEach((el) => {
-                    $(`${el}`).hide();
+                    $(`${el.replace('/', '#')}`).hide();
                 });
             };
             addEventListener('popstate', reset);

@@ -1,5 +1,6 @@
 function getConfig() {
     let settings = {
+        "gameSize":"70",
         "gameSpeed":"65",
         "gameTime":"30",
         "canvasBorderColour":"#023E8A",
@@ -35,6 +36,9 @@ function getConfig() {
         };
         if (config.gameTime < 30 || config.gameTime > 300) {
             config.gameTime = 120;
+        };
+        if (config.gameSize < 10 || config.gameSize > 100) {
+            config.gameSize = 70;
         };
     }
     else {

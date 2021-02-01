@@ -7,8 +7,12 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
             if (req.url.includes('snake')) {
                 if (Number.isInteger(parseInt(req.url.split('/')[3]))) {
                     if (req.url.split('/')[3] >= 20 && req.url.split('/')[3] <= 500) {
-                        readFile = false;
-                        res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3])}`);
+                        if (Number.isInteger(parseInt(req.url.split('/')[4]))) {
+                            if (req.url.split('/')[4] >= 10 && req.url.split('/')[4] <= 100) {
+                                readFile = false;
+                                res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]))}`);
+                            };
+                        };
                     };
                 };
             };
@@ -22,7 +26,11 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
                 };
             };
         };
-        /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
+        (url == '/single' || url == '/multi' || url == '/options' || url == '/home') ? (() => {
+            file = './public/index.html';
+        })() : (() => {
+            /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
+        })();
         readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/?a')) : false;
     });
     io.on('connection', (socket) => {

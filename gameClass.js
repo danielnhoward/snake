@@ -1,13 +1,14 @@
 module.exports = class {
-    constructor(gameType, gameSpeed, onTimeout) {
+    constructor(gameType, gameSpeed, onTimeout, blockSize) {
         this.type = gameType;
         this.players = [];
         this.playerIds = [];
         this.spectators = [];
         this.playerCount = 0;
+        this.blockSize = blockSize;
         this.gameSpeed = gameSpeed;
         this.canvas = [];
-        this.food = new Food(this.canvas);
+        this.food = new Food(this.canvas, blockSize);
         this.running = false;
         this.onTimeout = onTimeout;
         this.resetTimeout();
@@ -44,7 +45,7 @@ module.exports = class {
             emit: emit,
             name: name,
             settings: settings,
-            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id)
+            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize)
         });
         this.playerIds.push = id;
         this.playerCount = this.players.length;
@@ -132,7 +133,7 @@ module.exports = class {
                     emit: player.emit,
                     name: player.name,
                     settings: player.settings,
-                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)})
+                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize)
                 });
                 this.playerCount = this.players.length;
                 this.allEmit('playerCount', this.playerCount);
@@ -142,19 +143,20 @@ module.exports = class {
 };
 
 class Snake {
-    constructor(settings, initCanvas, onDie, id) {
+    constructor(settings, initCanvas, onDie, id, blockSize) {
         this.settings = settings;
         this.onDie = onDie;
         this.turning = false;
-        this.velocety = {x: 40, y: 0};
+        this.velocety = {x: parseInt(blockSize), y: 0};
         this.id = id;
         this.lengthDebt = 0;
+        this.blockSize = blockSize;
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}}];
+        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}}];
         for (let x = 1; x < 3; x++) {
-            this.snake.unshift({x:this.snake[this.snake.length - 1].x + 40 * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
+            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         };
         for (const part of initCanvas) {
             for (const snakePart of this.snake) {
@@ -184,9 +186,9 @@ class Snake {
         };
         const hits = {
             leftWall: this.snake[0].x < 0,
-            rightWall: this.snake[0].x > 960,
+            rightWall: this.snake[0].x > (1000 - this.blockSize),
             topWall: this.snake[0].y < 0,
-            bottomWall: this.snake[0].y > 960
+            bottomWall: this.snake[0].y > (1000 - this.blockSize)
         };
         return hits.leftWall || hits.rightWall || hits.topWall || hits.bottomWall;
     };
@@ -196,11 +198,12 @@ class Snake {
 };
 
 class Food {
-    constructor(initCanvas) {
+    constructor(initCanvas, blockSize) {
+        this.blockSize = blockSize;
         this.init(initCanvas);
     };
     init(canvas) {
-        this.food = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: '#2b9348', body: '#4BB500'}}];
+        this.food = [{x: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
         for (const part of canvas) {
             for (const foodPart of this.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {
@@ -210,7 +213,7 @@ class Food {
         };
     };
     redraw(canvas) {
-        this.food = [{x: Math.round((Math.round(Math.random() * 800))/40) * 40, y: Math.round((Math.round(Math.random() * 800))/40) * 40, colour: {border: '#2b9348', body: '#4BB500'}}];
+        this.food = [{x: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
         for (const part of canvas) {
             for (const foodPart of this.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {

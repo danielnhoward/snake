@@ -1,29 +1,31 @@
 const Game = require('./gameClass.js');
 let games = {};
-const veloceties = {
-    up: {
-        x:0,
-        y:-40
-    },
-    down: {
-        x:0,
-        y:40
-    },
-    left: {
-        x:-40,
-        y:0
-    },
-    right: {
-        x:40,
-        y:0
-    }
+const veloceties = (size) => {
+    return {
+        up: {
+            x:0,
+            y:-size
+        },
+        down: {
+            x:0,
+            y:size
+        },
+        left: {
+            x:-size,
+            y:0
+        },
+        right: {
+            x:size,
+            y:0
+        }
+    };
 };
 
 module.exports = {
     commands: {
         snakeJoin(body, emit, id) {
             if (!(body in games)) return emit('redirect', '/?b');
-            emit('gameExists', body);
+            emit('gameExists', games[body].blockSize);
         },
         snakeJoinWithName(body, emit, id) {
             if (!(body.gameId in games)) return emit('redirect', '/?c');
@@ -38,53 +40,57 @@ module.exports = {
             games[body].rejoin(id);
         },
         snakeUp(body, emit, id) {
+            let size = games[body].blockSize;
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
                     games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
-                        if (games[body].players[index].snake.velocety != veloceties.down) games[body].players[index].snake.velocety = veloceties.up;
+                        if (player.snake.velocety.x != veloceties(size).down.x && player.snake.velocety.y != veloceties(size).down.y) games[body].players[index].snake.velocety = veloceties(size).up;
                     };
                 };
             });
         },
         snakeDown(body, emit, id) {
+            let size = games[body].blockSize;
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
                     games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
-                        if (games[body].players[index].snake.velocety != veloceties.up) games[body].players[index].snake.velocety = veloceties.down;
+                        if (player.snake.velocety.x != veloceties(size).up.x && player.snake.velocety.y != veloceties(size).up.y) games[body].players[index].snake.velocety = veloceties(size).down;
                     };
                 };
             });
         },
         snakeLeft(body, emit, id) {
+            let size = games[body].blockSize;
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
                     games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
-                        if (games[body].players[index].snake.velocety != veloceties.right) games[body].players[index].snake.velocety = veloceties.left;
+                        if (player.snake.velocety.x != veloceties(size).right.x && player.snake.velocety.y != veloceties(size).right.y) games[body].players[index].snake.velocety = veloceties(size).left;
                     };
                 };
             });
         },
         snakeRight(body, emit, id) {
+            let size = games[body].blockSize;
             games[body].players.forEach((player, index) => {
                 if (player.id == id) {
                     games[body].resetTimeout();
                     if (!games[body].players[index].snake.turning) {
                         games[body].players[index].snake.turning = true;
-                        if (games[body].players[index].snake.velocety != veloceties.left) games[body].players[index].snake.velocety = veloceties.right;
+                        if (player.snake.velocety.x != veloceties(size).left.x && player.snake.velocety.y != veloceties(size).left.y) games[body].players[index].snake.velocety = veloceties(size).right;
                     };
                 };
             });
         }
     },
-    makeSnakeGame(speed) {
+    makeSnakeGame(speed, size) {
         const gameId = makeId();
-        games[gameId] = new Game('snake', speed, () => {delete games[gameId]});
+        games[gameId] = new Game('snake', speed, () => {delete games[gameId]}, size);
         return gameId;
     },
     getGamesList() {
