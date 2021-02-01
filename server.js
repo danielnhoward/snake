@@ -25,6 +25,20 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
                     res.sendFile(`${__dirname}/public/games/${require('./commands.js').getGamesList()[gameId].type}.html`);
                 };
             };
+        }
+        else if (req.url.includes('api')) {
+            let id = req.url.split('?')[1];
+            if (id) {
+                readFile = false;
+                let games = require('./commands.js').getGamesList();
+                if (id in games) {
+                    res.json({exists: true, id: id});
+                }
+                else {
+                    res.statusCode = 404;
+                    res.json({exists: false, id: id});
+                }
+            };
         };
         (url == '/single' || url == '/multi' || url == '/options' || url == '/home') ? (() => {
             file = './public/index.html';

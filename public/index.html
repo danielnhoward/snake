@@ -329,11 +329,17 @@
                     });
                 })();
             };
-            async function joinGame() {
-                const {value: gameId} = await Swal.fire({
+            function joinGame() {
+
+                /*Swal.fire({
                     title: 'Enter your Game ID',
                     input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
                     showCancelButton: true,
+                    confirmButtonText: 'Join',
+                    showLoaderOnConfirm: true,
                     inputValidator: (value) => {
                         if (!value) {
                             return 'Please enter a Game ID';
@@ -344,11 +350,54 @@
                         else if (value.length != 4) {
                             return 'Please enter a Game ID';
                         };
+                    },
+                    preConfirm: (id) => {
+                        console.log(id)
+                        return fetch(`/api?${id}`)
+                        .then(res => {
+                            return res.json();
+                        })
+                        .catch((error) => {
+                            Swal.showValidationMessage( `Request failed: ${error}`);
+                            console.error(error);
+                        })
+                    },
+                    allowOutsideClick: () => {!Swal.isLoading();}
+                })
+                .then((res) => {
+                    if (result.isConfirmed) {
+                        console.log(res)
                     }
+                })*/
+
+                Swal.fire({
+                    title: 'Enter your Game ID',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Join',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (id) => {
+                        return fetch(`/api?${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            };
+                            return response.json();
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Looks like that Game ID doesn't exist`);
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = `/play/${result.value.id}`;
+                    };
                 });
-                if (gameId) {
-                    emits.emit('snakeJoin', gameId)
-                };
             };
         </script>
     </body>

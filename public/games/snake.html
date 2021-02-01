@@ -82,7 +82,6 @@
                     onresize();
                     let canvas = new MultiCanvas('gameCanvas', getConfig(), body);
                     emits.on('snakePing', (body) => {
-                        console.log(body)
                         canvas.drawGame(body);
                     });
                     emits.on('snakeDeath', () => {
