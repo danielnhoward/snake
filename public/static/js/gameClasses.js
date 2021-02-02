@@ -141,8 +141,85 @@ class Snake {
         this.snake.forEach((part, index) => {
             this.ctx.fillStyle = shadeColor(this.settings.snakeColour, -(15 / (this.snake.length - 1)) * index);
             this.ctx.strokeStyle = shadeColor(this.settings.snakeBorderColour, -(15 / (this.snake.length - 1)) * index);
+            this.ctx.lineWidth = 3;
             this.ctx.fillRect(part.x, part.y, this.blockSize, this.blockSize);
-            this.ctx.strokeRect(part.x, part.y, this.blockSize, this.blockSize);
+            
+            
+            let differences = {};
+            if (index == 0) {
+                differences = {
+                    x: part.x - this.snake[index + 1].x,
+                    y: part.y - this.snake[index + 1].y
+                };
+            };
+            if (index == this.snake.length - 1) {
+                differences = {
+                    x: part.x - this.snake[index - 1].x,
+                    y: part.y - this.snake[index - 1].y
+                };
+            };
+            this.ctx.beginPath();
+
+            if (index == this.snake.length - 1 || index == 0) {
+                if (differences.x == this.blockSize) {
+                    // Left
+                    this.ctx.moveTo(part.x, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x, part.y + this.blockSize);
+                }
+                else if (differences.x == -this.blockSize) {
+                    // Right
+                    this.ctx.moveTo(part.x + this.blockSize, part.y);
+                    this.ctx.lineTo(part.x, part.y);
+                    this.ctx.lineTo(part.x, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                }
+                else if (differences.y == this.blockSize) {
+                    // Up
+                    this.ctx.moveTo(part.x, part.y);
+                    this.ctx.lineTo(part.x, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y);
+                }
+                else if (differences.y == -this.blockSize) {
+                    // Down
+                    this.ctx.moveTo(part.x, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                };
+            }
+            else {
+                differences = {
+                    before: {
+                        x: part.x - this.snake[index - 1].x,
+                        y: part.y - this.snake[index - 1].y
+                    },
+                    after: {
+                        x: part.x - this.snake[index + 1].x,
+                        y: part.y - this.snake[index + 1].y
+                    }
+                };
+                if (differences.before.x != this.blockSize && differences.after.x != this.blockSize) {
+                    this.ctx.moveTo(part.x, part.y);
+                    this.ctx.lineTo(part.x, part.y + this.blockSize);
+                };
+                if (differences.before.x != -this.blockSize && differences.after.x != -this.blockSize) {
+                    this.ctx.moveTo(part.x + this.blockSize, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                };
+                if (differences.before.y != this.blockSize && differences.after.y != this.blockSize) {
+                    this.ctx.moveTo(part.x, part.y);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y);
+                };
+                if (differences.before.y != -this.blockSize && differences.after.y != -this.blockSize) {
+                    this.ctx.moveTo(part.x, part.y + this.blockSize);
+                    this.ctx.lineTo(part.x + this.blockSize, part.y + this.blockSize);
+                };
+            };
+
+            this.ctx.stroke();
         });
     };
     advanceSnake() {

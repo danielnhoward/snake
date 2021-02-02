@@ -7,7 +7,10 @@ module.exports = class {
         this.playerCount = 0;
         this.blockSize = blockSize;
         this.gameSpeed = gameSpeed;
-        this.canvas = [];
+        this.canvas = {
+            players: [],
+            food: []
+        };
         this.food = new Food(this.canvas, blockSize);
         this.running = false;
         this.onTimeout = onTimeout;
@@ -86,7 +89,10 @@ module.exports = class {
     run() {
         this.running = true;
         this.interval = setInterval(() => {
-            this.canvas = [];
+            this.canvas = {
+                players: [],
+                food: []
+            };
             let redraw = false
             for (const player of this.players) {
                 player.snake.moveSnake(this.food);
@@ -109,11 +115,11 @@ module.exports = class {
                 };
             }).bind(this));
             for (const player of this.players) {
-                this.canvas = [...this.canvas, ...player.snake.snake];
+                this.canvas.players = [...this.canvas.players, ...player.snake.snake];
                 if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
             };
             if (redraw) this.food.redraw(this.canvas);
-            this.canvas = [...this.canvas, ...this.food.food];
+            this.canvas.food = this.food.food;
             this.allEmit('snakePing', this.canvas);
 
             this.players.forEach((player) => {
@@ -158,7 +164,14 @@ class Snake {
         for (let x = 1; x < 3; x++) {
             this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         };
-        for (const part of initCanvas) {
+        for (const part of initCanvas.players) {
+            for (const snakePart of this.snake) {
+                if (snakePart.x == part.x && snakePart.y == part.y) {
+                    return this.initSnake(initCanvas);
+                };
+            };
+        };
+        for (const part of initCanvas.food) {
             for (const snakePart of this.snake) {
                 if (snakePart.x == part.x && snakePart.y == part.y) {
                     return this.initSnake(initCanvas);
@@ -200,22 +213,12 @@ class Snake {
 class Food {
     constructor(initCanvas, blockSize) {
         this.blockSize = blockSize;
-        this.init(initCanvas);
-    };
-    init(canvas) {
-        this.food = [{x: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
-        for (const part of canvas) {
-            for (const foodPart of this.food) {
-                if (foodPart.x == part.x && foodPart.y == part.y) {
-                    return this.redraw(canvas);
-                };
-            };
-        };
+        this.redraw(initCanvas);
     };
     redraw(canvas) {
         this.food = [{x: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 800))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
-        for (const part of canvas) {
-            for (const foodPart of this.food) {
+        for (const part of canvas.players) {
+            for (const foodPart of canvas.food) {
                 if (foodPart.x == part.x && foodPart.y == part.y) {
                     return this.redraw(canvas);
                 };
