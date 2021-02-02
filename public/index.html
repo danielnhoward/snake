@@ -177,6 +177,12 @@
                             icon: 'error',
                             title: 'The Game has timed out'
                         });
+                    }
+                    else if (error == '?d') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Fuck off'
+                        });
                     };
                 };
 
@@ -340,7 +346,7 @@
                 })();
             };*/
 
-            
+
             function joinGame() {
                 Swal.fire({
                     title: 'Enter your Game ID',

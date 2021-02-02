@@ -29,6 +29,7 @@ module.exports = {
         },
         snakeJoinWithName(body, emit, id) {
             if (!(body.gameId in games)) return emit('redirect', '/?c');
+            if (games[body.gameId].playerIds.includes(id)) return emit('redirect', '/?d');
             games[body.gameId].addPlayer(id, emit, body.name, body.settings);
         },
         playerDisconnect(body, emit, id) {

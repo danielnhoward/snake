@@ -50,7 +50,7 @@ module.exports = class {
             settings: settings,
             snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize)
         });
-        this.playerIds.push = id;
+        this.playerIds.push(id);
         this.playerCount = this.players.length;
         this.allEmit('playerCount', this.playerCount);
     };
