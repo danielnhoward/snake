@@ -31,9 +31,9 @@
                 </div>
 
                 <div id="single" class="content">
-                    <div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup();">
+                    <!--<div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup();">
                         <img src="/static/img/help-icon.svg" width="50" height="50">
-                    </div>
+                    </div>-->
                     <div class="title">Play Single Player</div>
                     <form id="singlePlay" style="text-align: center;">
                         <div class="slider-hover">
@@ -56,18 +56,18 @@
                 </div>
 
                 <div style="display: none;" id="multi" class="content">
-                    <div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup(true);">
+                    <!--<div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup(true);">
                         <img src="/static/img/help-icon.svg" width="50" height="50">
-                    </div>
+                    </div>-->
                     <div class="title">Play Multi Player</div>
                     <form id="multiPlay" style="text-align: center;">
                         <div class="slider-hover">
-                            <label for="gameSpeedMulti">Game Speed: <x id="clientGameSpeedMulti"></x>ms</label><div style="height: 5px;"></div>
-                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSpeedMulti" min="20" max="500">
+                            <label for="gameSpeedMulti">Game Speed: <x id="clientGameSpeedMulti">100</x>%</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSpeedMulti" value="0" min="-50" max="50">
                         </div>
                         <br><div class="slider-hover">
-                            <label for="gameSpeedMulti">Game Size: <x id="clientGameSizeMulti"></x>px</label><div style="height: 5px;"></div>
-                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSizeMulti" min="10" max="100">
+                            <label for="gameSpeedMulti">Game Size: <x id="clientGameSizeMulti">100</x>%</label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto; cursor: auto;" type="range" class="slider" id="gameSizeMulti" value="0" min="-50" max="50">
                         </div>
                         <br><br>
                         <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
@@ -127,6 +127,19 @@
             const pages = ['/home', '/single', '/multi', '/options'];
             const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Snake'];
             let onload = reset;
+            
+            $('a').click((ev) => {
+                ev.preventDefault();
+                history.pushState(null, null, ev.currentTarget.href);
+                reset();
+            });
+            function hideAll() {
+                pages.forEach((el) => {
+                    $(`${el.replace('/', '#')}`).hide();
+                });
+            };
+            addEventListener('popstate', reset);
+
             function reset() {
                 hideAll();
                 if (pages.includes(location.pathname) || location.pathname == '/') {
@@ -223,36 +236,54 @@
 
 
                 /* Multi player */
-                document.getElementById('gameSpeedMulti').oninput = () => {
-                    document.getElementById('clientGameSpeedMulti').innerHTML = document.getElementById('gameSpeedMulti').value;
-                    setConfigItem('gameSpeed', document.getElementById('gameSpeedMulti').value);
+                function setSettings(gameSpeed, gameSize) {
+                    let percentage = 1;
+                    let value = parseInt(gameSize);
+                    percentage = (value / 100) + 1;
+                    gameSize = 50 * percentage;
+
+
+                    percentage = 1;
+                    value = parseInt(gameSpeed);
+                    if (Math.sign(value) == 1) {
+                        value = value - (2 * value);
+                        percentage = (value / 100) + 1;
+                    }
+                    else if (Math.sign(value) == -1) {
+                        value = value + Math.abs(2 * value);
+                        percentage = (value / 100) + 1;
+                    };
+                    gameSpeed = (1000 / ((1000 / gameSize) / 2)) * percentage;
+                    return {
+                        gameSpeed: gameSpeed,
+                        gameSize: gameSize
+                    };
                 };
-                settings.gameSpeed ? (() => {
-                    document.getElementById('clientGameSpeedMulti').innerHTML = settings.gameSpeed;
-                    document.getElementById('gameSpeedMulti').value = settings.gameSpeed;
-                })() : (() => {
-                    document.getElementById('clientGameSpeedMulti').innerHTML = '100';
-                    document.getElementById('gameSpeedMulti').value = 100;
-                })();
+
+                document.getElementById('gameSpeedMulti').oninput = () => {
+                    document.getElementById('clientGameSpeedMulti').innerHTML = parseInt(document.getElementById('gameSpeedMulti').value) + 100;
+
+                    let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, document.getElementById('gameSizeMulti').value);
+                    setConfigItem('gameSpeed', multiSettings.gameSpeed);
+                    setConfigItem('gameSize', multiSettings.gameSize);
+                };
 
 
                 document.getElementById('gameSizeMulti').oninput = () => {
-                    document.getElementById('clientGameSizeMulti').innerHTML = document.getElementById('gameSizeMulti').value;
-                    setConfigItem('gameSize', document.getElementById('gameSizeMulti').value);
-                };
-                settings.gameSize ? (() => {
-                    document.getElementById('clientGameSizeMulti').innerHTML = settings.gameSize;
-                    document.getElementById('gameSizeMulti').value = settings.gameSize;
-                })() : (() => {
-                    document.getElementById('clientGameSizeMulti').innerHTML = '70';
-                    document.getElementById('gameSizeMulti').value = 70;
-                })();
+                    document.getElementById('clientGameSizeMulti').innerHTML = parseInt(document.getElementById('gameSizeMulti').value) + 100;
 
+                    let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, document.getElementById('gameSizeMulti').value);
+                    setConfigItem('gameSpeed', multiSettings.gameSpeed);
+                    setConfigItem('gameSize', multiSettings.gameSize);
+                };
+
+                document.getElementById('gameSpeedMulti').oninput();
+                document.getElementById('gameSizeMulti').oninput();
                 
 
                 document.getElementById('multiPlay').onsubmit = (ev) => {
                     ev.preventDefault();
-                    location.href = `/start/snake/${document.getElementById('gameSpeedMulti').value}/${document.getElementById('gameSizeMulti').value}`;
+                    location.href = `/start/snake/${getConfig().gameSpeed}/${getConfig().gameSize}`;
                 };
 
 
@@ -295,19 +326,7 @@
                 });
             };
 
-            $('a').click((ev) => {
-                ev.preventDefault();
-                history.pushState(null, null, ev.currentTarget.href);
-                reset();
-            });
-            function hideAll() {
-                pages.forEach((el) => {
-                    $(`${el.replace('/', '#')}`).hide();
-                });
-            };
-            addEventListener('popstate', reset);
-
-            function showPopup (param) {
+            /*function showPopup (param) {
                 param ? (() => {
                     Swal.fire({
                         icon: 'info',
@@ -319,7 +338,9 @@
                         html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: white;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: white;">Game Time</b><br>Game is how long the game will last for.</div>'
                     });
                 })();
-            };
+            };*/
+
+            
             function joinGame() {
                 Swal.fire({
                     title: 'Enter your Game ID',

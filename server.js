@@ -6,24 +6,24 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
         if (req.url.includes('start')) {
             if (req.url.includes('snake')) {
                 if (Number.isInteger(parseInt(req.url.split('/')[3]))) {
-                    if (req.url.split('/')[3] >= 20 && req.url.split('/')[3] <= 500) {
-                        if (Number.isInteger(parseInt(req.url.split('/')[4]))) {
-                            if (req.url.split('/')[4] >= 10 && req.url.split('/')[4] <= 100) {
-                                readFile = false;
-                                res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]))}`);
-                            };
-                        };
+                    if (Number.isInteger(parseInt(req.url.split('/')[4]))) {
+                        readFile = false;
+                        res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]))}`);
                     };
                 };
             };
         }
-        else if (req.url.includes('play')) {
+        else if (req.url.startsWith('/play')) {
             let gameId = req.url.split('/')[2];
             if (gameId in require('./commands.js').getGamesList()) {
                 if (require('./commands.js').getGamesList()[gameId] instanceof require('./gameClass.js')) {
                     readFile = false;
                     res.sendFile(`${__dirname}/public/games/${require('./commands.js').getGamesList()[gameId].type}.html`);
                 };
+            }
+            else {
+                readFile = false;
+                res.redirect('/?b');
             };
         }
         else if (req.url.includes('api')) {

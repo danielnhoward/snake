@@ -31,14 +31,8 @@ function getConfig() {
                 config[setting] = settings[setting];
             };
         };
-        if (config.gameSpeed < 20 || config.gameSpeed > 500) {
-            config.gameSpeed = 100;
-        };
         if (config.gameTime < 30 || config.gameTime > 300) {
             config.gameTime = 120;
-        };
-        if (config.gameSize < 10 || config.gameSize > 100) {
-            config.gameSize = 70;
         };
     }
     else {
