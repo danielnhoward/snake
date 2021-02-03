@@ -42,32 +42,24 @@ class MultiCanvas {
             this.ctx.beginPath();
 
             if (index == game.players.length - 1 || index == 0) {
-                if (differences.x == this.gameSize) {
+                if (differences.x != this.gameSize) {
                     // Left
                     this.ctx.moveTo(part.x, part.y);
-                    this.ctx.lineTo(part.x + this.gameSize, part.y);
-                    this.ctx.lineTo(part.x + this.gameSize, part.y + this.gameSize);
                     this.ctx.lineTo(part.x, part.y + this.gameSize);
-                }
-                else if (differences.x == -this.gameSize) {
+                };
+                if (differences.x != -this.gameSize) {
                     // Right
                     this.ctx.moveTo(part.x + this.gameSize, part.y);
-                    this.ctx.lineTo(part.x, part.y);
-                    this.ctx.lineTo(part.x, part.y + this.gameSize);
                     this.ctx.lineTo(part.x + this.gameSize, part.y + this.gameSize);
-                }
-                else if (differences.y == this.gameSize) {
+                };
+                if (differences.y != this.gameSize) {
                     // Up
                     this.ctx.moveTo(part.x, part.y);
-                    this.ctx.lineTo(part.x, part.y + this.gameSize);
-                    this.ctx.lineTo(part.x + this.gameSize, part.y + this.gameSize);
                     this.ctx.lineTo(part.x + this.gameSize, part.y);
-                }
-                else if (differences.y == -this.gameSize) {
+                };
+                if (differences.y != -this.gameSize) {
                     // Down
                     this.ctx.moveTo(part.x, part.y + this.gameSize);
-                    this.ctx.lineTo(part.x, part.y);
-                    this.ctx.lineTo(part.x + this.gameSize, part.y);
                     this.ctx.lineTo(part.x + this.gameSize, part.y + this.gameSize);
                 };
             }
