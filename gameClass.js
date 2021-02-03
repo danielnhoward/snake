@@ -98,9 +98,11 @@ module.exports = class {
                 player.snake.moveSnake(this.food);
             };
             this.players.forEach(((player, index, players) => {
+                if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0) return;
                 if (player.snake.gameEnded()) return player.snake.onDie();
                 let collisionCanvas = [];
                 players.forEach((el, innerIndex) => {
+                    if (el.snake.velocety.x == 0 && el.snake.velocety.y == 0) return;
                     let snake = el.snake.snake;
                     for (let i in snake) {
                         snake[i].owner = innerIndex;
