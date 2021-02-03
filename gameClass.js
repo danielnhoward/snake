@@ -188,8 +188,7 @@ class Snake {
         }
         else {
             this.lengthDebt--;
-        }
-
+        };
     };
     gameEnded() {
         for (let i = 1; i < this.snake.length; i++) {

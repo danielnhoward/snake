@@ -1,6 +1,6 @@
 function getConfig() {
     let settings = {
-        "gameSize":"70",
+        "gameSize":"50",
         "gameSpeed":"65",
         "gameTime":"30",
         "canvasBorderColour":"#023E8A",

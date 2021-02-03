@@ -40,50 +40,14 @@ module.exports = {
             if (!(body in games)) return emit('redirect', '/?c');
             games[body].rejoin(id);
         },
-        snakeUp(body, emit, id) {
-            let size = games[body].blockSize;
-            games[body].players.forEach((player, index) => {
+        snakeMove(body, emit, id) {
+            const size = games[body.gameId].blockSize;
+            games[body.gameId].players.forEach((player, index) => {
                 if (player.id == id) {
-                    games[body].resetTimeout();
-                    if (!games[body].players[index].snake.turning) {
-                        games[body].players[index].snake.turning = true;
-                        if (player.snake.velocety.x != veloceties(size).down.x && player.snake.velocety.y != veloceties(size).down.y) games[body].players[index].snake.velocety = veloceties(size).up;
-                    };
-                };
-            });
-        },
-        snakeDown(body, emit, id) {
-            let size = games[body].blockSize;
-            games[body].players.forEach((player, index) => {
-                if (player.id == id) {
-                    games[body].resetTimeout();
-                    if (!games[body].players[index].snake.turning) {
-                        games[body].players[index].snake.turning = true;
-                        if (player.snake.velocety.x != veloceties(size).up.x && player.snake.velocety.y != veloceties(size).up.y) games[body].players[index].snake.velocety = veloceties(size).down;
-                    };
-                };
-            });
-        },
-        snakeLeft(body, emit, id) {
-            let size = games[body].blockSize;
-            games[body].players.forEach((player, index) => {
-                if (player.id == id) {
-                    games[body].resetTimeout();
-                    if (!games[body].players[index].snake.turning) {
-                        games[body].players[index].snake.turning = true;
-                        if (player.snake.velocety.x != veloceties(size).right.x && player.snake.velocety.y != veloceties(size).right.y) games[body].players[index].snake.velocety = veloceties(size).left;
-                    };
-                };
-            });
-        },
-        snakeRight(body, emit, id) {
-            let size = games[body].blockSize;
-            games[body].players.forEach((player, index) => {
-                if (player.id == id) {
-                    games[body].resetTimeout();
-                    if (!games[body].players[index].snake.turning) {
-                        games[body].players[index].snake.turning = true;
-                        if (player.snake.velocety.x != veloceties(size).left.x && player.snake.velocety.y != veloceties(size).left.y) games[body].players[index].snake.velocety = veloceties(size).right;
+                    if (!games[body.gameId].players[index].snake.turning) {
+                        games[body.gameId].resetTimeout();
+                        games[body.gameId].players[index].snake.turning = true;
+                        if (player.snake.velocety.x != veloceties(size)[body.dir].x && player.snake.velocety.y != veloceties(size)[body.dir].y) games[body.gameId].players[index].snake.velocety = veloceties(size)[body.dir];
                     };
                 };
             });

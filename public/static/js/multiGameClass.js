@@ -24,7 +24,7 @@ class MultiCanvas {
         game.players.forEach((part, index) => {
             this.ctx.fillStyle = part.colour.body;
             this.ctx.strokeStyle = part.colour.border;
-            this.ctx.lineWidth = 3;
+            this.ctx.lineWidth = 2;
             this.ctx.fillRect(part.x, part.y, this.gameSize, this.gameSize);
             let differences = {};
             if (index == 0) {
