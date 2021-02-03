@@ -153,7 +153,7 @@ class Snake {
         this.settings = settings;
         this.onDie = onDie;
         this.turning = false;
-        this.velocety = {x: parseInt(blockSize), y: 0};
+        this.velocety = {x: 0, y: 0};
         this.id = id;
         this.lengthDebt = 0;
         this.blockSize = blockSize;
@@ -181,6 +181,7 @@ class Snake {
     };
     moveSnake(food) {
         this.turning = false;
+        if (this.velocety.x == 0 && this.velocety.y == 0) return;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
         if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
         if (this.lengthDebt == 0) {

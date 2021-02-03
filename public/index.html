@@ -15,13 +15,13 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="/static/js/utils.js"></script>
         <script src="/static/js/settings.js"></script>
-        <title>Snake</title>
+        <title>Snakeee</title>
     </head>
     <body class="back">
         <div class="container">
             <div class="center">
                 <div style="display: none;" id="home" class="content">
-                    <div class="title">Snake</div>
+                    <div class="title">Snakeee</div>
                     <br>
                     <div id="buttons" style="animation: back-text 10s ease infinite;"> 
                         <a href="/single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <div id="single" class="content">
+                <div style="display: none;" id="single" class="content">
                     <!--<div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup();">
                         <img src="/static/img/help-icon.svg" width="50" height="50">
                     </div>-->
@@ -126,7 +126,7 @@
         </div>
         <script>
             const pages = ['/home', '/single', '/multi', '/options'];
-            const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Snake'];
+            const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee', 'Snakeee'];
             let onload = reset;
             
             $('a').click((ev) => {
@@ -145,7 +145,7 @@
                 hideAll();
                 if (pages.includes(location.pathname) || location.pathname == '/') {
                     if (location.pathname == '/') {
-                        document.title = 'Snake';
+                        document.title = 'Snakeee';
                         $('#home').show();
                     }
                     else {
@@ -168,10 +168,15 @@
                         });
                     }
                     else if (error == '?b') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'The Game ID is inncorrect'
-                        });
+                        (async () => {
+                            await Swal.fire({
+                                icon: 'error',
+                                title: 'The Game ID is inncorrect'
+                            });
+                            setTimeout(() => {
+                                joinGame();
+                            }, 300);
+                        })();
                     }
                     else if (error == '?c') {
                         Swal.fire({
@@ -184,6 +189,9 @@
                             icon: 'error',
                             title: 'We have detected that you have entered something into the console.'
                         });
+                    }
+                    else if (error == '?e') {
+                        joinGame();
                     };
                 };
 
