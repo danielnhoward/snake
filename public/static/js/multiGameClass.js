@@ -22,6 +22,7 @@ class MultiCanvas {
             this.ctx.strokeRect(part.x, part.y, this.gameSize, this.gameSize);
         });
         let owner = -1;
+        let queue = [];
         game.players.forEach((part, index) => {
             this.ctx.fillStyle = part.colour.body;
             this.ctx.strokeStyle = part.colour.border;
@@ -33,13 +34,27 @@ class MultiCanvas {
                     x: part.x - game.players[index + 1].x,
                     y: part.y - game.players[index + 1].y
                 };
-            };
-            if (index == game.players.length - 1) {
+            }
+            else if (index == game.players.length - 1) {
                 differences = {
                     x: part.x - game.players[index - 1].x,
                     y: part.y - game.players[index - 1].y
                 };
+            }
+            else {
+                differences = {
+                    before: {
+                        x: part.x - game.players[index - 1].x,
+                        y: part.y - game.players[index - 1].y
+                    },
+                    after: {
+                        x: part.x - game.players[index + 1].x,
+                        y: part.y - game.players[index + 1].y
+                    }
+                };
             };
+
+
             this.ctx.beginPath();
 
             if (index == game.players.length - 1 || index == 0) {
@@ -65,16 +80,6 @@ class MultiCanvas {
                 };
             }
             else {
-                differences = {
-                    before: {
-                        x: part.x - game.players[index - 1].x,
-                        y: part.y - game.players[index - 1].y
-                    },
-                    after: {
-                        x: part.x - game.players[index + 1].x,
-                        y: part.y - game.players[index + 1].y
-                    }
-                };
                 if (differences.before.x != this.gameSize && differences.after.x != this.gameSize) {
                     this.ctx.moveTo(part.x, part.y);
                     this.ctx.lineTo(part.x, part.y + this.gameSize);
@@ -97,11 +102,15 @@ class MultiCanvas {
 
             if (part.owner != owner) {
                 owner = part.owner;
-                this.ctx.font = '20px Arial';
-                this.ctx.fillStyle = 'black';
-                this.textAlign = 'center';
-                this.ctx.fillText(part.name, part.x - this.gameSize / 5, part.y - 10);
+                queue.push([part.name, part.x + this.gameSize / 3, part.y - 15]);
             };
+        });
+        this.ctx.font = '20px Arial';
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillStyle = 'black';
+        queue.forEach((el) => {
+            this.ctx.fillText(el[0], el[1], el[2]);
         });
     };
 };
