@@ -21,6 +21,7 @@ class MultiCanvas {
             this.ctx.fillRect(part.x, part.y, this.gameSize, this.gameSize);
             this.ctx.strokeRect(part.x, part.y, this.gameSize, this.gameSize);
         });
+        let owner = -1;
         game.players.forEach((part, index) => {
             this.ctx.fillStyle = part.colour.body;
             this.ctx.strokeStyle = part.colour.border;
@@ -93,6 +94,14 @@ class MultiCanvas {
             };
 
             this.ctx.stroke();
+
+            if (part.owner != owner) {
+                owner = part.owner;
+                this.ctx.font = '20px Arial';
+                this.ctx.fillStyle = 'black';
+                this.textAlign = 'center';
+                this.ctx.fillText(part.name, part.x - this.gameSize / 5, part.y - 10);
+            };
         });
     };
 };

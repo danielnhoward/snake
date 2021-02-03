@@ -48,7 +48,7 @@ module.exports = class {
             emit: emit,
             name: name,
             settings: settings,
-            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize)
+            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name)
         });
         this.playerIds.push(id);
         this.playerCount = this.players.length;
@@ -141,7 +141,7 @@ module.exports = class {
                     emit: player.emit,
                     name: player.name,
                     settings: player.settings,
-                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize)
+                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize, player.name)
                 });
                 this.playerCount = this.players.length;
                 this.allEmit('playerCount', this.playerCount);
@@ -151,7 +151,7 @@ module.exports = class {
 };
 
 class Snake {
-    constructor(settings, initCanvas, onDie, id, blockSize) {
+    constructor(settings, initCanvas, onDie, id, blockSize, name) {
         this.settings = settings;
         this.onDie = onDie;
         this.turning = false;
@@ -159,12 +159,13 @@ class Snake {
         this.id = id;
         this.lengthDebt = 0;
         this.blockSize = blockSize;
+        this.name = name;
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}}];
+        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name}];
         for (let x = 1; x < 3; x++) {
-            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
+            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name});
         };
         for (const part of initCanvas.players) {
             for (const snakePart of this.snake) {
@@ -184,7 +185,7 @@ class Snake {
     moveSnake(food) {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
-        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}});
+        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name:this.name});
         if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
         if (this.lengthDebt == 0) {
             this.snake.pop();
