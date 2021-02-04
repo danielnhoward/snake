@@ -117,7 +117,7 @@ module.exports = class {
                 };
             }).bind(this));
             for (const player of this.players) {
-                this.canvas.players = [...this.canvas.players, ...player.snake.snake];
+                this.canvas.players.push(player.snake.snake);
                 if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
             };
             if (redraw) this.food.redraw(this.canvas);
@@ -163,9 +163,9 @@ class Snake {
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name}];
+        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: {x: this.blockSize, y:0}}];
         for (let x = 1; x < 3; x++) {
-            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name});
+            this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: {x: this.blockSize, y:0}});
         };
         for (const part of initCanvas.players) {
             for (const snakePart of this.snake) {
@@ -185,7 +185,7 @@ class Snake {
     moveSnake(food) {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
-        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name:this.name});
+        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: this.velocety});
         if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
         if (this.lengthDebt == 0) {
             this.snake.pop();

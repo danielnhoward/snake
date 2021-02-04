@@ -226,6 +226,12 @@ input[type="color"] {
     -webkit-transition: 0.2s;
     transition: opacity 0.2s, height 0.2s;
 }
+.slider-hover {
+    cursor: grab;
+}
+.slider-hover:active {
+    cursor: grabbing;
+}
 .slider-hover:hover .slider {
     opacity: 1;
     height: 25px;
