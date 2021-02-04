@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
-        <link rel="icon" href="/static/img/icon.ico">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -44,24 +43,6 @@
                     <img width="50" height="50" src="/static/img/restart-icon.svg">
                 </div>
             </div>
-
-            <div style="display: none;">
-                <img src="/static/img/gameAssets/food.png" id="food">
-                <img src="/static/img/gameAssets/up-head.png" id="up-head">
-                <img src="/static/img/gameAssets/down-head.png" id="down-head">
-                <img src="/static/img/gameAssets/left-head.png" id="left-head">
-                <img src="/static/img/gameAssets/right-head.png" id="right-head">
-                <img src="/static/img/gameAssets/up-tail.png" id="up-tail">
-                <img src="/static/img/gameAssets/down-tail.png" id="down-tail">
-                <img src="/static/img/gameAssets/left-tail.png" id="left-tail">
-                <img src="/static/img/gameAssets/right-tail.png" id="right-tail">
-                <img src="/static/img/gameAssets/right-left-straight.png" id="right-left-straight">
-                <img src="/static/img/gameAssets/bottom-top-straight.png" id="bottom-top-straight">
-                <img src="/static/img/gameAssets/bottom-left-corner.png" id="bottom-left-corner">
-                <img src="/static/img/gameAssets/right-bottom-corner.png" id="right-bottom-corner">
-                <img src="/static/img/gameAssets/top-right-corner.png" id="top-right-corner">
-                <img src="/static/img/gameAssets/left-top-corner.png" id="left-top-corner">
-            </div>
         </div>
         <script>
             async function onload() {
@@ -100,32 +81,8 @@
                         }
                     };
                     onresize();
-                    let img = {
-                        heads: {
-                            top: document.getElementById('up-head'),
-                            down: document.getElementById('down-head'),
-                            left: document.getElementById('left-head'),
-                            right: document.getElementById('right-head')
-                        },
-                        tails: {
-                            top: document.getElementById('up-tail'),
-                            bottom: document.getElementById('down-tail'),
-                            left: document.getElementById('left-tail'),
-                            right: document.getElementById('right-tail')
-                        },
-                        straights: {
-                            hor: document.getElementById('right-left-straight'),
-                            ver: document.getElementById('bottom-top-straight')
-                        },
-                        corners: {
-                            topLeft: document.getElementById('left-top-corner'),
-                            topRight: document.getElementById('top-right-corner'),
-                            bottomLeft: document.getElementById('bottom-left-corner'),
-                            bottomRight: document.getElementById('right-bottom-corner')
-                        },
-                        food: document.getElementById('food')
-                    };
-                    let canvas = new MultiCanvas('gameCanvas', getConfig(), body, img);
+                    
+                    let canvas = new MultiCanvas('gameCanvas', getConfig(), body);
                     emits.on('snakePing', (body) => {
                         turning = false;
                         canvas.drawGame(body);
@@ -144,6 +101,14 @@
                     });
                     emits.on('playerSize', (body) => {
                         document.getElementById('size').innerHTML = body;
+                    });
+                    emits.on('setImage', (body) => {
+                        canvas.setImage(body.id, body.image);
+                    });
+                    emits.on('initImages', (body) => {
+                        Object.keys(body).forEach((el) => {
+                            canvas.setImage(el, body[el]);
+                        });
                     });
                     
                     

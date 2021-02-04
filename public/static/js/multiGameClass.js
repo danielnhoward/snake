@@ -19,22 +19,37 @@ const veloceties = (size) => {
     };
 };
 
+function createImg(src) {
+    let img = document.createElement('img');
+    img.src = src;
+    return img;
+};
+
 class MultiCanvas {
-    constructor(id, settings, gameSize, img) {
+    constructor(id, settings, gameSize) {
         this.id = id;
         this.settings = settings;
         this.gameSize = gameSize;
-        this.img = img;
+        this.images = {};
+        this.img = {
+            background: createImg(settings.background),
+            food: createImg(settings.food)
+        }
         this.veloceties = veloceties(gameSize);
         this.canvas = document.getElementById(id);
         this.ctx = this.canvas.getContext('2d');
         this.clearCanvas();
     };
     clearCanvas() {
-        this.ctx.fillStyle = this.settings.canvasBackgroundColour;
-        this.ctx.strokeStyle = this.settings.canvasBorderColour;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.img.background, 0, 0, 1000, 1000);
+    };
+    setImage(id, image) {
+        this.images[id] = {
+            head: createImg(image.head),
+            straight: createImg(image.body),
+            tail: createImg(image.tail),
+            corner: createImg(image.corner)
+        };
     };
     drawGame(game) {
         this.clearCanvas();
@@ -45,39 +60,62 @@ class MultiCanvas {
         game.players.forEach((player) => {
             player.forEach((part, index) => {
                 if (index == 0) {
+                    this.ctx.save();
                     queue.push([part.name, part.x + this.gameSize / 3, part.y - 15]);
                     if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y) {
-                        this.ctx.drawImage(this.img.heads.top, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].head, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
-                        this.ctx.drawImage(this.img.heads.down, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(180*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y) {
-                        this.ctx.drawImage(this.img.heads.left, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(270*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
-                        this.ctx.drawImage(this.img.heads.right, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(90*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     };
+                    this.ctx.restore();
                 }
                 else if (index == player.length - 1) {
+                    this.ctx.save();
                     let differences = {
                         x: part.x - player[index - 1].x,
                         y: part.y - player[index - 1].y
                     };
                     if (differences.y == this.gameSize) {
-                        this.ctx.drawImage(this.img.tails.bottom, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(180*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.y == -this.gameSize) {
-                        this.ctx.drawImage(this.img.tails.top, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].tail, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (differences.x == this.gameSize) {
-                        this.ctx.drawImage(this.img.tails.right, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(90*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.x == -this.gameSize) {
-                        this.ctx.drawImage(this.img.tails.left, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(270*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     };
+                    this.ctx.restore();
                 }
                 else {
+                    this.ctx.save();
                     let differences = {
                         before: {
                             x: part.x - player[index - 1].x,
@@ -90,24 +128,37 @@ class MultiCanvas {
                     };
                     if (differences.before.x == differences.after.x || differences.before.y == differences.after.y) {
                         if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y || part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
-                            this.ctx.drawImage(this.img.straights.ver, part.x, part.y, this.gameSize, this.gameSize);
+                            this.ctx.drawImage(this.images[part.id].straight, part.x, part.y, this.gameSize, this.gameSize);
                         }
                         else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y || part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
-                            this.ctx.drawImage(this.img.straights.hor, part.x, part.y, this.gameSize, this.gameSize);
+                            this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                            this.ctx.rotate(90*Math.PI/180);
+                            this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                            this.ctx.drawImage(this.images[part.id].straight, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                         };
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == this.gameSize) {
-                        this.ctx.drawImage(this.img.corners.topLeft, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(90*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].corner, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == -this.gameSize) {
-                        this.ctx.drawImage(this.img.corners.topRight, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(180*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].corner, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == this.gameSize) {
-                        this.ctx.drawImage(this.img.corners.bottomLeft, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].corner, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == -this.gameSize) {
-                        this.ctx.drawImage(this.img.corners.bottomRight, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
+                        this.ctx.rotate(270*Math.PI/180);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].corner, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     };
+                    this.ctx.restore();
                 };
             });
         });

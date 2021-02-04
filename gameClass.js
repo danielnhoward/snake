@@ -8,6 +8,7 @@ module.exports = class {
         this.blockSize = blockSize;
         this.gameSpeed = gameSpeed;
         this.startLength = startLength;
+        this.settings = {};
         this.canvas = {
             players: [],
             food: []
@@ -53,7 +54,15 @@ module.exports = class {
         });
         this.playerIds.push(id);
         this.playerCount = this.players.length;
+        this.settings[id] = {
+            head: settings.head,
+            tail: settings.tail,
+            body: settings.straight,
+            corner: settings.corner
+        };
         this.allEmit('playerCount', this.playerCount);
+        emit('initImages', this.settings)
+        this.allEmit('setImage', {id: id, image: {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner}});
     };
     playerDisconnect(id) {
         this.players.forEach((player, index) => {
@@ -165,10 +174,7 @@ class Snake {
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: {x: this.blockSize, y:0}}];
-        // for (let x = 1; x < 10; x++) {
-        //     this.snake.unshift({x:this.snake[this.snake.length - 1].x + this.blockSize * x, y:this.snake[this.snake.length - 1].y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: {x: this.blockSize, y:0}});
-        // };
+        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, name: this.name, vel: {x: this.blockSize, y:0}, id: this.id}];
         this.lengthDebt = this.startLength - 1;
         for (const player of initCanvas.players) {
             for (const part of player) {
@@ -190,7 +196,7 @@ class Snake {
     moveSnake(food) {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
-        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, colour: {border: this.settings.snakeBorderColour, body: this.settings.snakeColour}, name: this.name, vel: this.velocety});
+        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, name: this.name, vel: this.velocety, id: this.id});
         if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
         if (this.lengthDebt == 0) {
             this.snake.pop();
