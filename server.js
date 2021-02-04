@@ -7,8 +7,10 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
             if (req.url.includes('snake')) {
                 if (Number.isInteger(parseInt(req.url.split('/')[3]))) {
                     if (Number.isInteger(parseInt(req.url.split('/')[4]))) {
-                        readFile = false;
-                        res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]))}`);
+                        if (Number.isInteger(parseInt(req.url.split('/')[5]))) {
+                            readFile = false;
+                            res.redirect(`/play/${require('./commands.js').makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]))}`);
+                        };
                     };
                 };
             };

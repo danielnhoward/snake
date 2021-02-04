@@ -3,6 +3,7 @@ function getConfig() {
         "gameSize":"50",
         "gameSpeed":"65",
         "gameTime":"30",
+        "startLength":"3",
         "canvasBorderColour":"#023E8A",
         "canvasBackgroundColour":"#CAF0F8",
         "snakeColour":"#0096C7",

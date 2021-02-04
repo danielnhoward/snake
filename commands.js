@@ -30,7 +30,7 @@ module.exports = {
         snakeJoinWithName(body, emit, id) {
             if (!(body.gameId in games)) return emit('redirect', '/?c');
             if (games[body.gameId].playerIds.includes(id)) return emit('redirect', '/?d');
-            games[body.gameId].addPlayer(id, emit, body.name, body.settings);
+            games[body.gameId].addPlayer(id, emit, body.name.substring(0, 10), body.settings);
         },
         playerDisconnect(body, emit, id) {
             if (!(body in games)) return;
@@ -54,9 +54,9 @@ module.exports = {
             });
         }
     },
-    makeSnakeGame(speed, size) {
+    makeSnakeGame(speed, size, startLength) {
         const gameId = makeId();
-        games[gameId] = new Game('snake', speed, () => {delete games[gameId]}, size);
+        games[gameId] = new Game('snake', speed, () => {delete games[gameId]}, size, startLength);
         return gameId;
     },
     getGamesList() {

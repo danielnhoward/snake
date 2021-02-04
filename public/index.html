@@ -67,8 +67,12 @@
                             <input style="width: 200px; margin: auto;" type="range" class="slider" id="gameSpeedMulti" value="0" min="-50" max="50">
                         </div>
                         <br><div class="slider-hover">
-                            <label for="gameSpeedMulti">Game Size: <x id="clientGameSizeMulti">100</x>%</label><div style="height: 5px;"></div>
+                            <label for="gameSizeMulti">Game Size: <x id="clientGameSizeMulti">100</x>%</label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto;" type="range" class="slider" id="gameSizeMulti" value="0" min="-50" max="50">
+                        </div>
+                        <br><div class="slider-hover">
+                            <label for="startLength">Start Length: <x id="clientStartLengthMulti">0</x></label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto;" type="range" class="slider" id="startLength" value="3" min="3" max="20">
                         </div>
                         <br><br>
                         <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
@@ -292,13 +296,20 @@
                     setConfigItem('gameSize', multiSettings.gameSize);
                 };
 
+                document.getElementById('startLength').oninput = () => {
+                    document.getElementById('clientStartLengthMulti').innerHTML = document.getElementById('startLength').value;
+                    setConfigItem('startLength', document.getElementById('startLength').value)
+                };
+
                 document.getElementById('gameSpeedMulti').oninput();
                 document.getElementById('gameSizeMulti').oninput();
+                    document.getElementById('clientStartLengthMulti').innerHTML = 3;
+                document.getElementById('startLength').value = 3;
                 
 
                 document.getElementById('multiPlay').onsubmit = (ev) => {
                     ev.preventDefault();
-                    location.href = `/start/snake/${getConfig().gameSpeed}/${getConfig().gameSize}`;
+                    location.href = `/start/snake/${getConfig().gameSpeed}/${getConfig().gameSize}/${getConfig().startLength}`;
                 };
 
 
