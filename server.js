@@ -17,7 +17,10 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
         }
         else if (req.url.startsWith('/play')) {
             let gameId = req.url.split('/')[2];
-            if (gameId in require('./commands.js').getGamesList()) {
+            if (gameId == 6969) {
+                res.redirect('https://youtu.be/dQw4w9WgXcQ');
+            }
+            else if (gameId in require('./commands.js').getGamesList()) {
                 if (require('./commands.js').getGamesList()[gameId] instanceof require('./gameClass.js')) {
                     readFile = false;
                     res.sendFile(`${__dirname}/public/games/${require('./commands.js').getGamesList()[gameId].type}.html`);

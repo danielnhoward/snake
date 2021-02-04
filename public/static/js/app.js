@@ -476,6 +476,7 @@ function resetSettings() {
     });
 };
 
+
 function resetCanvas() {
     const settings = getConfig();
     const canvas = document.getElementById('snakePreview');
