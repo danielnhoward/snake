@@ -203,6 +203,8 @@ function reset() {
 
 
     /* Build a snake */
+    resetCanvas();
+    
     ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
         document.querySelectorAll(`#${field}`).forEach((el) => {
             el.src = settings[field];
@@ -394,7 +396,6 @@ function resetCanvas() {
         canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
     }, 80);
 };
-resetCanvas();
 
 
 onresize = () => {
