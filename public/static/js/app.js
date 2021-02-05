@@ -204,6 +204,10 @@ function reset() {
 
     /* Build a snake */
     resetCanvas();
+
+    document.getElementById('presetHead').src = settings.head;
+    document.getElementById('presetStraight').src = settings.straight;
+    document.getElementById('presetTail').src = settings.tail;
     
     ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
         document.querySelectorAll(`#${field}`).forEach((el) => {
@@ -270,7 +274,11 @@ function reset() {
                                     el.src = `/static/img/gameAssets/deafult/${field}.png`;
                                 });
                                 setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
-                                resetCanvas(); 
+                                resetCanvas();
+                                settings = getConfig();
+                                document.getElementById('presetHead').src = settings.head;
+                                document.getElementById('presetStraight').src = settings.straight;
+                                document.getElementById('presetTail').src = settings.tail;
                             break;
                             case 3:
                                 document.querySelectorAll(`#${field}`).forEach((el) => {
@@ -278,6 +286,10 @@ function reset() {
                                 });
                                 setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
                                 resetCanvas(); 
+                                settings = getConfig();
+                                document.getElementById('presetHead').src = settings.head;
+                                document.getElementById('presetStraight').src = settings.straight;
+                                document.getElementById('presetTail').src = settings.tail;
                             break;
                         }
                     };
@@ -312,11 +324,17 @@ function reset() {
                     });
 
                     setConfigItem(field, imgSrc);
-                    resetCanvas(); 
+                    document.getElementById('presetHead').src = settings.head;
+                    document.getElementById('presetStraight').src = settings.straight;
+                    document.getElementById('presetTail').src = settings.tail;
+                    resetCanvas();
+
                 };
             };
         };
     });
+    document.getElementById('presets').onclick
+
 };
 
 /*function showPopup (param) {
@@ -410,7 +428,7 @@ function resetCanvas() {
         else snake.pop();
 
         canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
-    }, 100);
+    }, 200);
 };
 
 
