@@ -206,6 +206,14 @@ input[type="color"] {
     display: none;
 }
 
+
+.swal2-content {
+    color: black;
+    text-align: center;
+}
+.centerAlt {
+    text-align: center;
+}
 .baseColor {
     display: inline-block;
     width: 35px;

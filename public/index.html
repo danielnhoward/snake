@@ -6,15 +6,17 @@
         <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="/static/css/style.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+        <link rel="stylesheet" href="/static/lib/image-selector/image-picker.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="/static/lib/image-selector/image-picker.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="/static/js/utils.js"></script>
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/multiGameClass.js"></script>
+        <link rel="stylesheet" href="/static/css/style.css">
         <title>Snakeee</title>
     </head>
     <body class="back">
@@ -88,8 +90,8 @@
                             <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="head" src="" title="Head">
                             <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="tail" src="" title="Tail">
                             <br><br><br>
-                            <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="body" src="" title="Body">
-                            <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="body" src="" title="Body">
+                            <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="straight" src="" title="Body">
+                            <img width="60" height="60" style="transform: rotate(0deg); width: 60px; float: left;" id="straight" src="" title="Body">
                             <br><br><br>
                             <img width="60" height="60" style="transform: rotate(180deg); width: 60px; float: left;" id="corner" src="" title="Corner">
                             <img width="60" height="60" style="transform: rotate(90deg); width: 60px; float: left;" id="corner" src="" title="Corner">
@@ -98,8 +100,10 @@
                         </div>
                     </div>
 
+                    <div style="color: black;" id="pop-up"></div>
+
                     <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="headInput">
-                    <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="bodyInput">
+                    <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="straightInput">
                     <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="tailInput">
                     <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="cornerInput">
                     <input width="60" height="60" accept="image/png, image/jpeg" style="display: none;" type="file" id="foodInput">

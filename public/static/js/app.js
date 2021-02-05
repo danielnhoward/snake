@@ -203,231 +203,102 @@ function reset() {
 
 
     /* Build a snake */
-    document.querySelectorAll('#head').forEach((el) => {
-        el.src = settings.head;
-    });
-    document.querySelectorAll('#head').forEach((el) => {
-        el.style.cursor = 'pointer';
-    });
-    document.querySelectorAll('#head').forEach((el) => {
-        el.onclick = () => {
-            document.getElementById('headInput').click();
-        };
-    });
-
-    document.getElementById('headInput').oninput = () => {
-        document.querySelectorAll('#head').forEach((el) => {
-            el.src = '/static/img/loading.gif';
-        });
-        let file = document.getElementById('headInput').files[0];
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.name = file.name;
-        reader.size = file.size;
-        reader.onload = (ev) => {
-            let img = new Image();
-            img.src = ev.target.result;
-            img.size = ev.target.size;
-            img.onload = (ev) => {
-                let canvas = document.createElement('canvas');
-                canvas.width = 60;
-                canvas.height = 60;
-
-                let ctx = canvas.getContext('2d');
-                ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                document.querySelectorAll('#head').forEach((el) => {
-                    el.src = imgSrc;
+    ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+        document.querySelectorAll(`#${field}`).forEach((el) => {
+            el.src = settings[field];
+            el.style.cursor = 'pointer';
+            el.onclick = () => {
+                let settings = getConfig();
+                // document.getElementById(`${field}Input`).click();
+                Swal.fire({
+                    title: `<strong>Pick a ${field}</strong>`,
+                    width: 'auto',
+                    html: [
+                        '<select class="image-picker" style="color: black;">',
+                        `<option data-img-src="${settings[field]}" data-img-class="centerAlt" value="1">Current</option>`,
+                        `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="centerAlt" data-img-alt="Deafult" value="2">Deafult</option>`,
+                        `<option data-img-src="/static/img/gameAssets/Greyscale/${field}.png" data-img-class="centerAlt" data-img-alt="Greyscale" value="3">Greyscale</option>`,
+                        `<option data-img-src="/static/img/upload-icon.svg" data-img-class="upload" data-img-alt="Upload from files" value="4">Upload from files</option>`,
+                        '</select>'
+                    ],
+                    didOpen: (el) => {
+                        $("select").imagepicker({
+                            hide_select : true,
+                            show_label  : true,
+                            changed: (from, to) => {
+                                window.selected = to[0];
+                            },
+                            initialized: console.log
+                        });
+                        el.getElementsByClassName('upload')[2].width = 60;
+                        el.getElementsByClassName('upload')[2].height = 'auto';
+                    },
+                    target: '#pop-up',
+                    showCancelButton: true
+                })
+                .then((result) => {
+                    if (result.isConfirmed && selected) {
+                        let option = selected;
+                        delete selected;
+                        switch (option) {
+                            case '1':
+                                return
+                            break;
+                            case '2':
+                                document.querySelectorAll(`#${field}`).forEach((el) => {
+                                    el.src = `/static/img/gameAssets/deafult/${field}.png`;
+                                });
+                                setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
+                                resetCanvas(); 
+                            break;
+                            case '3':
+                                document.querySelectorAll(`#${field}`).forEach((el) => {
+                                    el.src = `/static/img/gameAssets/Greyscale/${field}.png`;
+                                });
+                                setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
+                                resetCanvas(); 
+                            break;
+                            case '4':
+                                document.getElementById(`${field}Input`).click();
+                            break;
+                        }
+                    };
                 });
+            };
+        });
+        document.getElementById(`${field}Input`).oninput = () => {
+            document.querySelectorAll(`#${field}`).forEach((el) => {
+                el.src = '/static/img/loading.gif';
+            });
+            let file = document.getElementById(`${field}Input`).files[0];
+            let reader = new FileReader();
 
-                setConfigItem('head', imgSrc);
-                resetCanvas() 
+            reader.readAsDataURL(file);
+            reader.name = file.name;
+            reader.size = file.size;
+            reader.onload = (ev) => {
+                let img = new Image();
+                img.src = ev.target.result;
+                img.size = ev.target.size;
+                img.onload = (ev) => {
+                    let canvas = document.createElement('canvas');
+                    canvas.width = 60;
+                    canvas.height = 60;
+
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
+
+                    let imgSrc = ctx.canvas.toDataURL('image/png', 1);
+                    document.querySelectorAll(`#${field}`).forEach((el) => {
+                        el.src = imgSrc;
+                    });
+
+                    setConfigItem(field, imgSrc);
+                    resetCanvas(); 
+                };
             };
         };
-    };
-
-    document.querySelectorAll('#body').forEach((el) => {
-        el.src = settings.straight;
     });
-    document.querySelectorAll('#body').forEach((el) => {
-        el.style.cursor = 'pointer';
-    });
-    document.querySelectorAll('#body').forEach((el) => {
-        el.onclick = async () => {
-            document.getElementById('bodyInput').click();
-        };
-    });
-
-    document.getElementById('bodyInput').oninput = () => {
-        document.querySelectorAll('#body').forEach((el) => {
-            el.src = '/static/img/loading.gif';
-        });
-        let file = document.getElementById('bodyInput').files[0];
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.name = file.name;
-        reader.size = file.size;
-        reader.onload = (ev) => {
-            let img = new Image();
-            img.src = ev.target.result;
-            img.size = ev.target.size;
-            img.onload = (ev) => {
-                let canvas = document.createElement('canvas');
-                canvas.width = 60;
-                canvas.height = 60;
-
-                let ctx = canvas.getContext('2d');
-                ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                document.querySelectorAll('#body').forEach((el) => {
-                    el.src = imgSrc;
-                });
-
-                setConfigItem('straight', imgSrc);
-                resetCanvas() 
-            };
-        };
-    };
-
-    document.querySelectorAll('#tail').forEach((el) => {
-        el.src = settings.tail;
-    });
-    document.querySelectorAll('#tail').forEach((el) => {
-        el.style.cursor = 'pointer';
-    });
-    document.querySelectorAll('#tail').forEach((el) => {
-        el.onclick = async () => {
-            document.getElementById('tailInput').click();
-        };
-    });
-
-    document.getElementById('tailInput').oninput = () => {
-        document.querySelectorAll('#tail').forEach((el) => {
-            el.src = '/static/img/loading.gif';
-        });
-        let file = document.getElementById('tailInput').files[0];
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.name = file.name;
-        reader.size = file.size;
-        reader.onload = (ev) => {
-            let img = new Image();
-            img.src = ev.target.result;
-            img.size = ev.target.size;
-            img.onload = (ev) => {
-                let canvas = document.createElement('canvas');
-                canvas.width = 60;
-                canvas.height = 60;
-
-                let ctx = canvas.getContext('2d');
-                ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                document.querySelectorAll('#tail').forEach((el) => {
-                    el.src = imgSrc;
-                });
-
-                setConfigItem('tail', imgSrc);
-                resetCanvas() 
-            };
-        };
-    };
-
-    document.querySelectorAll('#corner').forEach((el) => {
-        el.src = settings.corner;
-    });
-    document.querySelectorAll('#corner').forEach((el) => {
-        el.style.cursor = 'pointer';
-    });
-    document.querySelectorAll('#corner').forEach((el) => {
-        el.onclick = async () => {
-            document.getElementById('cornerInput').click();
-        };
-    });
-
-    document.getElementById('cornerInput').oninput = () => {
-        document.querySelectorAll('#corner').forEach((el) => {
-            el.src = '/static/img/loading.gif';
-        });
-        let file = document.getElementById('cornerInput').files[0];
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.name = file.name;
-        reader.size = file.size;
-        reader.onload = (ev) => {
-            let img = new Image();
-            img.src = ev.target.result;
-            img.size = ev.target.size;
-            img.onload = (ev) => {
-                let canvas = document.createElement('canvas');
-                canvas.width = 60;
-                canvas.height = 60;
-
-                let ctx = canvas.getContext('2d');
-                ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                document.querySelectorAll('#corner').forEach((el) => {
-                    el.src = imgSrc;
-                });
-
-                setConfigItem('corner', imgSrc);
-                resetCanvas() 
-            };
-        };
-    };
-
-
-    document.querySelectorAll('#food').forEach((el) => {
-        el.src = settings.food;
-    });
-    document.querySelectorAll('#food').forEach((el) => {
-        el.style.cursor = 'pointer';
-    });
-    document.querySelectorAll('#food').forEach((el) => {
-        el.onclick = async () => {
-            document.getElementById('foodInput').click();
-        };
-    });
-
-    document.getElementById('foodInput').oninput = () => {
-        document.querySelectorAll('#food').forEach((el) => {
-            el.src = '/static/img/loading.gif';
-        });
-        let file = document.getElementById('foodInput').files[0];
-        let reader = new FileReader();
-
-        reader.readAsDataURL(file);
-        reader.name = file.name;
-        reader.size = file.size;
-        reader.onload = (ev) => {
-            let img = new Image();
-            img.src = ev.target.result;
-            img.size = ev.target.size;
-            img.onload = (ev) => {
-                let canvas = document.createElement('canvas');
-                canvas.width = 60;
-                canvas.height = 60;
-
-                let ctx = canvas.getContext('2d');
-                ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                document.querySelectorAll('#food').forEach((el) => {
-                    el.src = imgSrc;
-                });
-
-                setConfigItem('food', imgSrc);
-                resetCanvas() 
-            };
-        };
-    };
 };
 
 /*function showPopup (param) {
@@ -521,7 +392,7 @@ function resetCanvas() {
         else snake.pop();
 
         canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
-    }, 50);
+    }, 80);
 };
 resetCanvas();
 
