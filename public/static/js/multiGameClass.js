@@ -34,14 +34,14 @@ class MultiCanvas {
         this.img = {
             background: createImg(settings.background),
             food: createImg(settings.food)
-        }
+        };
         this.veloceties = veloceties(gameSize);
         this.canvas = document.getElementById(id);
         this.ctx = this.canvas.getContext('2d');
         this.clearCanvas();
     };
     clearCanvas() {
-        this.ctx.drawImage(this.img.background, 0, 0, 1000, 1000);
+        this.ctx.drawImage(this.img.background, 0, 0, this.canvas.width, this.canvas.height);
     };
     setImage(id, image) {
         this.images[id] = {

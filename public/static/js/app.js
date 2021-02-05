@@ -216,6 +216,9 @@ function reset() {
     });
 
     document.getElementById('headInput').oninput = () => {
+        document.querySelectorAll('#head').forEach((el) => {
+            el.src = '/static/img/loading.gif';
+        });
         let file = document.getElementById('headInput').files[0];
         let reader = new FileReader();
 
@@ -258,6 +261,9 @@ function reset() {
     });
 
     document.getElementById('bodyInput').oninput = () => {
+        document.querySelectorAll('#body').forEach((el) => {
+            el.src = '/static/img/loading.gif';
+        });
         let file = document.getElementById('bodyInput').files[0];
         let reader = new FileReader();
 
@@ -300,6 +306,9 @@ function reset() {
     });
 
     document.getElementById('tailInput').oninput = () => {
+        document.querySelectorAll('#tail').forEach((el) => {
+            el.src = '/static/img/loading.gif';
+        });
         let file = document.getElementById('tailInput').files[0];
         let reader = new FileReader();
 
@@ -307,7 +316,6 @@ function reset() {
         reader.name = file.name;
         reader.size = file.size;
         reader.onload = (ev) => {
-            console.log(0)
             let img = new Image();
             img.src = ev.target.result;
             img.size = ev.target.size;
@@ -343,6 +351,9 @@ function reset() {
     });
 
     document.getElementById('cornerInput').oninput = () => {
+        document.querySelectorAll('#corner').forEach((el) => {
+            el.src = '/static/img/loading.gif';
+        });
         let file = document.getElementById('cornerInput').files[0];
         let reader = new FileReader();
 
@@ -350,7 +361,6 @@ function reset() {
         reader.name = file.name;
         reader.size = file.size;
         reader.onload = (ev) => {
-            console.log(0)
             let img = new Image();
             img.src = ev.target.result;
             img.size = ev.target.size;
@@ -387,6 +397,9 @@ function reset() {
     });
 
     document.getElementById('foodInput').oninput = () => {
+        document.querySelectorAll('#food').forEach((el) => {
+            el.src = '/static/img/loading.gif';
+        });
         let file = document.getElementById('foodInput').files[0];
         let reader = new FileReader();
 
@@ -394,7 +407,6 @@ function reset() {
         reader.name = file.name;
         reader.size = file.size;
         reader.onload = (ev) => {
-            console.log(0)
             let img = new Image();
             img.src = ev.target.result;
             img.size = ev.target.size;
@@ -478,13 +490,37 @@ function resetSettings() {
 
 
 function resetCanvas() {
-    const settings = getConfig();
-    const canvas = document.getElementById('snakePreview');
-    const ctx = canvas.getContext('2d');
-    let img = document.createElement('img');
-    img.src = settings.background;
-    console.log(img)
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    console.log(canvas)
+    if (window.interval) clearInterval(interval);
+    const snakePath = [
+        {coords: {x: 30, y: 30}, vel: {x: 30, y: 0}},
+        {coords: {x: 240, y: 30}, vel: {x: 0, y: 30}},
+        {coords: {x: 240, y: 240}, vel: {x: -30, y: 0}},
+        {coords: {x: 30, y: 240}, vel: {x: 0, y: -30}}
+    ];
+    let vel = {x: 30, y: 0};
+    let snake = [{x:30, y:30, name: 'Toffee1347', vel: vel, id: 0}];
+    let current = -1;
+    let lengthDebt = 5;
+    window.canvas = new MultiCanvas('snakePreview', getConfig(), 30);
+    let settings = getConfig();
+    canvas.setImage(0, {
+        head: settings.head,
+        body: settings.straight,
+        tail: settings.tail,
+        corner: settings.corner
+    });
+    window.interval = setInterval(() => {
+        if (current >= 3) current = -1;
+        if (snakePath[current + 1].coords.x == snake[0].x && snakePath[current + 1].coords.y == snake[0].y) {
+            vel = snakePath[current + 1].vel;
+            current++;
+        };
+
+        snake.unshift({x:snake[0].x + vel.x, y:snake[0].y + vel.y, name: 'Toffee1347', vel: vel, id: 0});
+        if (lengthDebt) lengthDebt--;
+        else snake.pop();
+
+        canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
+    }, 100);
 };
 resetCanvas();
