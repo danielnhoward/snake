@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: snakeee.xyz
+Token: a4fea693088bf3b1d5cebf45d79a4a219ac6aa5f5d969d4e4ba65c4b02eb47f6

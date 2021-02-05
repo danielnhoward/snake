@@ -521,7 +521,7 @@ function resetCanvas() {
         else snake.pop();
 
         canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
-    }, 100);
+    }, 50);
 };
 resetCanvas();
 
