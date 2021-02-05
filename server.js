@@ -2,7 +2,7 @@ module.exports = (express, http_, socket_io, fs, commands, cors) => {
     var app = express(), http = http_.createServer(app), io = socket_io(http);
     app.use(cors());
     app.use((req, res, next) => {
-        req.get('X-Forwarded-Proto') !== 'https' && req.get('Host') !== 'localhost' ? res.redirect('https://' + req.get('Host') + req.url) : next();
+        req.get('X-Forwarded-Proto') !== 'https' && req.get('Host') == 'snakeee.xyz' ? res.redirect('https://' + req.get('Host') + req.url) : next();
     });
     app.get('/*', (req, res) => {
         let readFile = true, url = req.url.split('?')[0], file;
