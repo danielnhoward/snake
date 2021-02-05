@@ -211,29 +211,48 @@ function reset() {
             el.style.cursor = 'pointer';
             el.onclick = () => {
                 let settings = getConfig();
-                // document.getElementById(`${field}Input`).click();
                 Swal.fire({
                     title: `<strong>Pick a ${field}</strong>`,
                     width: 'auto',
                     html: [
                         '<select class="image-picker" style="color: black;">',
-                        `<option data-img-src="${settings[field]}" data-img-class="centerAlt" value="1">Current</option>`,
-                        `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="centerAlt" data-img-alt="Deafult" value="2">Deafult</option>`,
-                        `<option data-img-src="/static/img/gameAssets/Greyscale/${field}.png" data-img-class="centerAlt" data-img-alt="Greyscale" value="3">Greyscale</option>`,
-                        `<option data-img-src="/static/img/upload-icon.svg" data-img-class="upload" data-img-alt="Upload from files" value="4">Upload from files</option>`,
+                        '<option value=""></option>',
+                        `<option data-img-src="${settings[field]}" data-img-class="opt1" value="current">Current</option>`,
+                        `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="opt2" data-img-alt="Deafult" value="deafult">Deafult</option>`,
+                        `<option data-img-src="/static/img/gameAssets/Big-Red/${field}.png" data-img-class="opt3" data-img-alt="Big Red" value="bigRed">Big Red</option>`,
+                        '</select>',
+                        `<select class="image-picker" style="color: black;">`,
+                        '<option value=""></option>',
+                        `<option data-img-src="/static/img/upload-icon.svg" data-img-class="opt4" data-img-alt="Upload from files" value="upload">Upload from files</option>`,
                         '</select>'
                     ],
-                    didOpen: (el) => {
+                    didOpen: (doc) => {
                         $("select").imagepicker({
                             hide_select : true,
                             show_label  : true,
                             changed: (from, to) => {
-                                window.selected = to[0];
-                            },
-                            initialized: console.log
+                                switch (to[0]) {
+                                    case 'current':
+                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
+                                        window.selected  = 0;
+                                    break;
+                                    case 'upload':
+                                        doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
+                                        doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
+                                        doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
+                                        window.selected  = 1;
+                                    break;
+                                    case 'deafult':
+                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
+                                        window.selected  = 2;
+                                    break;
+                                    case 'bigRed':
+                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
+                                        window.selected  = 3;
+                                    break;
+                                };
+                            }
                         });
-                        el.getElementsByClassName('upload')[2].width = 60;
-                        el.getElementsByClassName('upload')[2].height = 'auto';
                     },
                     target: '#pop-up',
                     showCancelButton: true
@@ -243,25 +262,22 @@ function reset() {
                         let option = selected;
                         delete selected;
                         switch (option) {
-                            case '1':
-                                return
+                            case 1:
+                                document.getElementById(`${field}Input`).click();
                             break;
-                            case '2':
+                            case 2:
                                 document.querySelectorAll(`#${field}`).forEach((el) => {
                                     el.src = `/static/img/gameAssets/deafult/${field}.png`;
                                 });
                                 setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
                                 resetCanvas(); 
                             break;
-                            case '3':
+                            case 3:
                                 document.querySelectorAll(`#${field}`).forEach((el) => {
-                                    el.src = `/static/img/gameAssets/Greyscale/${field}.png`;
+                                    el.src = `/static/img/gameAssets/Big-Red/${field}.png`;
                                 });
-                                setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
+                                setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
                                 resetCanvas(); 
-                            break;
-                            case '4':
-                                document.getElementById(`${field}Input`).click();
                             break;
                         }
                     };
@@ -394,7 +410,7 @@ function resetCanvas() {
         else snake.pop();
 
         canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
-    }, 80);
+    }, 100);
 };
 
 

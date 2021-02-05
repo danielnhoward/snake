@@ -49,6 +49,14 @@ button.full-screen {
     text-align: left;
     float: left;
 }
+
+.opt4 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
 .game {
     padding: 20px;
     padding-top: 0px;
