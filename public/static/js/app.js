@@ -494,36 +494,10 @@ onresize = () => {
 };
 onresize();
 
-document.getElementById('export').onclick = () => {
-    let settings = getConfig();
-    const userConfig = {
-        v: 0,
-        skin: {
-            head: settings.head,
-            straight: settings.straight,
-            tail: settings.tail,
-            corner: settings.corner,
-            food: settings.food,
-            background:  settings.background
-        }
-    };
-    let blob = new Blob([JSON.stringify(userConfig)], {type: 'text/snakeee'});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement('a');
-    a.href = url;
-    a.download = `${Date.now()}.snakeee`;
-    a.click();
-};
-
-document.getElementById('import').onclick = () => {
-    document.getElementById('importUpload').click();
-};
-
 document.getElementById('importUpload').oninput = () => {
     try {
-        document.getElementById('importImg').src = '/static/img/loading.gif';
-        document.getElementById('import').style.cursor = 'deafult';
-        document.getElementById('import').onclick = null;
+        document.getElementById('shareImg').src = '/static/img/loading.gif';
+        document.getElementById('export').style.cursor = 'deafult';
 
         let file = document.getElementById(`importUpload`).files[0];
         let reader = new FileReader();
@@ -554,9 +528,77 @@ document.getElementById('importUpload').oninput = () => {
             html: `Error: ${err.name}<br>Message: ${err.message}`
         });
     };
-    document.getElementById('importImg').src = '/static/img/upload-icon.svg';
-    document.getElementById('import').style.cursor = 'pointer';
-    document.getElementById('import').onclick = () => {
-        document.getElementById('importUpload').click();
-    };
+    document.getElementById('shareImg').src = '/static/img/export-icon.svg';
+    document.getElementById('export').style.cursor = 'pointer';
+};
+
+
+document.getElementById('export').onclick = (ev) => {
+    if (!ev.isTrusted) return;
+    Swal.fire({
+        title: `<strong>Pick an Option</strong>`,
+        width: 'auto',
+        html: [
+            '<select class="image-picker" style="color: black;">',
+            `<option data-img-src="/static/img/upload-icon.svg" data-img-class="opt1" data-img-alt="Import" value="import">Import a save</option>`,
+            `<option data-img-src="/static/img/export-icon.svg" data-img-class="opt2" data-img-alt="Download" value="download">Export this save</option>`,
+            '</select>'
+        ],
+        didOpen: (doc) => {
+            $("select").imagepicker({
+                hide_select : true,
+                show_label  : true,
+                changed: (from, to) => {
+                    switch (to[0]) {
+                        case 'import':
+                            doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
+                            window.selected  = 1;
+                        break;
+                        case 'download':
+                            doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
+                            window.selected  = 2;
+                        break;
+                    };
+                }
+            });
+            window.selected  = 1;
+            doc.getElementsByClassName('opt1')[0].style.width = '100px';
+            doc.getElementsByClassName('opt2')[0].style.width = '100px';
+            doc.getElementsByClassName('opt1')[0].style.height = 'auto';
+            doc.getElementsByClassName('opt2')[0].style.height = 'auto';
+        },
+        target: '#pop-up',
+        showCancelButton: true
+    })
+    .then((result) => {
+        if (result.isConfirmed && window.selected) {
+            let option = selected;
+            delete selected;
+            switch (option) {
+                case 1:
+                    document.getElementById('importUpload').click();
+                break;
+                case 2:
+                    let settings = getConfig();
+                    const userConfig = {
+                        v: 0,
+                        skin: {
+                            head: settings.head,
+                            straight: settings.straight,
+                            tail: settings.tail,
+                            corner: settings.corner,
+                            food: settings.food,
+                            background:  settings.background
+                        }
+                    };
+                    let blob = new Blob([JSON.stringify(userConfig)], {type: 'text/snakeee'});
+                    let url = URL.createObjectURL(blob);
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${Date.now()}.snakeee`;
+                    a.click();
+                break;
+            }
+        };
+    });
 };
