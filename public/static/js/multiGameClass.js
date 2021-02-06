@@ -31,9 +31,15 @@ class MultiCanvas {
         this.settings = settings;
         this.gameSize = gameSize;
         this.images = {};
-        this.img = {
-            background: createImg(settings.background),
-            food: createImg(settings.food)
+        try {
+            this.img = {
+                background: createImg(settings.background),
+                food: createImg(settings.food)
+            };
+        }
+        catch(err) {
+            resetConfig();
+            location.reload();
         };
         this.veloceties = veloceties(gameSize);
         this.canvas = document.getElementById(id);
@@ -44,11 +50,23 @@ class MultiCanvas {
         this.ctx.drawImage(this.img.background, 0, 0, this.canvas.width, this.canvas.height);
     };
     setImage(id, image) {
-        this.images[id] = {
-            head: createImg(image.head),
-            straight: createImg(image.body),
-            tail: createImg(image.tail),
-            corner: createImg(image.corner)
+        try {
+            let dragon = (image.head == '/static/img/gameAssets/Big-Red/head.png' && image.tail == '/static/img/gameAssets/Big-Red/tail.png' && image.body == '/static/img/gameAssets/Big-Red/straight.png' && image.corner == '/static/img/gameAssets/Big-Red/corner.png')
+            this.images[id] = {
+                head: createImg(image.head),
+                straight: createImg(image.body),
+                tail: createImg(image.tail),
+                corner: createImg(image.corner)
+            };
+            if (dragon) {
+                this.images[id].dragon = dragon;
+                this.images[id].cornerWings = createImg('/static/img/gameAssets/Big-Red/corner-wing.png');
+                this.images[id].straightWings = createImg('/static/img/gameAssets/Big-Red/straight-wing.png');
+            };
+        }
+        catch(err) {
+            resetConfig();
+            location.reload();
         };
     };
     drawGame(game) {
@@ -128,35 +146,35 @@ class MultiCanvas {
                     };
                     if (differences.before.x == differences.after.x || differences.before.y == differences.after.y) {
                         if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y || part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
-                            this.ctx.drawImage(this.images[part.id].straight, part.x, part.y, this.gameSize, this.gameSize);
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x, part.y, this.gameSize, this.gameSize);
                         }
                         else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y || part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
                             this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                             this.ctx.rotate(90*Math.PI/180);
                             this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
-                            this.ctx.drawImage(this.images[part.id].straight, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                         };
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == this.gameSize) {
                         this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(90*Math.PI/180);
                         this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].corner, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == -this.gameSize) {
                         this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(180*Math.PI/180);
                         this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].corner, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == this.gameSize) {
-                        this.ctx.drawImage(this.images[part.id].corner, part.x, part.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == -this.gameSize) {
                         this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(270*Math.PI/180);
                         this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].corner, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     };
                     this.ctx.restore();
                 };
