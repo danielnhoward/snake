@@ -493,3 +493,70 @@ onresize = () => {
     };
 };
 onresize();
+
+document.getElementById('export').onclick = () => {
+    let settings = getConfig();
+    const userConfig = {
+        v: 0,
+        skin: {
+            head: settings.head,
+            straight: settings.straight,
+            tail: settings.tail,
+            corner: settings.corner,
+            food: settings.food,
+            background:  settings.background
+        }
+    };
+    let blob = new Blob([JSON.stringify(userConfig)], {type: 'text/snakeee'});
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = `${Date.now()}.snakeee`;
+    a.click();
+};
+
+document.getElementById('import').onclick = () => {
+    document.getElementById('importUpload').click();
+};
+
+document.getElementById('importUpload').oninput = () => {
+    try {
+        document.getElementById('importImg').src = '/static/img/loading.gif';
+        document.getElementById('import').style.cursor = 'deafult';
+        document.getElementById('import').onclick = null;
+
+        let file = document.getElementById(`importUpload`).files[0];
+        let reader = new FileReader();
+
+        reader.readAsDataURL(file);
+        reader.name = file.name;
+        reader.size = file.size;
+        reader.onload = (ev) => {
+            let config = JSON.parse(atob(ev.target.result.split('base64,')[1]));
+            switch(config.v) {
+                case 0:
+                    ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                        setConfigItem(field, config.skin[field]);
+                    });
+                    setConfigItem('background', config.background);
+                    reset();
+                break;
+                default:
+                    throw new Error('Improper Version');
+                break;
+            }
+        };
+    }
+    catch (err) {
+        Swal.fire({
+            title: 'Looks like we encounted an error!',
+            icon: 'error',
+            html: `Error: ${err.name}<br>Message: ${err.message}`
+        });
+    };
+    document.getElementById('importImg').src = '/static/img/upload-icon.svg';
+    document.getElementById('import').style.cursor = 'pointer';
+    document.getElementById('import').onclick = () => {
+        document.getElementById('importUpload').click();
+    };
+};

@@ -85,10 +85,18 @@
                     
                     <div class="title">Snake builder</div>
         
-                    <div id="presets" style="cursor: pointer;">
+                    <div id="presets" style="cursor: pointer; float: left;">
                         <img width="30" height="30" style="transform: rotate(270deg); float: left;" src="" id="presethead" title="Presets">
                         <img width="30" height="30" style="transform: rotate(270deg); float: left;" src="" id="presetstraight" title="Presets">
                         <img width="30" height="30" style="transform: rotate(90deg); float: left;" src="" id="presettail" title="Presets">
+                    </div>
+
+                    <div id="export" style="cursor: pointer; float: right; margin-right: 30px;">
+                        <img src="/static/img/export-icon.svg" width="30" height="30" title="Export Snake">
+                    </div>
+                    <div id="import" style="cursor: pointer; float: right; margin-right: 10px;">
+                        <img src="/static/img/upload-icon.svg" id="importImg" width="30" height="30" title="Import Snake">
+                        <input type="file" accept=".snakeee" id="importUpload" style="display: none;">
                     </div>
                     
                     <br><br><br>
