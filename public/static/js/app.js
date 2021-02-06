@@ -204,10 +204,6 @@ function reset() {
 
     /* Build a snake */
     resetCanvas();
-
-    document.getElementById('presetHead').src = settings.head;
-    document.getElementById('presetStraight').src = settings.straight;
-    document.getElementById('presetTail').src = settings.tail;
     
     ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
         document.querySelectorAll(`#${field}`).forEach((el) => {
@@ -221,7 +217,7 @@ function reset() {
                     html: [
                         '<select class="image-picker" style="color: black;">',
                         '<option value=""></option>',
-                        `<option data-img-src="${settings[field]}" data-img-class="opt1" value="current">Current</option>`,
+                        `<option data-img-src="${settings[field]}" data-img-class="opt1" data-img-alt="Current" value="current">Current</option>`,
                         `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="opt2" data-img-alt="Deafult" value="deafult">Deafult</option>`,
                         `<option data-img-src="/static/img/gameAssets/Big-Red/${field}.png" data-img-class="opt3" data-img-alt="Big Red" value="bigRed">Big Red</option>`,
                         '</select>',
@@ -262,7 +258,7 @@ function reset() {
                     showCancelButton: true
                 })
                 .then((result) => {
-                    if (result.isConfirmed && selected) {
+                    if (result.isConfirmed && window.selected) {
                         let option = selected;
                         delete selected;
                         switch (option) {
@@ -276,9 +272,6 @@ function reset() {
                                 setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
                                 resetCanvas();
                                 settings = getConfig();
-                                document.getElementById('presetHead').src = settings.head;
-                                document.getElementById('presetStraight').src = settings.straight;
-                                document.getElementById('presetTail').src = settings.tail;
                             break;
                             case 3:
                                 document.querySelectorAll(`#${field}`).forEach((el) => {
@@ -287,9 +280,6 @@ function reset() {
                                 setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
                                 resetCanvas(); 
                                 settings = getConfig();
-                                document.getElementById('presetHead').src = settings.head;
-                                document.getElementById('presetStraight').src = settings.straight;
-                                document.getElementById('presetTail').src = settings.tail;
                             break;
                         }
                     };
@@ -324,17 +314,73 @@ function reset() {
                     });
 
                     setConfigItem(field, imgSrc);
-                    document.getElementById('presetHead').src = settings.head;
-                    document.getElementById('presetStraight').src = settings.straight;
-                    document.getElementById('presetTail').src = settings.tail;
                     resetCanvas();
 
                 };
             };
         };
     });
-    document.getElementById('presets').onclick
-
+    document.getElementById('presets').onclick = () => {
+        let settings = getConfig();
+        Swal.fire({
+            title: `<strong>Pick a Preset</strong>`,
+            width: 'auto',
+            html: [
+                '<select class="image-picker" style="color: black;">',
+                '<option value=""></option>',
+                `<option data-img-src="/static/img/gameAssets/presets/deafult.png" data-img-class="opt1" data-img-alt="Deafult" value="deafult">Deafult</option>`,
+                '</select>',
+                `<select class="image-picker" style="color: black;">`,
+                '<option value=""></option>',
+                `<option data-img-src="/static/img/gameAssets/presets/Big-Red.png" data-img-class="opt2" data-img-alt="bigRed" value="bigRed">Big-Red</option>`,
+                '</select>'
+            ],
+            didOpen: (doc) => {
+                $("select").imagepicker({
+                    hide_select : true,
+                    show_label  : true,
+                    changed: (from, to) => {
+                        switch (to[0]) {
+                            case 'deafult':
+                                doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
+                                window.selected  = 1;
+                            break;
+                            case 'bigRed':
+                                doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
+                                window.selected  = 2;
+                            break;
+                        };
+                    }
+                });
+            },
+            target: '#pop-up',
+            showCancelButton: true
+        })
+        .then((result) => {
+            if (result.isConfirmed && window.selected) {
+                let option = selected;
+                delete selected;
+                switch (option) {
+                    case 1:
+                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                            setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
+                        });
+                        resetCanvas();
+                        reset();
+                        settings = getConfig();
+                    break;
+                    case 2:
+                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                            setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
+                        });
+                        resetCanvas();
+                        reset();
+                        settings = getConfig();
+                    break;
+                }
+            };
+        });
+    };
 };
 
 /*function showPopup (param) {
@@ -391,12 +437,17 @@ function resetSettings() {
         showConfirmButton: false,
         timer: 1000,
         backdrop: false,
-        timerProgressBar: true
+        timerProgressBar: true,
+        allowOutsideClick: false
     });
 };
 
 
 function resetCanvas() {
+    let settings = getConfig();
+    document.getElementById('presethead').src = settings.head;
+    document.getElementById('presetstraight').src = settings.straight;
+    document.getElementById('presettail').src = settings.tail;
     if (window.interval) clearInterval(interval);
     const snakePath = [
         {coords: {x: 30, y: 30}, vel: {x: 30, y: 0}},
@@ -409,7 +460,6 @@ function resetCanvas() {
     let current = -1;
     let lengthDebt = 5;
     window.canvas = new MultiCanvas('snakePreview', getConfig(), 30);
-    let settings = getConfig();
     canvas.setImage(0, {
         head: settings.head,
         body: settings.straight,
@@ -438,8 +488,8 @@ onresize = () => {
         document.getElementById('snakePreview').style.height = '70vw';
     }
     else {
-        document.getElementById('snakePreview').style.width = '100%';
-        document.getElementById('snakePreview').style.height = '100%';
+        document.getElementById('snakePreview').style.width = '90%';
+        document.getElementById('snakePreview').style.height = '90%';
     };
 };
 onresize();
