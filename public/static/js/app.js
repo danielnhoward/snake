@@ -126,21 +126,9 @@ function reset() {
     /* Multi player */
     function setSettings(gameSpeed, gameSize) {
         let percentage = 1;
-        let value = parseInt(gameSize);
+        let value = parseInt(gameSpeed);
+        value *= -1;
         percentage = (value / 100) + 1;
-        gameSize = 40 * percentage;
-
-
-        percentage = 1;
-        value = parseInt(gameSpeed);
-        if (Math.sign(value) == 1) {
-            value = value - (2 * value);
-            percentage = (value / 100) + 1;
-        }
-        else if (Math.sign(value) == -1) {
-            value = value + Math.abs(2 * value);
-            percentage = (value / 100) + 1;
-        };
         gameSpeed = (1000 / ((1000 / gameSize) / 2)) * percentage;
         return {
             gameSpeed: gameSpeed,
@@ -148,19 +136,21 @@ function reset() {
         };
     };
 
+    const gameSizes = [[200, 'Super Small (may be imposible to play on)'], [100, 'Small'], [50, 'Medium'], [40, 'Normal'], [20, 'Big'], [10, 'Bigger'], [1, 'Super Big (may cause major lag)']]
+
     document.getElementById('gameSpeedMulti').oninput = () => {
         document.getElementById('clientGameSpeedMulti').innerHTML = parseInt(document.getElementById('gameSpeedMulti').value) + 100;
 
-        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, document.getElementById('gameSizeMulti').value);
+        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
         setConfigItem('gameSpeed', multiSettings.gameSpeed);
         setConfigItem('gameSize', multiSettings.gameSize);
     };
 
 
     document.getElementById('gameSizeMulti').oninput = () => {
-        document.getElementById('clientGameSizeMulti').innerHTML = parseInt(document.getElementById('gameSizeMulti').value) + 100;
+        document.getElementById('clientGameSizeMulti').innerHTML = gameSizes[document.getElementById('gameSizeMulti').value][1];
 
-        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, document.getElementById('gameSizeMulti').value);
+        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
         setConfigItem('gameSpeed', multiSettings.gameSpeed);
         setConfigItem('gameSize', multiSettings.gameSize);
     };
