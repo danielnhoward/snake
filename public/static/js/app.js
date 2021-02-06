@@ -220,6 +220,7 @@ function reset() {
                         `<option data-img-src="${settings[field]}" data-img-class="opt1" data-img-alt="Current" value="current">Current</option>`,
                         `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="opt2" data-img-alt="Deafult" value="deafult">Deafult</option>`,
                         `<option data-img-src="/static/img/gameAssets/Big-Red/${field}.png" data-img-class="opt3" data-img-alt="Big Red" value="bigRed">Big Red</option>`,
+                        `<option data-img-src="/static/img/gameAssets/Greyscale/${field}.png" data-img-class="opt5" data-img-alt="Greyscale" value="greyscale">Greyscale</option>`,
                         '</select>',
                         `<select class="image-picker" style="color: black;">`,
                         '<option value=""></option>',
@@ -240,6 +241,7 @@ function reset() {
                                         doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
                                         doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
                                         doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
+                                        doc.getElementsByClassName('opt5')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
                                         window.selected  = 1;
                                     break;
                                     case 'deafult':
@@ -249,6 +251,9 @@ function reset() {
                                     case 'bigRed':
                                         doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
                                         window.selected  = 3;
+                                    break;
+                                    case 'greyscale':
+                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
                                     break;
                                 };
                             }
@@ -333,6 +338,10 @@ function reset() {
                 `<select class="image-picker" style="color: black;">`,
                 '<option value=""></option>',
                 `<option data-img-src="/static/img/gameAssets/presets/Big-Red.png" data-img-class="opt2" data-img-alt="bigRed" value="bigRed">Big-Red</option>`,
+                '</select>',
+                `<select class="image-picker" style="color: black;">`,
+                '<option value=""></option>',
+                `<option data-img-src="/static/img/gameAssets/presets/Greyscale.png" data-img-class="opt3" data-img-alt="greyscale" value="greyscale">Greyscale</option>`,
                 '</select>'
             ],
             didOpen: (doc) => {
@@ -343,11 +352,18 @@ function reset() {
                         switch (to[0]) {
                             case 'deafult':
                                 doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
+                                doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
                                 window.selected  = 1;
                             break;
                             case 'bigRed':
                                 doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
+                                doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
                                 window.selected  = 2;
+                            break;
+                            case 'greyscale':
+                                doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
+                                doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
+                                window.selected  = 3;
                             break;
                         };
                     }
@@ -377,7 +393,15 @@ function reset() {
                         reset();
                         settings = getConfig();
                     break;
-                }
+                    case 2:
+                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                            setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
+                        });
+                        resetCanvas();
+                        reset();
+                        settings = getConfig();
+                    break;
+                };
             };
         });
     };

@@ -5,7 +5,12 @@ ul.thumbnails.image_picker_selector {
     list-style-position: outside;
     list-style-type: none;
     padding: 0px;
+    padding-left: auto;
+    padding-right: auto;
     margin: 0px; 
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
 }
 /* line 15, source/sass/image-picker.scss */
 ul.thumbnails.image_picker_selector ul {
