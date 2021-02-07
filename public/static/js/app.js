@@ -244,6 +244,7 @@ function reset() {
                                     break;
                                     case 'greyscale':
                                         doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
+                                        window.selected  = 4;
                                     break;
                                 };
                             }
@@ -276,6 +277,13 @@ function reset() {
                                 resetCanvas(); 
                                 settings = getConfig();
                             break;
+                            case 4:
+                                document.querySelectorAll(`#${field}`).forEach((el) => {
+                                    el.src = `/static/img/gameAssets/Greyscale/${field}.png`;
+                                });
+                                setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
+                                resetCanvas(); 
+                                settings = getConfig();
                         }
                     };
                 });
@@ -383,7 +391,7 @@ function reset() {
                         reset();
                         settings = getConfig();
                     break;
-                    case 2:
+                    case 3:
                         ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
                             setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
                         });
