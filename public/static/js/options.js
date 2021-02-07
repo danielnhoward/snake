@@ -1,199 +1,9 @@
-const pages = ['/home', '/single', '/multi', '/options'];
-const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee'];
-let onload = reset;
-
-$('a').click((ev) => {
-    ev.preventDefault();
-    history.pushState(null, null, ev.currentTarget.href);
-    reset();
-});
-function hideAll() {
-    pages.forEach((el) => {
-        $(`${el.replace('/', '#')}`).hide();
-    });
-};
-addEventListener('popstate', reset);
+onload = reset;
 
 function reset() {
-    hideAll();
-    if (pages.includes(location.pathname) || location.pathname == '/') {
-        if (location.pathname == '/') {
-            document.title = 'Snakeee';
-            $('#home').show();
-        }
-        else {
-        document.title = titles[pages.indexOf(location.pathname)];
-            $(`${location.pathname.replace('/', '#')}`).show();
-        };
-    }
-    else {
-        location.replace('/');
-    };
-
-    if (location.search) {
-        let error = location.search;
-        history.replaceState(null, null, '/');
-        if (error == '?a') {
-            Swal.fire({
-                icon: 'error',
-                title: '<h1>404 Error</h1>',
-                html: '<div style="color: white;">Looks like we couldn\'t find the file you wanted, instead we\'ve put you back on the homepage.</div>'
-            });
-        }
-        else if (error == '?b') {
-            (async () => {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'The Game ID is inncorrect'
-                });
-                setTimeout(() => {
-                    joinGame();
-                }, 300);
-            })();
-        }
-        else if (error == '?c') {
-            Swal.fire({
-                icon: 'error',
-                title: 'The Game has timed out'
-            });
-        }
-        else if (error == '?d') {
-            Swal.fire({
-                icon: 'error',
-                title: 'We have detected that you have entered something into the console.'
-            });
-        }
-        else if (error == '?e') {
-            joinGame();
-        };
-    };
-
-    let settings = getConfig();
-
-    /* Single Player */
-    document.getElementById('gameSpeed').oninput = () => {
-        document.getElementById('clientGameSpeed').innerHTML = document.getElementById('gameSpeed').value;
-        setConfigItem('gameSpeed', document.getElementById('gameSpeed').value);
-    };
-    settings.gameSpeed ? (() => {
-        document.getElementById('clientGameSpeed').innerHTML = settings.gameSpeed;
-        document.getElementById('gameSpeed').value = settings.gameSpeed;
-    })() : (() => {
-        document.getElementById('clientGameSpeed').innerHTML = '100';
-        document.getElementById('gameSpeed').value = 100;
-    })();
-    document.getElementById('gameTime').oninput = () => {
-        document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
-        setConfigItem('gameTime', document.getElementById('gameTime').value);
-    };
-    if (settings.gameTime == 'off') {
-        document.getElementById('gameTime').disabled = true;
-        document.getElementById('timed').checked = false;
-        document.getElementById('gameTimeArea').style.opacity = 0.5;
-        document.getElementById('clientGameTime').innerHTML = '120';
-        document.getElementById('gameTime').value = 120;
-    }
-    else {
-        document.getElementById('clientGameTime').innerHTML = settings.gameTime;
-        document.getElementById('gameTime').value = settings.gameTime;
-        document.getElementById('timed').checked = true;
-    };
-
-    document.getElementById('timed').oninput = () => {
-        document.getElementById('timed').checked ? (() => {
-            document.getElementById('gameTime').disabled = false;
-            document.getElementById('gameTimeArea').style.opacity = 1;
-            document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
-            document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
-        })() : (() => {
-            document.getElementById('gameTime').disabled = true;
-            document.getElementById('gameTimeArea').style.opacity = 0.5;
-            document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120; 
-            document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;  
-        })();
-    }
-
-    document.getElementById('singlePlay').onsubmit = (ev) => {
-        ev.preventDefault();
-        let playSettings = getConfig();
-        playSettings.gameSpeed = document.getElementById('gameSpeed').value;
-        playSettings.gameTime = document.getElementById('timed').checked ? document.getElementById('gameTime').value : 'off';
-        setConfig(playSettings);
-        location.href = '/singleSnake';
-    };
-
-
-    /* Multi player */
-    function setSettings(gameSpeed, gameSize) {
-        let percentage = 1;
-        let value = parseInt(gameSpeed);
-        value *= -1;
-        percentage = (value / 100) + 1;
-        gameSpeed = (1000 / ((1000 / gameSize) / 2)) * percentage;
-        return {
-            gameSpeed: gameSpeed,
-            gameSize: gameSize
-        };
-    };
-
-    const gameSizes = [[200, 'Super Small (may be imposible to play on)'], [100, 'Small'], [50, 'Medium'], [40, 'Normal'], [20, 'Big'], [10, 'Bigger'], [1, 'Super Big (may cause major lag)']]
-
-    document.getElementById('gameSpeedMulti').oninput = () => {
-        document.getElementById('clientGameSpeedMulti').innerHTML = parseInt(document.getElementById('gameSpeedMulti').value) + 100;
-
-        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
-        setConfigItem('gameSpeed', multiSettings.gameSpeed);
-        setConfigItem('gameSize', multiSettings.gameSize);
-    };
-
-
-    document.getElementById('gameSizeMulti').oninput = () => {
-        document.getElementById('clientGameSizeMulti').innerHTML = gameSizes[document.getElementById('gameSizeMulti').value][1];
-
-        let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
-        setConfigItem('gameSpeed', multiSettings.gameSpeed);
-        setConfigItem('gameSize', multiSettings.gameSize);
-    };
-
-    document.getElementById('startLength').oninput = () => {
-        document.getElementById('clientStartLengthMulti').innerHTML = document.getElementById('startLength').value;
-        setConfigItem('startLength', document.getElementById('startLength').value)
-    };
-
-    document.getElementById('gameSpeedMulti').oninput();
-    document.getElementById('gameSizeMulti').oninput();
-    document.getElementById('clientStartLengthMulti').innerHTML = 3;
-    document.getElementById('startLength').value = 3;
-    document.getElementById('startLength').oninput();
-    
-
-    document.getElementById('multiPlay').onsubmit = (ev) => {
-        ev.preventDefault();
-        location.href = `/start/snake/${getConfig().gameSpeed}/${getConfig().gameSize}/${getConfig().startLength}`;
-    };
-
-
-
-    /* Options */
-    const keyInps = [
-        {button: document.getElementById('upKey'), dis: document.getElementById('upKeyDis'), name: 'up'},
-        {button: document.getElementById('leftKey'), dis: document.getElementById('leftKeyDis'), name: 'left'},
-        {button: document.getElementById('rightKey'), dis: document.getElementById('rightKeyDis'), name: 'right'},
-        {button: document.getElementById('downKey'), dis: document.getElementById('downKeyDis'), name: 'down'}
-    ];
-    keyInps.forEach((el) => {
-        function keyDown(ev) {
-            setConfigItem(el.name, ev.keyCode);
-            setConfigItem(`${el.name}Key`, ev.key);
-            el.dis.innerHTML = ev.key;
-        }
-        el.button.addEventListener('keydown', keyDown)
-        el.dis.innerHTML = settings[`${el.name}Key`];
-    });
-
-
     /* Build a snake */
     resetCanvas();
+    let settings = getConfig();
     
     ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
         document.querySelectorAll(`#${field}`).forEach((el) => {
@@ -405,52 +215,6 @@ function reset() {
     };
 };
 
-/*function showPopup (param) {
-    param ? (() => {
-        Swal.fire({
-            icon: 'info',
-            html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: white;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.</div>'
-        });
-    })() : (() => {
-        Swal.fire({
-            icon: 'info',
-            html: '<div style="font-size: medium; color: grey;"><b style="font-size: large; color: white;">Game Speed</b><br>Game speed is how often the snake will move. 1000ms are equal to 1 second.<br><b style="font-size: large; color: white;">Game Time</b><br>Game is how long the game will last for.</div>'
-        });
-    })();
-};*/
-
-
-function joinGame() {
-    Swal.fire({
-        title: 'Enter your Game ID',
-        input: 'text',
-        inputAttributes: {
-            autocapitalize: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Join',
-        showLoaderOnConfirm: true,
-        preConfirm: (id) => {
-            return fetch(`/api?${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText);
-                };
-                return response.json();
-            })
-            .catch(error => {
-                Swal.showValidationMessage(`Looks like that Game ID doesn't exist`);
-            });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    })
-    .then((result) => {
-        if (result.isConfirmed) {
-            location.href = `/play/${result.value.id}`;
-        };
-    });
-};
-
 function resetSettings() {
     Swal.fire({
         position: 'bottom-start',
@@ -525,8 +289,9 @@ document.getElementById('importUpload').oninput = () => {
         let reader = new FileReader();
 
         reader.readAsDataURL(file);
+        reader.name = file.name;
+        reader.size = file.size;
         reader.onload = (ev) => {
-            console.log(ev.target)
             let config = JSON.parse(atob(ev.target.result.split('base64,')[1]));
             switch(config.v) {
                 case 0:
@@ -537,7 +302,6 @@ document.getElementById('importUpload').oninput = () => {
                     reset();
                 break;
                 default:
-                    console.log(0)
                     throw new Error('Improper Version');
                 break;
             }
@@ -613,7 +377,7 @@ document.getElementById('export').onclick = (ev) => {
                             background:  settings.background
                         }
                     };
-                    let blob = new Blob([JSON.stringify(userConfig)], {type: 'text/plain'});
+                    let blob = new Blob([JSON.stringify(userConfig)], {type: 'text/snakeee'});
                     let url = URL.createObjectURL(blob);
                     let a = document.createElement('a');
                     a.href = url;

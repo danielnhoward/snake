@@ -41,6 +41,21 @@ body {
 .center-inner {
     display: inline-block;
 }
+.window {
+    transition: all 1s ease;
+    transition-property: bottom;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+#tint {
+    transition: all 1s ease;
+}
+iframe {
+    border: none;
+}
 button.full-screen {
     display: flex;
     flex-direction: column;

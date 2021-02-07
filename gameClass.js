@@ -70,6 +70,7 @@ module.exports = class {
                 this.players = this.players.filter((value, filterIndex) => {
                     return filterIndex != index;
                 });
+                delete this.playerIds[this.playerIds.indexOf(id)];
                 this.playerCount = this.players.length;
                 this.allEmit('playerCount', this.playerCount);
             };

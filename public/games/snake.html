@@ -22,25 +22,44 @@
             }
         </style>
     </head>
-    <body style="overflow-x: hidden;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
-        <div class="center">
-            <div class="center-inner">
-                <div class="game">
-                    <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
+    <body style="overflow: hidden; display: inline-block;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
+        <div class="window" style="bottom: -100%; z-index: 999;" id="options">
+            <div class="center" style="position: relative;">
+                <div style="width: 80vw; height: 80vh; border: 2px solid black; z-index: 2; position: absolute;">
+                    <img id="close" width="30" height="30" src="/static/img/close-icon.svg" style="cursor: pointer; right: 20px; top: 10px; margin: 10px; z-index: 1; position: inherit;">
+                    <div style="position: relative; width: 100%; height: 100%;">
+                        <iframe id="iframe" style="width: 100%; height: 100%;" src="/snakeBuilder.html"></iframe>
+                    </div>
                 </div>
-                <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
-                    <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
-                </div>
-                <div class="player-count">
-                    Game ID: <x id="gameId">0000</x><br>
-                    Player Count: <x id="playerCount">0</x><br>
-                    Size: <x id="size">0</x>
-                </div>
-                <div class="copy">
-                    <button style="margin: 0px;" type="button" class="main-btn" onclick="copy(location.href); copied();"><span>Copy Link</span></button>
-                </div>
-                <div id="restart" onclick="restart();" class="multi-reset" style="display: none;">
-                    <img width="50" height="50" src="/static/img/restart-icon.svg">
+                <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" id="listener"></div>
+            </div>
+        </div>
+        <div style="top: 0; bottom: 0;" class="window" id="game">
+            <div style="width: 100%; height: 100%; z-index: 99; position: absolute; top: 0; left: 0; pointer-events: none;" id="tint"></div>
+            <div style="position: relative;">
+                <div class="center">
+                    <div class="center-inner">
+                        <div class="game">
+                            <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
+                        </div>
+                        <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
+                            <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
+                        </div>
+                        <div style="cursor: pointer;" class="player-count" onclick="copy(location.href); copied();">
+                            Game ID: <x id="gameId">0000</x><br>
+                            Player Count: <x id="playerCount">0</x><br>
+                            Size: <x id="size">0</x><br>
+                            Click to Copy Link
+                        </div>
+                        <div id="customise" style="cursor: pointer; text-align: center;" title="Snake Builder" class="copy">
+                            <img width="20" height="20" src="/static/img/art-icon.png">
+                            <br>
+                            <small>Snake Builder</small>
+                        </div>
+                        <div id="restart" onclick="restart();" class="multi-reset" style="display: none;">
+                            <img width="50" height="50" src="/static/img/restart-icon.svg">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,10 +80,11 @@
                         allowEscapeKey: false,
                         inputValidator: (value) => {
                             if (!value || (value.length > 10)) {
-                                return 'Please enter a username';
+                                return 'Please enter a username with less that 10 characters';
                             };
                         }
                     });
+                    window.username = username;
                     emits.emit('snakeJoinWithName', {
                         gameId: gameId,
                         name: username,
@@ -192,6 +212,28 @@
                     backdrop: false,
                     timerProgressBar: true
                 });
+            };
+            document.getElementById('customise').onclick = () => {
+                let closed = false;
+                emits.emit('playerDisconnect', location.pathname.split('/')[2]);
+                document.getElementById('options').style.bottom = '0%';
+                document.getElementById('tint').style.opacity = '0.5';
+                document.getElementById('tint').style.backgroundColor = 'black';
+                document.getElementById('close').onclick = close;
+                document.getElementById('listener').onclick = close;
+                function close() {
+                    if (!closed) {
+                        closed = true;
+                        document.getElementById('options').style.bottom = '-100%';
+                        document.getElementById('tint').style.opacity = '0';
+                        emits.emit('snakeJoinWithName', {
+                            gameId: location.pathname.split('/')[2],
+                            name: username,
+                            settings: getConfig()
+                        });
+                        document.getElementById('gameCanvas').click();
+                    };
+                }
             };
         </script>
     </body>
