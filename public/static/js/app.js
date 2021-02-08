@@ -195,214 +195,165 @@ function reset() {
     /* Build a snake */
     resetCanvas();
     
-    ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-        document.querySelectorAll(`#${field}`).forEach((el) => {
-            el.src = settings[field];
-            el.style.cursor = 'pointer';
-            el.onclick = () => {
-                let settings = getConfig();
-                Swal.fire({
-                    title: `<strong>Pick a ${field}</strong>`,
-                    width: 'auto',
-                    html: [
-                        '<select class="image-picker" style="color: black;">',
-                        '<option value=""></option>',
-                        `<option data-img-src="${settings[field]}" data-img-class="opt1" data-img-alt="Current" value="current">Current</option>`,
-                        `<option data-img-src="/static/img/gameAssets/deafult/${field}.png" data-img-class="opt2" data-img-alt="Deafult" value="deafult">Deafult</option>`,
-                        `<option data-img-src="/static/img/gameAssets/Big-Red/${field}.png" data-img-class="opt3" data-img-alt="Big Red" value="bigRed">Big Red</option>`,
-                        `<option data-img-src="/static/img/gameAssets/Greyscale/${field}.png" data-img-class="opt5" data-img-alt="Greyscale" value="greyscale">Greyscale</option>`,
-                        '</select>',
-                        `<select class="image-picker" style="color: black;">`,
-                        '<option value=""></option>',
-                        `<option data-img-src="/static/img/upload-icon.svg" data-img-class="opt4" data-img-alt="Upload from files" value="upload">Upload from files</option>`,
-                        '</select>'
-                    ],
-                    didOpen: (doc) => {
-                        $("select").imagepicker({
-                            hide_select : true,
-                            show_label  : true,
-                            changed: (from, to) => {
-                                switch (to[0]) {
-                                    case 'current':
-                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
-                                        window.selected  = 0;
-                                    break;
-                                    case 'upload':
-                                        doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
-                                        doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
-                                        doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
-                                        doc.getElementsByClassName('opt5')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
-                                        window.selected  = 1;
-                                    break;
-                                    case 'deafult':
-                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
-                                        window.selected  = 2;
-                                    break;
-                                    case 'bigRed':
-                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
-                                        window.selected  = 3;
-                                    break;
-                                    case 'greyscale':
-                                        doc.getElementsByClassName('opt4')[1].classList.contains('selected') ? doc.getElementsByClassName('opt4')[1].click() : null;
-                                        window.selected  = 4;
-                                    break;
-                                };
-                            }
-                        });
-                    },
-                    target: '#pop-up',
-                    showCancelButton: true
-                })
-                .then((result) => {
-                    if (result.isConfirmed && window.selected) {
-                        let option = selected;
-                        delete selected;
-                        switch (option) {
-                            case 1:
-                                document.getElementById(`${field}Input`).click();
-                            break;
-                            case 2:
-                                document.querySelectorAll(`#${field}`).forEach((el) => {
-                                    el.src = `/static/img/gameAssets/deafult/${field}.png`;
-                                });
-                                setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
-                                resetCanvas();
-                                settings = getConfig();
-                            break;
-                            case 3:
-                                document.querySelectorAll(`#${field}`).forEach((el) => {
-                                    el.src = `/static/img/gameAssets/Big-Red/${field}.png`;
-                                });
-                                setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
-                                resetCanvas(); 
-                                settings = getConfig();
-                            break;
-                            case 4:
-                                document.querySelectorAll(`#${field}`).forEach((el) => {
-                                    el.src = `/static/img/gameAssets/Greyscale/${field}.png`;
-                                });
-                                setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
-                                resetCanvas(); 
-                                settings = getConfig();
-                        }
-                    };
-                });
-            };
-        });
-        document.getElementById(`${field}Input`).oninput = () => {
-            document.querySelectorAll(`#${field}`).forEach((el) => {
-                el.src = '/static/img/loading.gif';
-            });
-            let file = document.getElementById(`${field}Input`).files[0];
-            let reader = new FileReader();
+    (async () => {
+        let snakes = await (await fetch('/snakes.json')).json();
 
-            reader.readAsDataURL(file);
-            reader.name = file.name;
-            reader.size = file.size;
-            reader.onload = (ev) => {
-                let img = new Image();
-                img.src = ev.target.result;
-                img.size = ev.target.size;
-                img.onload = (ev) => {
-                    let canvas = document.createElement('canvas');
-                    canvas.width = 60;
-                    canvas.height = 60;
-
-                    let ctx = canvas.getContext('2d');
-                    ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
-
-                    let imgSrc = ctx.canvas.toDataURL('image/png', 1);
-                    document.querySelectorAll(`#${field}`).forEach((el) => {
-                        el.src = imgSrc;
-                    });
-
-                    setConfigItem(field, imgSrc);
-                    resetCanvas();
-
-                };
-            };
-        };
-    });
-    document.getElementById('presets').onclick = () => {
-        let settings = getConfig();
-        Swal.fire({
-            title: `<strong>Pick a Preset</strong>`,
-            width: 'auto',
-            html: [
+        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+            let html = [
                 '<select class="image-picker" style="color: black;">',
                 '<option value=""></option>',
-                `<option data-img-src="/static/img/gameAssets/presets/deafult.png" data-img-class="opt1" data-img-alt="Deafult" value="deafult">Deafult</option>`,
+                `<option data-img-src="${settings[field]}" data-img-class="current" data-img-alt="Current" value="current">Current</option>`
+            ];
+            let endHtml = [
                 '</select>',
                 `<select class="image-picker" style="color: black;">`,
                 '<option value=""></option>',
-                `<option data-img-src="/static/img/gameAssets/presets/Big-Red.png" data-img-class="opt2" data-img-alt="bigRed" value="bigRed">Big-Red</option>`,
-                '</select>',
-                `<select class="image-picker" style="color: black;">`,
-                '<option value=""></option>',
-                `<option data-img-src="/static/img/gameAssets/presets/Greyscale.png" data-img-class="opt3" data-img-alt="greyscale" value="greyscale">Greyscale</option>`,
+                `<option data-img-src="/static/img/upload-icon.svg" data-img-class="upload" data-img-alt="Upload from files" value="upload">Upload from files</option>`,
                 '</select>'
-            ],
-            didOpen: (doc) => {
-                $("select").imagepicker({
-                    hide_select : true,
-                    show_label  : true,
-                    changed: (from, to) => {
-                        switch (to[0]) {
-                            case 'deafult':
-                                doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
-                                doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
-                                window.selected  = 1;
-                            break;
-                            case 'bigRed':
-                                doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
-                                doc.getElementsByClassName('opt3')[1].classList.contains('selected') ? doc.getElementsByClassName('opt3')[1].click() : null;
-                                window.selected  = 2;
-                            break;
-                            case 'greyscale':
-                                doc.getElementsByClassName('opt1')[1].classList.contains('selected') ? doc.getElementsByClassName('opt1')[1].click() : null;
-                                doc.getElementsByClassName('opt2')[1].classList.contains('selected') ? doc.getElementsByClassName('opt2')[1].click() : null;
-                                window.selected  = 3;
-                            break;
+            ]
+            snakes.forEach((el, index) => {
+                html.push(`<option data-img-src="/static/img/gameAssets/${el}/${field}.png" data-img-class="snakeOp${index}" data-img-alt="${el}" value="${el}">${el}</option>`);
+            });
+            html = [...html, ...endHtml];
+            document.querySelectorAll(`#${field}`).forEach((el) => {
+                el.src = settings[field];
+                el.style.cursor = 'pointer';
+                el.onclick = () => {
+                    let settings = getConfig();
+                    Swal.fire({
+                        title: `<strong>Pick a ${field}</strong>`,
+                        width: 'auto',
+                        html: html,
+                        didOpen: (doc) => {
+                            $("select").imagepicker({
+                                hide_select : true,
+                                show_label  : true,
+                                changed: (from, to) => {
+                                    window.selected = to[0];
+                                    if (to[0] == 'upload') {
+                                        snakes.forEach((el, index) => {
+                                            doc.getElementsByClassName(`snakeOp${index}`)[1].classList.contains('selected') ? doc.getElementsByClassName(`snakeOp${index}`)[1].click() : null;
+                                        });
+                                        doc.getElementsByClassName(`current`)[1].classList.contains('selected') ? doc.getElementsByClassName(`current`)[1].click() : null;
+                                        doc.getElementsByClassName('upload')[1].classList.contains('selected') ? null  : doc.getElementsByClassName('upload')[1].click();
+                                    }
+                                    else {
+                                        doc.getElementsByClassName('upload')[1].classList.contains('selected') ?  doc.getElementsByClassName('upload')[1].click() : null;
+                                    };
+                                }
+                            });
+                        },
+                        target: '#pop-up',
+                        showCancelButton: true
+                    })
+                    .then((result) => {
+                        if (result.isConfirmed && window.selected) {
+                            let option = selected;
+                            delete selected;
+                            if (option == 'upload') return document.getElementById(`${field}Input`).click();
+                            snakes.forEach((el) => {
+                                if (option == el) {
+                                    document.querySelectorAll(`#${field}`).forEach((innerEl) => {
+                                        innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
+                                    });
+                                    setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
+                                    resetCanvas();
+                                    settings = getConfig();
+                                    return;
+                                };
+                            });
                         };
-                    }
+                    });
+                };
+            });
+            document.getElementById(`${field}Input`).oninput = () => {
+                document.querySelectorAll(`#${field}`).forEach((el) => {
+                    el.src = '/static/img/loading.gif';
                 });
-            },
-            target: '#pop-up',
-            showCancelButton: true
-        })
-        .then((result) => {
-            if (result.isConfirmed && window.selected) {
-                let option = selected;
-                delete selected;
-                switch (option) {
-                    case 1:
-                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                            setConfigItem(field, `/static/img/gameAssets/deafult/${field}.png`);
+                let file = document.getElementById(`${field}Input`).files[0];
+                let reader = new FileReader();
+
+                reader.readAsDataURL(file);
+                reader.name = file.name;
+                reader.size = file.size;
+                reader.onload = (ev) => {
+                    let img = new Image();
+                    img.src = ev.target.result;
+                    img.size = ev.target.size;
+                    img.onload = (ev) => {
+                        let canvas = document.createElement('canvas');
+                        canvas.width = 60;
+                        canvas.height = 60;
+
+                        let ctx = canvas.getContext('2d');
+                        ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
+
+                        let imgSrc = ctx.canvas.toDataURL('image/png', 1);
+                        document.querySelectorAll(`#${field}`).forEach((el) => {
+                            el.src = imgSrc;
                         });
+
+                        setConfigItem(field, imgSrc);
                         resetCanvas();
-                        reset();
-                        settings = getConfig();
-                    break;
-                    case 2:
-                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                            setConfigItem(field, `/static/img/gameAssets/Big-Red/${field}.png`);
-                        });
-                        resetCanvas();
-                        reset();
-                        settings = getConfig();
-                    break;
-                    case 3:
-                        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                            setConfigItem(field, `/static/img/gameAssets/Greyscale/${field}.png`);
-                        });
-                        resetCanvas();
-                        reset();
-                        settings = getConfig();
-                    break;
+
+                    };
                 };
             };
         });
-    };
+        document.getElementById('presets').onclick = () => {
+            let html = [];
+            snakes.forEach((el, index) => {
+                html.push(
+                    '<select class="image-picker" style="color: black;">',
+                    '<option value=""></option>',
+                    `<option data-img-src="/static/img/gameAssets/presets/${el}.png" data-img-class="snakeOp${index}" data-img-alt="${el}" value="${el}">${el}</option>`,
+                    '</select>'
+                );
+            });
+            let settings = getConfig();
+            Swal.fire({
+                title: `<strong>Pick a Preset</strong>`,
+                width: 'auto',
+                html: html,
+                didOpen: (doc) => {
+                    $("select").imagepicker({
+                        hide_select : true,
+                        show_label  : true,
+                        changed: (from, to) => {
+                            snakes.forEach((el, index) => {
+                                if (to[0] == el) {
+                                    window.selected = el;
+                                    snakes.forEach((innerEl, innerIndex) => {
+                                        if (index != innerIndex) {
+                                            doc.getElementsByClassName(`snakeOp${innerIndex}`)[1].classList.contains('selected') ? doc.getElementsByClassName(`snakeOp${innerIndex}`)[1].click() : null;
+                                        };
+                                    });
+                                };
+                            });
+                        }
+                    });
+                },
+                target: '#pop-up',
+                showCancelButton: true
+            })
+            .then((result) => {
+                if (result.isConfirmed && window.selected) {
+                    let option = selected;
+                    delete selected;
+                    snakes.forEach((el) => {
+                        if (option == el) {
+                            ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                                setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
+                            });
+                            resetCanvas();
+                            reset();
+                            settings = getConfig();
+                        }
+                    });
+                };
+            });
+        };
+    })();
 };
 
 /*function showPopup (param) {
@@ -418,6 +369,8 @@ function reset() {
         });
     })();
 };*/
+
+
 
 
 function joinGame() {
@@ -526,7 +479,6 @@ document.getElementById('importUpload').oninput = () => {
 
         reader.readAsDataURL(file);
         reader.onload = (ev) => {
-            console.log(ev.target)
             let config = JSON.parse(atob(ev.target.result.split('base64,')[1]));
             switch(config.v) {
                 case 0:

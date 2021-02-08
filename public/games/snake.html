@@ -23,7 +23,7 @@
         </style>
     </head>
     <body style="overflow: hidden; display: inline-block;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
-        <div class="window" style="bottom: -100%; z-index: 999;" id="options">
+        <div class="window" style="left: -100%; z-index: 999;" id="options">
             <div class="center" style="position: relative;">
                 <div style="width: 80vw; height: 80vh; border: 2px solid black; z-index: 2; position: absolute;">
                     <img id="close" width="30" height="30" src="/static/img/close-icon.svg" style="cursor: pointer; right: 20px; top: 10px; margin: 10px; z-index: 1; position: inherit;">
@@ -216,7 +216,7 @@
             document.getElementById('customise').onclick = () => {
                 let closed = false;
                 emits.emit('playerDisconnect', location.pathname.split('/')[2]);
-                document.getElementById('options').style.bottom = '0%';
+                document.getElementById('options').style.left = '0%';
                 document.getElementById('tint').style.opacity = '0.5';
                 document.getElementById('tint').style.backgroundColor = 'black';
                 document.getElementById('close').onclick = close;
@@ -224,7 +224,7 @@
                 function close() {
                     if (!closed) {
                         closed = true;
-                        document.getElementById('options').style.bottom = '-100%';
+                        document.getElementById('options').style.left = '-100%';
                         document.getElementById('tint').style.opacity = '0';
                         emits.emit('snakeJoinWithName', {
                             gameId: location.pathname.split('/')[2],

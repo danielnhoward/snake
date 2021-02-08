@@ -4,12 +4,12 @@ function getConfig() {
         "gameSpeed":"65",
         "gameTime":"30",
         "startLength":"3",
-        "head":"/static/img/gameAssets/deafult/head.png",
-        "tail":"/static/img/gameAssets/deafult/tail.png",
-        "corner":"/static/img/gameAssets/deafult/corner.png",
-        "straight":"/static/img/gameAssets/deafult/straight.png",
-        "food":"/static/img/gameAssets/deafult/food.png",
-        "background":"/static/img/gameAssets/deafult/background.png",
+        "head":"/static/img/gameAssets/Deafult/head.png",
+        "tail":"/static/img/gameAssets/Deafult/tail.png",
+        "corner":"/static/img/gameAssets/Deafult/corner.png",
+        "straight":"/static/img/gameAssets/Deafult/straight.png",
+        "food":"/static/img/gameAssets/Deafult/food.png",
+        "background":"/static/img/gameAssets/Deafult/background.png",
         "up":87,
         "down":83,
         "left":65,
@@ -34,6 +34,33 @@ function getConfig() {
         };
         if (config.gameTime < 30 || config.gameTime > 300) {
             config.gameTime = 120;
+        };
+        let imgs = {};
+        ['head', 'tail', 'corner', 'straight', 'food'].forEach((el) => {
+            imgs[el] = new Image();
+            imgs[el].src = config[el];
+            imgs[el].onerror = () => {
+                resetConfig();
+                location.reload();
+            };
+            imgs[el].onload = () => {
+                if (imgs[el].width != 60 && imgs[el].height != 60) {
+                    resetConfig();
+                    location.reload();
+                };
+            };
+        });
+        imgs.background = new Image();
+        imgs.background.src = config.background;
+        imgs.background.onerror = () => {
+            resetConfig();
+            location.reload();
+        };
+        imgs.background.onload = () => {
+            if (imgs.background.width != 1000 && imgs.background.height != 1000) {
+                resetConfig();
+                location.reload();
+            };
         };
     }
     else {

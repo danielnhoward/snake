@@ -43,12 +43,14 @@ body {
 }
 .window {
     transition: all 1s ease;
-    transition-property: bottom;
+    transition-property: left;
     width: 100vw;
     height: 100vh;
     position: absolute;
     left: 0;
     right: 0;
+    bottom: 0;
+    top: 0;
 }
 #tint {
     transition: all 1s ease;
@@ -65,7 +67,7 @@ button.full-screen {
     float: left;
 }
 
-.opt4 {
+.upload {
     display: block;
     margin-left: auto;
     margin-right: auto;
