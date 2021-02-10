@@ -257,7 +257,7 @@ function reset() {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
                                     setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
-                                    resetCanvas();
+                                    reset()
                                     settings = getConfig();
                                     return;
                                 };
@@ -294,7 +294,7 @@ function reset() {
                         });
 
                         setConfigItem(field, imgSrc);
-                        resetCanvas();
+                        reset()
 
                     };
                 };
@@ -345,7 +345,7 @@ function reset() {
                             ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
                                 setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
                             });
-                            resetCanvas();
+                            reset()
                             reset();
                             settings = getConfig();
                         }
@@ -431,7 +431,7 @@ function resetCanvas() {
         {coords: {x: 30, y: 240}, vel: {x: 0, y: -30}}
     ];
     let vel = {x: 30, y: 0};
-    let snake = [{x:30, y:30, name: '', vel: vel, id: 0}];
+    let snake = [{x:30, y:30, name: '', vel: vel, id: 0, position: {x: 30, y: 30}}];
     let current = -1;
     let lengthDebt = 5;
     window.canvas = new MultiCanvas('snakePreview', getConfig(), 30);
@@ -448,11 +448,11 @@ function resetCanvas() {
             current++;
         };
 
-        snake.unshift({x:snake[0].x + vel.x, y:snake[0].y + vel.y, name: '', vel: vel, id: 0});
+        snake.unshift({x:snake[0].x + vel.x, y:snake[0].y + vel.y, name: '', vel: vel, id: 0, position: {x:snake[0].x + vel.x, y:snake[0].y + vel.y}});
         if (lengthDebt) lengthDebt--;
         else snake.pop();
 
-        canvas.drawGame({players: [snake], food: [{x: 135, y: 135}]});
+        canvas.drawGame({players: [{snake: snake}], food: [{x: 135, y: 135}]});
     }, 200);
 };
 

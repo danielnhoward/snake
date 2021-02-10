@@ -60,6 +60,7 @@ module.exports = class {
             body: settings.straight,
             corner: settings.corner
         };
+        this.updatePlayers = true;
         this.allEmit('playerCount', this.playerCount);
         emit('initImages', this.settings)
         this.allEmit('setImage', {id: id, image: {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner}});
@@ -70,6 +71,7 @@ module.exports = class {
                 this.players = this.players.filter((value, filterIndex) => {
                     return filterIndex != index;
                 });
+                this.updatePlayers = true;
                 delete this.playerIds[this.playerIds.indexOf(id)];
                 this.playerCount = this.players.length;
                 this.allEmit('playerCount', this.playerCount);
@@ -84,6 +86,7 @@ module.exports = class {
         this.players.forEach((player, index) => {
             if (player.id == id) {
                 player.emit('snakeDeath');
+                this.updatePlayers = true;
                 this.spectators.push(player);
                 this.players = this.players.filter((value, filterIndex) => {
                     return filterIndex != index;
@@ -99,6 +102,7 @@ module.exports = class {
     };
     run() {
         this.running = true;
+        this.updatePlayers = true;
         this.interval = setInterval(() => {
             this.canvas = {
                 players: [],
@@ -128,16 +132,24 @@ module.exports = class {
                 };
             }).bind(this));
             for (const player of this.players) {
-                this.canvas.players.push(player.snake.snake);
+                this.canvas.players = [...this.canvas.players, {snake: player.snake.snake, vel: player.snake.velocety, lengthDebt: player.snake.lengthDebt}];
                 if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
             };
-            if (redraw) this.food.redraw(this.canvas);
+            if (redraw) {
+                this.food.redraw(this.canvas);
+                this.updatePlayers = true;
+            };
             this.canvas.food = this.food.food;
-            this.allEmit('snakePing', this.canvas);
+
+            if (this.updatePlayers) {
+                this.allEmit('snakePing', this.canvas);
+                this.updatePlayers = false;
+            };
 
             this.players.forEach((player) => {
-                player.emit('playerSize', player.snake.snake.length);
+                player.emit('render', player.snake.snake.length);
             });
+            this.specEmit('render', 'Dead');
         }, this.gameSpeed);
     };
     rejoin(id) {
@@ -146,6 +158,7 @@ module.exports = class {
                 this.spectators = this.spectators.filter((value, filterIndex) => {
                     return filterIndex != index;
                 });
+                this.updatePlayers = true;
                 if (this.players.length == 0) this.run();
                 this.players.push({
                     id: player.id,
@@ -175,10 +188,12 @@ class Snake {
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, name: this.name, vel: {x: this.blockSize, y:0}, id: this.id}];
+        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, name: this.name, vel: {x: this.blockSize, y:0}, id: this.id, position: {}}];
+        this.snake[0].position.x = this.snake[0].x;
+        this.snake[0].position.y = this.snake[0].y;
         this.lengthDebt = this.startLength - 1;
         for (const player of initCanvas.players) {
-            for (const part of player) {
+            for (const part of player.snake) {
                 for (const snakePart of this.snake) {
                     if (snakePart.x == part.x && snakePart.y == part.y) {
                         return this.initSnake(initCanvas);
@@ -197,7 +212,7 @@ class Snake {
     moveSnake(food) {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
-        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, name: this.name, vel: this.velocety, id: this.id});
+        this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, name: this.name, vel: this.velocety, id: this.id, position: {x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y}});
         if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
         if (this.lengthDebt == 0) {
             this.snake.pop();
@@ -233,7 +248,7 @@ class Food {
     redraw(canvas) {
         this.food = [{x: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
         for (const player of canvas.players) {
-            for (const part of player) {
+            for (const part of player.snake) {
                 if (this.food.x == part.x && this.food.y == part.y) {
                     return this.redraw(canvas);
                 };

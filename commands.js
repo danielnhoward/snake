@@ -25,7 +25,7 @@ module.exports = {
     commands: {
         snakeJoin(body, emit, id) {
             if (!(body in games)) return emit('redirect', '/?b');
-            emit('gameExists', games[body].blockSize);
+            emit('gameExists', {gameSize: games[body].blockSize, gameSpeed: games[body].gameSpeed, id: id});
         },
         snakeJoinWithName(body, emit, id) {
             if (!(body.gameId in games)) return emit('redirect', '/?c');
@@ -49,6 +49,7 @@ module.exports = {
                         games[body.gameId].players[index].snake.turning = true;
                         if (player.snake.velocety.x != veloceties(size)[body.dir].x && player.snake.velocety.y != veloceties(size)[body.dir].y) games[body.gameId].players[index].snake.velocety = veloceties(size)[body.dir];
                         else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && body.dir != 'left') games[body.gameId].players[index].snake.velocety = veloceties(size)[body.dir];
+                        games[body.gameId].updatePlayers = true;
                     };
                 };
             });
