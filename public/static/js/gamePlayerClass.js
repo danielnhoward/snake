@@ -21,11 +21,15 @@ class Game {
 
     run() {
         if (!this.game) return;
+        let move = false;
+        if (this.recivedData) {
+            move = true;
+            this.recivedData = false;
+        };
         this.game.players.forEach((player, index) => {
             if (player.vel.x == 0 && player.vel.y == 0) return;
             let snake, ld;
-            if (this.recivedData) {
-                this.recivedData = false;
+            if (move) {
                 snake = player.snake;
                 ld = player.lengthDebt;
             }
@@ -37,6 +41,10 @@ class Game {
             this.game.players[index] = {snake: snake, vel: player.vel, lengthDebt: ld};
         });
         this.canvasClass.drawGame(this.game);
+    };
+
+    runFrames() {
+        
     };
 
     setVel(vel) {
