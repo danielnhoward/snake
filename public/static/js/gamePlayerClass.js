@@ -11,6 +11,7 @@ class Game {
         this.recivedData = false;
         this.id = id;
         this.vel = veloceties(this.gameSize);
+        this.gameChanged = true;
         this.run();
     };
 
