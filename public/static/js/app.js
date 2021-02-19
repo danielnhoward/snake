@@ -164,6 +164,7 @@ function reset() {
     document.getElementById('gameSizeMulti').oninput();
     document.getElementById('clientStartLengthMulti').innerHTML = 3;
     document.getElementById('startLength').value = 3;
+    setConfigItem('startLength', 3);
     document.getElementById('startLength').oninput();
     
 

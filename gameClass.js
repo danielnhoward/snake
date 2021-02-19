@@ -1,3 +1,5 @@
+const { Agent } = require("http");
+
 module.exports = class {
     constructor(gameType, gameSpeed, onTimeout, blockSize, startLength) {
         this.type = gameType;
@@ -26,28 +28,41 @@ module.exports = class {
         }, 300000);
     };
     allEmit(func, data) {
+        let args = [];
+        for (let i = 1; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        };
         this.players.forEach((el) => {
-            el.emit(func, data);
+            el.socket.emit(func, ...args);
         });
         this.spectators.forEach((el) => {
-            el.emit(func, data);
+            el.socket.emit(func, ...args);
         });
     };
     aliveEmit(func, data) {
+        let args = [];
+        for (let i = 1; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        };
         this.players.forEach((el) => {
-            el.emit(func, data);
+            el.socket.emit(func, ...args);
         });
     };
     specEmit(func, data) {
+        let args = [];
+        for (let i = 1; i < arguments.length; i++) {
+            args.push(arguments[i]);
+        };
         this.spectators.forEach((el) => {
-            el.emit(func, data);
+            el.socket.emit(func, ...args);
         });
     };
-    addPlayer(id, emit, name, settings) {
+    addPlayer(id, socket, name, settings) {
         if (this.players.length == 0) this.run();
         this.players.push({
             id: id,
-            emit: emit,
+            socket: socket,
+            emit: socket.emit,
             name: name,
             settings: settings,
             snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength)
@@ -62,8 +77,8 @@ module.exports = class {
         };
         this.updatePlayers = true;
         this.allEmit('playerCount', this.playerCount);
-        emit('initImages', this.settings)
-        this.allEmit('setImage', {id: id, image: {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner}});
+        socket.emit('initImages', this.settings)
+        this.allEmit('setImage', id, {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner});
     };
     playerDisconnect(id) {
         this.players.forEach((player, index) => {
@@ -85,13 +100,14 @@ module.exports = class {
     playerDie(id) {
         this.players.forEach((player, index) => {
             if (player.id == id) {
-                player.emit('snakeDeath');
+                player.socket.emit('snakeDeath');
                 this.updatePlayers = true;
                 this.spectators.push(player);
                 this.players = this.players.filter((value, filterIndex) => {
                     return filterIndex != index;
                 });
                 this.playerCount = this.players.length;
+                delete this.playerIds[this.playerIds.indexOf(id)];
                 this.allEmit('playerCount', this.playerCount);
             };
         });
@@ -147,7 +163,7 @@ module.exports = class {
             };
 
             this.players.forEach((player) => {
-                player.emit('render', player.snake.snake.length);
+                player.socket.emit('render', player.snake.snake.length);
             });
             this.specEmit('render', 'Dead');
         }, this.gameSpeed);
@@ -162,6 +178,7 @@ module.exports = class {
                 if (this.players.length == 0) this.run();
                 this.players.push({
                     id: player.id,
+                    socket: player.socket,
                     emit: player.emit,
                     name: player.name,
                     settings: player.settings,

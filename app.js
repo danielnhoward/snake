@@ -1,1 +1,0 @@
-require('./server.js')(require('express'), require('http'), require('socket.io'), require('fs'), require('./commands.js').commands, require('cors'));

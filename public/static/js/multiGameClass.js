@@ -66,6 +66,8 @@ class MultiCanvas {
         }
         catch(err) {
             resetConfig();
+            alert(err)
+            alert(err.stack)
             location.reload();
         };
     };

@@ -23,7 +23,7 @@
             }
         </style>
     </head>
-    <body style="overflow: hidden; display: inline-block;" class="back" onbeforeunload="emits.emit('playerDisconnect', location.pathname.split('/')[2])">
+    <body style="overflow: hidden; display: inline-block;" class="back">
         <div class="window" style="left: -100%; z-index: 999;" id="options">
             <div class="center" style="position: relative;">
                 <div style="width: 80vw; height: 80vh; border: 2px solid black; z-index: 2; position: absolute;">
@@ -68,10 +68,7 @@
             async function onload() {
                 let gameId = location.pathname.split('/')[2];
                 document.getElementById('gameId').innerHTML = gameId;
-                emits.on('redirect', (body) => {
-                    location.replace(body);
-                });
-                emits.on('gameExists', async (body) => {
+                socket.emit('snakeJoin', gameId, async (gameSize, gameSpeed) => {
                     let turning = false;
                     const {value: username} = await Swal.fire({
                         title: 'Please enter a username',
@@ -86,11 +83,7 @@
                         }
                     });
                     window.username = username;
-                    emits.emit('snakeJoinWithName', {
-                        gameId: gameId,
-                        name: username,
-                        settings: getConfig()
-                    });
+                    socket.emit('snakeJoinWithName', gameId, username, getConfig());
                     onresize = () => {
                         if (innerHeight > innerWidth) {
                             document.getElementById('gameCanvas').style.width = '80vw';
@@ -103,14 +96,13 @@
                     };
                     onresize();
                     
-                    let canvas = new MultiCanvas('gameCanvas', getConfig(), body.gameSize);
-                    let game = new Game(canvas, body.gameSpeed, body.gameSize, body.id);
-                    emits.on('snakePing', (body) => {
-                        turning = false;
-                        game.recivedData = true;
-                        game.gameUpdate(body);
+                    let canvas = new MultiCanvas('gameCanvas', getConfig(), gameSize);
+                    let game = new Game(canvas, gameSpeed, gameSize, socket.id);
+                    socket.on('snakePing', (gamePing) => {
+                        game.gameUpdate(gamePing);
                     });
-                    emits.on('snakeDeath', () => {
+                    socket.on('snakeDeath', () => {
+                        $('#customise').hide();
                         Swal.fire({
                             html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${document.getElementById('size').innerHTML}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); $('#restart').show();">No</button>`,
                             showConfirmButton: false,
@@ -119,19 +111,20 @@
                             allowEnterKey: false
                         });
                     });
-                    emits.on('playerCount', (body) => {
-                        document.getElementById('playerCount').innerHTML = body;
+                    socket.on('playerCount', (count) => {
+                        document.getElementById('playerCount').innerHTML = count;
                     });
-                    emits.on('render', (body) => {
-                        document.getElementById('size').innerHTML = body;
+                    socket.on('render', (size) => {
+                        document.getElementById('size').innerHTML = size;
+                        turning = false;
                         game.run();
                     });
-                    emits.on('setImage', (body) => {
-                        canvas.setImage(body.id, body.image);
+                    socket.on('setImage', (id, image) => {
+                        canvas.setImage(id, image);
                     });
-                    emits.on('initImages', (body) => {
-                        Object.keys(body).forEach((el) => {
-                            canvas.setImage(el, body[el]);
+                    socket.on('initImages', (players) => {
+                        Object.keys(players).forEach((el) => {
+                            canvas.setImage(el, players[el]);
                         });
                     });
                     
@@ -147,8 +140,8 @@
                                 [settings.right]: 'right'
                             };
                             if (key.keyCode in inpMap) {
-                                emits.emit('snakeMove', {gameId: location.pathname.split('/')[2], dir: inpMap[key.keyCode]});
-                                game.setVel(inpMap[key.keyCode]);
+                                socket.emit('snakeMove', gameId = location.pathname.split('/')[2], dir = inpMap[key.keyCode]);
+                                // game.setVel(inpMap[key.keyCode]);
                             };
                         };
                     });
@@ -163,19 +156,19 @@
                         if (Math.abs(mouseDiff.x) > Math.abs(mouseDiff.y)) {
                             if (Math.abs(mouseDiff.x) < screenX/10) return;
                             if (Math.sign(mouseDiff.x) == 1) {
-                                emits.emit('snakeMove', {gameId: location.pathname.split('/')[2], dir: 'left'});
+                                socket.emit('snakeMove', gameId = location.pathname.split('/')[2], dir = 'left');
                             }
                             else if (Math.sign(mouseDiff.x) == -1) {
-                                emits.emit('snakeMove', {gameId: location.pathname.split('/')[2], dir: 'right'});
+                                socket.emit('snakeMove', gameId = location.pathname.split('/')[2], dir = 'right');
                             };
                         }
                         else if (Math.abs(mouseDiff.x) < Math.abs(mouseDiff.y)) {
                             if (Math.abs(mouseDiff.y) < screenY/10) return;
                             if (Math.sign(mouseDiff.y) == 1) {
-                                emits.emit('snakeMove', {gameId: location.pathname.split('/')[2], dir: 'up'});
+                                socket.emit('snakeMove', gameId = location.pathname.split('/')[2], dir = 'up');
                             }
                             else if (Math.sign(mouseDiff.y) == -1) {
-                                emits.emit('snakeMove', {gameId: location.pathname.split('/')[2], dir: 'down'});
+                                socket.emit('snakeMove', gameId = location.pathname.split('/')[2], dir = 'down');
                             };
                         };
                     };
@@ -193,7 +186,24 @@
                         });
                     });
                 });
-                emits.emit('snakeJoin', gameId);
+                document.getElementById('customise').onclick = () => {
+                    let closed = false;
+                    socket.emit('playerDisconnect');
+                    document.getElementById('options').style.left = '0%';
+                    document.getElementById('tint').style.opacity = '0.5';
+                    document.getElementById('tint').style.backgroundColor = 'black';
+                    document.getElementById('close').onclick = close;
+                    document.getElementById('listener').onclick = close;
+                    function close() {
+                        if (!closed) {
+                            closed = true;
+                            document.getElementById('options').style.left = '-100%';
+                            document.getElementById('tint').style.opacity = '0';
+                            socket.emit('snakeJoinWithName', location.pathname.split('/')[2], username, getConfig());
+                            document.getElementById('gameCanvas').click();
+                        };
+                    };
+                };
             };
             function toggleFullScreen() {
                 if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
@@ -205,7 +215,8 @@
             };
             function restart() {
                 $('#restart').hide();
-                emits.emit('snakeRejoin', location.pathname.split('/')[2]);
+                $('#customise').show();
+                socket.emit('snakeRejoin', location.pathname.split('/')[2]);
             };
             function copied() {
                 Swal.fire({
@@ -217,28 +228,6 @@
                     backdrop: false,
                     timerProgressBar: true
                 });
-            };
-            document.getElementById('customise').onclick = () => {
-                let closed = false;
-                emits.emit('playerDisconnect', location.pathname.split('/')[2]);
-                document.getElementById('options').style.left = '0%';
-                document.getElementById('tint').style.opacity = '0.5';
-                document.getElementById('tint').style.backgroundColor = 'black';
-                document.getElementById('close').onclick = close;
-                document.getElementById('listener').onclick = close;
-                function close() {
-                    if (!closed) {
-                        closed = true;
-                        document.getElementById('options').style.left = '-100%';
-                        document.getElementById('tint').style.opacity = '0';
-                        emits.emit('snakeJoinWithName', {
-                            gameId: location.pathname.split('/')[2],
-                            name: username,
-                            settings: getConfig()
-                        });
-                        document.getElementById('gameCanvas').click();
-                    };
-                }
             };
         </script>
     </body>

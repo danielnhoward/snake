@@ -23,33 +23,33 @@ const veloceties = (size) => {
 
 module.exports = {
     commands: {
-        snakeJoin(body, emit, id) {
-            if (!(body in games)) return emit('redirect', '/?b');
-            emit('gameExists', {gameSize: games[body].blockSize, gameSpeed: games[body].gameSpeed, id: id});
+        snakeJoin([gameId], emit, id) {
+            if (!(gameId in games)) return emit('redirect', '/?b');
+            emit('gameExists', games[gameId].blockSize, games[gameId].gameSpeed);
         },
-        snakeJoinWithName(body, emit, id) {
-            if (!(body.gameId in games)) return emit('redirect', '/?c');
-            if (games[body.gameId].playerIds.includes(id)) return emit('redirect', '/?d');
-            games[body.gameId].addPlayer(id, emit, body.name.substring(0, 10), body.settings);
+        snakeJoinWithName([gameId, name, settings], emit, id) {
+            if (!(gameId in games)) return emit('redirect', '/?c');
+            if (games[gameId].playerIds.includes(id)) return emit('redirect', '/?d');
+            games[gameId].addPlayer(id, emit, name.substring(0, 10), settings);
         },
-        playerDisconnect(body, emit, id) {
-            if (!(body in games)) return;
-            games[body].playerDisconnect(id);
+        playerDisconnect([gameId], emit, id) {
+            if (!(gameId in games)) return;
+            games[gameId].playerDisconnect(id);
         },
-        snakeRejoin(body, emit, id) {
-            if (!(body in games)) return emit('redirect', '/?c');
-            games[body].rejoin(id);
+        snakeRejoin([gameId], emit, id) {
+            if (!(gameId in games)) return emit('redirect', '/?c');
+            games[gameId].rejoin(id);
         },
-        snakeMove(body, emit, id) {
-            const size = games[body.gameId].blockSize;
-            games[body.gameId].players.forEach((player, index) => {
+        snakeMove([gameId, dir], emit, id) {
+            const size = games[gameId].blockSize;
+            games[gameId].players.forEach((player, index) => {
                 if (player.id == id) {
-                    if (!games[body.gameId].players[index].snake.turning) {
-                        games[body.gameId].resetTimeout();
-                        games[body.gameId].players[index].snake.turning = true;
-                        if (player.snake.velocety.x != veloceties(size)[body.dir].x && player.snake.velocety.y != veloceties(size)[body.dir].y) games[body.gameId].players[index].snake.velocety = veloceties(size)[body.dir];
-                        else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && body.dir != 'left') games[body.gameId].players[index].snake.velocety = veloceties(size)[body.dir];
-                        games[body.gameId].updatePlayers = true;
+                    if (!games[gameId].players[index].snake.turning) {
+                        games[gameId].resetTimeout();
+                        games[gameId].players[index].snake.turning = true;
+                        if (player.snake.velocety.x != veloceties(size)[dir].x && player.snake.velocety.y != veloceties(size)[dir].y) games[gameId].players[index].snake.velocety = veloceties(size)[body.dir];
+                        else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && dir != 'left') games[gameId].players[index].snake.velocety = veloceties(size)[dir];
+                        games[gameId].updatePlayers = true;
                     };
                 };
             });
@@ -64,12 +64,3 @@ module.exports = {
         return games;
     }
 };
-
-function makeId() {
-    let id = '', run = true;
-    while (id in games || run) {
-        run = false;
-        id = Math.round(Math.random() * 10000);
-    }
-    return id.toLocaleString('en-US', {minimumIntegerDigits: 4, useGrouping:false});
-}
