@@ -199,7 +199,7 @@ function reset() {
     (async () => {
         let snakes = await (await fetch('/snakes.json')).json();
 
-        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+        ['head', 'straight', 'tail', 'corner', 'food', 'background'].forEach((field) => {
             let html = [
                 '<select class="image-picker" style="color: black;">',
                 '<option value=""></option>',
@@ -223,7 +223,7 @@ function reset() {
                     let settings = getConfig();
                     Swal.fire({
                         title: `<strong>Pick a ${field}</strong>`,
-                        width: 'auto',
+                        width: field == 'background' ? 400 : 'auto',
                         html: html,
                         didOpen: (doc) => {
                             $("select").imagepicker({
@@ -258,7 +258,7 @@ function reset() {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
                                     setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
-                                    reset()
+                                    reset();
                                     settings = getConfig();
                                     return;
                                 };
@@ -283,8 +283,8 @@ function reset() {
                     img.size = ev.target.size;
                     img.onload = (ev) => {
                         let canvas = document.createElement('canvas');
-                        canvas.width = 60;
-                        canvas.height = 60;
+                        canvas.width = field == 'background' ? 1000 : 60;
+                        canvas.height = field == 'background' ? 1000 : 60;
 
                         let ctx = canvas.getContext('2d');
                         ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);

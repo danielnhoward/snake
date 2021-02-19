@@ -16,7 +16,7 @@ class Game {
         this.id = id;
         this.vel = veloceties(this.gameSize);
         this.run();
-        // requestAnimationFrame(this.runFrames.bind(this));
+        requestAnimationFrame(this.runFrames.bind(this));
     };
 
     gameUpdate(canvas)  {
@@ -26,22 +26,22 @@ class Game {
     };
 
     run() {
-        let move = false;
+        let move = true;
         if (this.recivedData) {
-            move = true;
+            move = false;
             this.recivedData = false;
         };
         this.game.players.forEach((player, index) => {
             if (player.vel.x == 0 && player.vel.y == 0) return;
             let snake, ld;
             if (move) {
-                snake = player.snake;
-                ld = player.lengthDebt;
-            }
-            else {
                 let x = moveSnake(player.snake, player.vel, this.game.food, player.lengthDebt);
                 snake = x.snake;
                 ld = x.ld;
+            }
+            else {
+                snake = player.snake;
+                ld = player.lengthDebt;
             }
             this.game.players[index] = {snake: snake, vel: player.vel, lengthDebt: ld};
         });
@@ -49,16 +49,17 @@ class Game {
         this.serverGame = this.game;
     };
 
-    // runFrames(time) {
-    //     if (!this.prev) this.prev = time;
-    //     const delta = time - this.prev;
-    //     this.serverGame.players.forEach((player, index) => {
-    //         if (player.vel.x == 0 && player.vel.y == 0) return;
-    //         this.serverGame.players[index] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
-    //     });
-    //     this.prev = time;
-    //     requestAnimationFrame(this.runFrames.bind(this));
-    // };
+    runFrames(time) {
+        if (!this.prev) this.prev = time;
+        const delta = time - this.prev;
+        this.serverGame.players.forEach((player, index) => {
+            if (player.vel.x == 0 && player.vel.y == 0) return;
+            // this.serverGame.players[index] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
+            this.serverGame.players[index] = {snake: [{x: 0, y:0, name: 'pog', vel: {x: 0, y:0}}], vel: player.vel, lengthDebt: 0};
+        });
+        this.prev = time;
+        requestAnimationFrame(this.runFrames.bind(this));
+    };
 
     setVel(vel) {
         this.serverGame.players.forEach((player, index) => {
