@@ -4,6 +4,13 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
+
+        <meta property="og:url" content="https://snakeee.xyz/"/>
+        <meta property="og:type" content="game"/>
+        <meta property="og:title" content="Join Multiplayer Snake Game"/>
+        <meta property="og:description" content="Join a game of multiplayer snake with your friends!"/>
+        <meta property="og:image" content="https://snakeee.xyz/favicon.ico"/>
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -46,11 +53,17 @@
                         <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
                             <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
                         </div>
-                        <div style="cursor: pointer;" class="player-count" onclick="copy(location.href); copied();">
+                        <div class="player-count">
                             Game ID: <x id="gameId">0000</x><br>
                             Player Count: <x id="playerCount">0</x><br>
-                            Size: <x id="size">0</x><br>
-                            Click to Copy Link
+                            Size: <x id="size">0</x><br><br>
+                            <div id="shareLinks">
+                                <img style="cursor: pointer;" id="facebook" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30">
+                                <img style="cursor: pointer;" id="twitter" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30">
+                                <img style="cursor: pointer;" id="pinterest" title="Share on Pinterest" src="/static/img/social-icons/pinterest.png" width="30" height="30">
+                                <img style="cursor: pointer;" id="whatsapp" title="Share on Whatsapp" src="/static/img/social-icons/whatsapp.png" width="30" height="30">
+                                <img style="cursor: pointer;" id="copy" title="Copy link" src="/static/img/social-icons/copy.png" width="30" height="30" onclick="copy(location.href); copied();">
+                            </div>
                         </div>
                         <div id="customise" style="cursor: pointer; text-align: center;" title="Snake Builder" class="copy">
                             <img width="20" height="20" src="/static/img/art-icon.png">
@@ -68,6 +81,10 @@
             async function onload() {
                 let gameId = location.pathname.split('/')[2];
                 document.getElementById('gameId').innerHTML = gameId;
+                document.getElementById('facebook').onclick = () => open(`https://www.facebook.com/share.php?u=${location.href}`, 'Share Sankeee on Facebook', 'width=600,height=600');
+                document.getElementById('twitter').onclick = () => open(`https://twitter.com/intent/tweet?text=Play Multiplayer Snake with me at: ${location.href}!`, 'Share Sankeee on Twitter', 'width=600,height=600');
+                document.getElementById('pinterest').onclick = () => open(`https://www.pinterest.co.uk/pin/create/link/?url=${location.href}&media=https%3A%2F%2Fsnakeee.xyz%2Ffavicon.ico&description=Come and play Multiplayer Snake with me!`, 'Share Sankeee on Pinterest', 'width=600,height=600');
+                document.getElementById('whatsapp').onclick = () => open(`https://api.whatsapp.com/send?text=Play Multiplayer Snake with me at: ${location.href}!`, 'Share Sankeee on Whatsapp', 'width=600,height=600');
                 socket.emit('snakeJoin', gameId, async (gameSize, gameSpeed) => {
                     let turning = false;
                     const {value: username} = await Swal.fire({

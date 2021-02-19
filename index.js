@@ -106,7 +106,7 @@ const veloceties = (size) => {
                 };
             }
             catch(err) {
-                console.error(err);
+                return;
             };
         });
         socket.on('playerDisconnect', () => {
