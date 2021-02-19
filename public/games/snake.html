@@ -116,7 +116,6 @@
                     let canvas = new MultiCanvas('gameCanvas', getConfig(), gameSize);
                     let game = new Game(canvas, gameSpeed, gameSize, socket.id);
                     socket.on('snakePing', (gamePing) => {
-                        console.log(gamePing, gamePing.players[0].snake)
                         game.gameUpdate(gamePing);
                     });
                     socket.on('snakeDeath', () => {
