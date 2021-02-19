@@ -71,56 +71,56 @@ function reset() {
     let settings = getConfig();
 
     /* Single Player */
-    document.getElementById('gameSpeed').oninput = () => {
-        document.getElementById('clientGameSpeed').innerHTML = document.getElementById('gameSpeed').value;
-        setConfigItem('gameSpeed', document.getElementById('gameSpeed').value);
-    };
-    settings.gameSpeed ? (() => {
-        document.getElementById('clientGameSpeed').innerHTML = settings.gameSpeed;
-        document.getElementById('gameSpeed').value = settings.gameSpeed;
-    })() : (() => {
-        document.getElementById('clientGameSpeed').innerHTML = '100';
-        document.getElementById('gameSpeed').value = 100;
-    })();
-    document.getElementById('gameTime').oninput = () => {
-        document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
-        setConfigItem('gameTime', document.getElementById('gameTime').value);
-    };
-    if (settings.gameTime == 'off') {
-        document.getElementById('gameTime').disabled = true;
-        document.getElementById('timed').checked = false;
-        document.getElementById('gameTimeArea').style.opacity = 0.5;
-        document.getElementById('clientGameTime').innerHTML = '120';
-        document.getElementById('gameTime').value = 120;
-    }
-    else {
-        document.getElementById('clientGameTime').innerHTML = settings.gameTime;
-        document.getElementById('gameTime').value = settings.gameTime;
-        document.getElementById('timed').checked = true;
-    };
+    // document.getElementById('gameSpeed').oninput = () => {
+    //     document.getElementById('clientGameSpeed').innerHTML = document.getElementById('gameSpeed').value;
+    //     setConfigItem('gameSpeed', document.getElementById('gameSpeed').value);
+    // };
+    // settings.gameSpeed ? (() => {
+    //     document.getElementById('clientGameSpeed').innerHTML = settings.gameSpeed;
+    //     document.getElementById('gameSpeed').value = settings.gameSpeed;
+    // })() : (() => {
+    //     document.getElementById('clientGameSpeed').innerHTML = '100';
+    //     document.getElementById('gameSpeed').value = 100;
+    // })();
+    // document.getElementById('gameTime').oninput = () => {
+    //     document.getElementById('clientGameTime').innerHTML = document.getElementById('gameTime').value;
+    //     setConfigItem('gameTime', document.getElementById('gameTime').value);
+    // };
+    // if (settings.gameTime == 'off') {
+    //     document.getElementById('gameTime').disabled = true;
+    //     document.getElementById('timed').checked = false;
+    //     document.getElementById('gameTimeArea').style.opacity = 0.5;
+    //     document.getElementById('clientGameTime').innerHTML = '120';
+    //     document.getElementById('gameTime').value = 120;
+    // }
+    // else {
+    //     document.getElementById('clientGameTime').innerHTML = settings.gameTime;
+    //     document.getElementById('gameTime').value = settings.gameTime;
+    //     document.getElementById('timed').checked = true;
+    // };
 
-    document.getElementById('timed').oninput = () => {
-        document.getElementById('timed').checked ? (() => {
-            document.getElementById('gameTime').disabled = false;
-            document.getElementById('gameTimeArea').style.opacity = 1;
-            document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
-            document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
-        })() : (() => {
-            document.getElementById('gameTime').disabled = true;
-            document.getElementById('gameTimeArea').style.opacity = 0.5;
-            document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120; 
-            document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;  
-        })();
-    }
+    // document.getElementById('timed').oninput = () => {
+    //     document.getElementById('timed').checked ? (() => {
+    //         document.getElementById('gameTime').disabled = false;
+    //         document.getElementById('gameTimeArea').style.opacity = 1;
+    //         document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
+    //         document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;
+    //     })() : (() => {
+    //         document.getElementById('gameTime').disabled = true;
+    //         document.getElementById('gameTimeArea').style.opacity = 0.5;
+    //         document.getElementById('clientGameTime').innerHTML = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120; 
+    //         document.getElementById('gameTime').value = Number.isInteger(parseInt(getConfig().gameTime)) ? getConfig().gameTime : 120;  
+    //     })();
+    // }
 
-    document.getElementById('singlePlay').onsubmit = (ev) => {
-        ev.preventDefault();
-        let playSettings = getConfig();
-        playSettings.gameSpeed = document.getElementById('gameSpeed').value;
-        playSettings.gameTime = document.getElementById('timed').checked ? document.getElementById('gameTime').value : 'off';
-        setConfig(playSettings);
-        location.href = '/singleSnake';
-    };
+    // document.getElementById('singlePlay').onsubmit = (ev) => {
+    //     ev.preventDefault();
+    //     let playSettings = getConfig();
+    //     playSettings.gameSpeed = document.getElementById('gameSpeed').value;
+    //     playSettings.gameTime = document.getElementById('timed').checked ? document.getElementById('gameTime').value : 'off';
+    //     setConfig(playSettings);
+    //     location.href = '/singleSnake';
+    // };
 
 
     /* Multi player */

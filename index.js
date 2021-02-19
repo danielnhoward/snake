@@ -66,7 +66,7 @@ const veloceties = (size) => {
                 }
             };
         };
-        (url == '/single' || url == '/multi' || url == '/options' || url == '/home') ? (() => {
+        (url == '/multi' || url == '/options' || url == '/home') ? (() => {
             file = './public/index.html';
         })() : (() => {
             /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
