@@ -131,6 +131,7 @@ const veloceties = (size) => {
         });
         socket.on('snakeMove', (gameId, dir) => {
             try {
+                if (!(socket.id in games[gameId].players)) return;
                 const size = games[gameId].blockSize;
                 let player = games[gameId].players[socket.id];
                 if (!player.snake.turning) {
