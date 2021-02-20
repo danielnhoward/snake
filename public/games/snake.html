@@ -78,6 +78,12 @@
             </div>
         </div>
         <script>
+            let sounds = {
+                eat: makeAudio('/static/sound/eat.mp3'),
+                back: makeAudio('/static/sound/music.mp3', 0.1, true, true)
+            };
+
+
             async function onload() {
                 let gameId = location.pathname.split('/')[2];
                 document.getElementById('gameId').innerHTML = gameId;
@@ -99,6 +105,8 @@
                             };
                         }
                     });
+                    sounds.back.restart();
+                    sounds.back.fade.in(2);
                     window.username = username;
                     socket.emit('snakeJoinWithName', gameId, username, getConfig());
                     onresize = () => {
@@ -119,6 +127,7 @@
                         game.gameUpdate(gamePing);
                     });
                     socket.on('snakeDeath', () => {
+                        sounds.back.fade.out(2);
                         $('#customise').hide();
                         Swal.fire({
                             html: `<div style="font-size: large; color: white;"><b>You lost!</b></div><br><div style="font-size: small; color: light-grey;">Your score was ${document.getElementById('size').innerHTML}</div><br><large style="font-size: large;">Would you like to play again?</large><br><br><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); restart();">Yes</button><button type="button" class="swal2-confirm swal2-styled" style="display: inline-block; border: none;" aria-label="" onclick="Swal.close(); $('#restart').show();">No</button>`,
@@ -133,6 +142,7 @@
                     });
                     socket.on('render', (size) => {
                         document.getElementById('size').innerHTML = size;
+                        sounds.back.tempo(size == 'Dead' ? 1 : size);
                         turning = false;
                         game.run();
                     });
@@ -144,6 +154,8 @@
                             canvas.setImage(el, players[el]);
                         });
                     });
+
+                    socket.on('foodEat', sounds.eat);
                     
                     
                     document.addEventListener('keydown', (key) => {
@@ -233,6 +245,7 @@
             function restart() {
                 $('#restart').hide();
                 $('#customise').show();
+                sounds.back.fade.in(2);
                 socket.emit('snakeRejoin', location.pathname.split('/')[2]);
             };
             function copied() {
@@ -245,6 +258,68 @@
                     backdrop: false,
                     timerProgressBar: true
                 });
+            };
+
+            function makeAudio(src, vol = 0.1, loop = false, seperate = false) {
+                let audioEl = document.createElement('audio');
+                audioEl.src = src;
+                audioEl.setAttribute("preload", "auto");
+                audioEl.setAttribute("controls", "none");
+                audioEl.loop = loop;
+                audioEl.style.display = "none";
+                document.body.appendChild(audioEl);
+                audioEl.volume = vol;
+                return seperate ? {
+                    play: () => {
+                        audioEl.play();
+                    },
+                    restart: () => {
+                        audioEl.currentTime = 0;
+                    },
+                    stop: () => {
+                        audioEl.pause();
+                    },
+                    tempo: (size) => {
+                        audioEl.playbackRate = 1 + size / 100;
+                    },
+                    fade: {
+                        in: (time) => {
+                            audioEl.play();
+                            audioEl.volume = 0;
+                            let interval = setInterval(() => {
+                                try {
+                                    audioEl.volume += vol / ((time * 1000) / 50);
+                                }
+                                catch(err) {
+                                    audioEl.volume = vol
+                                };
+                                if (audioEl.volume >= vol) {
+                                    clearInterval(interval);
+                                    audioEl.volume = vol;
+                                };
+                            }, 20)
+                        },
+                        out: (time) => {
+                            audioEl.volume = vol;
+                            let interval = setInterval(() => {
+                                try {
+                                    audioEl.volume -= vol / ((time * 1000) / 50);
+                                }
+                                catch(err) {
+                                    audioEl.volume = 0;
+                                };
+                                if (audioEl.volume <= 0) {
+                                    clearInterval(interval);
+                                    audioEl.volume = 0;
+                                };
+                            }, 20)
+                            audioEl.pause();
+                        }
+                    }
+                } : () => {
+                    audioEl.currentTime = 0;
+                    audioEl.play();
+                };
             };
         </script>
     </body>

@@ -65,7 +65,7 @@ module.exports = class {
             emit: socket.emit,
             name: name,
             settings: settings,
-            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength)
+            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength, () => socket.emit('foodEat'))
         });
         this.playerIds.push(id);
         this.playerCount = this.players.length;
@@ -182,7 +182,7 @@ module.exports = class {
                     emit: player.emit,
                     name: player.name,
                     settings: player.settings,
-                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize, player.name, this.startLength)
+                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize, player.name, this.startLength, () => player.socket.emit('foodEat'))
                 });
                 this.playerCount = this.players.length;
                 this.allEmit('playerCount', this.playerCount);
@@ -192,9 +192,10 @@ module.exports = class {
 };
 
 class Snake {
-    constructor(settings, initCanvas, onDie, id, blockSize, name, startLength) {
+    constructor(settings, initCanvas, onDie, id, blockSize, name, startLength, foodEat) {
         this.settings = settings;
         this.onDie = onDie;
+        this.foodEat = foodEat;
         this.turning = false;
         this.velocety = {x: 0, y: 0};
         this.id = id;
@@ -230,7 +231,10 @@ class Snake {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, name: this.name, vel: this.velocety, id: this.id, position: {x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y}});
-        if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) this.lengthDebt++;
+        if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) {
+            this.lengthDebt++;
+            this.foodEat();
+        };
         if (this.lengthDebt == 0) {
             this.snake.pop();
         }
