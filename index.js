@@ -132,17 +132,14 @@ const veloceties = (size) => {
         socket.on('snakeMove', (gameId, dir) => {
             try {
                 const size = games[gameId].blockSize;
-                games[gameId].players.forEach((player, index) => {
-                    if (player.id == socket.id) {
-                        if (!games[gameId].players[index].snake.turning) {
-                            games[gameId].resetTimeout();
-                            games[gameId].players[index].snake.turning = true;
-                            if (player.snake.velocety.x != veloceties(size)[dir].x && player.snake.velocety.y != veloceties(size)[dir].y) games[gameId].players[index].snake.velocety = veloceties(size)[dir];
-                            else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && dir != 'left') games[gameId].players[index].snake.velocety = veloceties(size)[dir];
-                            games[gameId].updatePlayers = true;
-                        };
-                    };
-                });
+                let player = games[gameId].players[socket.id];
+                if (!player.snake.turning) {
+                    games[gameId].resetTimeout();
+                    player.snake.turning = true;
+                    if (player.snake.velocety.x != veloceties(size)[dir].x && player.snake.velocety.y != veloceties(size)[dir].y) player.snake.velocety = veloceties(size)[dir];
+                    else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && dir != 'left') player.snake.velocety = veloceties(size)[dir];
+                    games[gameId].updatePlayers = true;
+                };
             }
             catch(err) {
                 console.error(err);

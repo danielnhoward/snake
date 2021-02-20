@@ -1,18 +1,16 @@
-const { Agent } = require("http");
-
 module.exports = class {
     constructor(gameType, gameSpeed, onTimeout, blockSize, startLength) {
         this.type = gameType;
-        this.players = [];
+        this.players = {};
         this.playerIds = [];
-        this.spectators = [];
+        this.spectators = {};
         this.playerCount = 0;
         this.blockSize = blockSize;
         this.gameSpeed = gameSpeed;
         this.startLength = startLength;
         this.settings = {};
         this.canvas = {
-            players: [],
+            players: {},
             food: []
         };
         this.food = new Food(this.canvas, blockSize);
@@ -32,11 +30,11 @@ module.exports = class {
         for (let i = 1; i < arguments.length; i++) {
             args.push(arguments[i]);
         };
-        this.players.forEach((el) => {
-            el.socket.emit(func, ...args);
+        Object.keys(this.players).forEach((playerId) => {
+            this.players[playerId].socket.emit(func, ...args);
         });
-        this.spectators.forEach((el) => {
-            el.socket.emit(func, ...args);
+        Object.keys(this.spectators).forEach((playerId) => {
+            this.spectators[playerId].socket.emit(func, ...args);
         });
     };
     aliveEmit(func, data) {
@@ -44,8 +42,8 @@ module.exports = class {
         for (let i = 1; i < arguments.length; i++) {
             args.push(arguments[i]);
         };
-        this.players.forEach((el) => {
-            el.socket.emit(func, ...args);
+        Object.keys(this.players).forEach((playerId) => {
+            this.players[playerId].socket.emit(func, ...args);
         });
     };
     specEmit(func, data) {
@@ -53,22 +51,22 @@ module.exports = class {
         for (let i = 1; i < arguments.length; i++) {
             args.push(arguments[i]);
         };
-        this.spectators.forEach((el) => {
-            el.socket.emit(func, ...args);
+        Object.keys(this.spectators).forEach((playerId) => {
+            this.spectators[playerId].socket.emit(func, ...args);
         });
     };
     addPlayer(id, socket, name, settings) {
-        if (this.players.length == 0) this.run();
-        this.players.push({
+        if (Object.keys(this.players).length == 0) this.run();
+        this.players[id] = {
             id: id,
             socket: socket,
             emit: socket.emit,
             name: name,
             settings: settings,
             snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength, () => socket.emit('foodEat'))
-        });
+        };
         this.playerIds.push(id);
-        this.playerCount = this.players.length;
+        this.playerCount = Object.keys(this.players).length;
         this.settings[id] = {
             head: settings.head,
             tail: settings.tail,
@@ -81,37 +79,25 @@ module.exports = class {
         this.allEmit('setImage', id, {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner});
     };
     playerDisconnect(id) {
-        this.players.forEach((player, index) => {
-            if (player.id == id) {
-                this.players = this.players.filter((value, filterIndex) => {
-                    return filterIndex != index;
-                });
-                this.updatePlayers = true;
-                delete this.playerIds[this.playerIds.indexOf(id)];
-                this.playerCount = this.players.length;
-                this.allEmit('playerCount', this.playerCount);
-            };
-        });
-        if (this.players.length == 0) {
+        delete this.players[id];
+        this.updatePlayers = true;
+        delete this.playerIds[this.playerIds.indexOf(id)];
+        this.playerCount = Object.keys(this.players).length;
+        this.allEmit('playerCount', this.playerCount);
+        if (this.playerCount == 0) {
             clearInterval(this.interval);
             this.running = false;
         };
     };
     playerDie(id) {
-        this.players.forEach((player, index) => {
-            if (player.id == id) {
-                player.socket.emit('snakeDeath');
-                this.updatePlayers = true;
-                this.spectators.push(player);
-                this.players = this.players.filter((value, filterIndex) => {
-                    return filterIndex != index;
-                });
-                this.playerCount = this.players.length;
-                delete this.playerIds[this.playerIds.indexOf(id)];
-                this.allEmit('playerCount', this.playerCount);
-            };
-        });
-        if (this.players.length == 0) {
+        this.players[id].socket.emit('snakeDeath');
+        this.updatePlayers = true;
+        this.spectators[id] = this.players[id];
+        delete this.players[id];
+        this.playerCount = Object.keys(this.players).length;
+        delete this.playerIds[this.playerIds.indexOf(id)];
+        this.allEmit('playerCount', this.playerCount);
+        if (this.playerCount == 0) {
             clearInterval(this.interval);
             this.running = false;
         };
@@ -121,36 +107,36 @@ module.exports = class {
         this.updatePlayers = true;
         this.interval = setInterval(() => {
             this.canvas = {
-                players: [],
+                players: {},
                 food: []
             };
-            let redraw = false
-            for (const player of this.players) {
-                player.snake.moveSnake(this.food);
-            };
-            this.players.forEach(((player, index, players) => {
+            let redraw = false;
+            Object.keys(this.players).forEach((playerId) => {
+                this.players[playerId].snake.moveSnake(this.food);
+            });
+            Object.keys(this.players).forEach(((playerId, index, playerIds) => {
+                let player = this.players[playerId];
                 if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0) return;
                 if (player.snake.gameEnded()) return player.snake.onDie();
                 let collisionCanvas = [];
-                players.forEach((el, innerIndex) => {
-                    if (el.snake.velocety.x == 0 && el.snake.velocety.y == 0) return;
-                    let snake = el.snake.snake;
-                    for (let i in snake) {
-                        snake[i].owner = innerIndex;
-                    };
-                    if (innerIndex != index) collisionCanvas = [...collisionCanvas, ...snake];
+                playerIds.forEach((innerPlayerId) => {
+                    let innerPlayer = this.players[innerPlayerId];
+                    if (innerPlayer.snake.velocety.x == 0 && innerPlayer.snake.velocety.y == 0) return;
+                    let snake = innerPlayer.snake.snake;
+                    if (playerId != innerPlayerId) collisionCanvas = [...collisionCanvas, ...snake];
                 });
-                for (const el of collisionCanvas) {
-                    if (player.snake.snake[0].x == el.x && player.snake.snake[0].y == el.y) {
-                        this.players[el.owner].snake.addLength(player.snake.snake.length);
+                collisionCanvas.forEach((part) => {
+                    if (player.snake.snake[0].x == part.x && player.snake.snake[0].y == part.y) {
+                        this.players[part.id].snake.addLength(player.snake.snake.length);
                         return player.snake.onDie();
-                    }
-                };
+                    };
+                });
             }).bind(this));
-            for (const player of this.players) {
-                this.canvas.players = [...this.canvas.players, {snake: player.snake.snake, vel: player.snake.velocety, lengthDebt: player.snake.lengthDebt}];
+            Object.keys(this.players).forEach((playerId) => {
+                let player = this.players[playerId];
+                this.canvas.players = {...this.canvas.players, [playerId]: {snake: player.snake.snake, vel: player.snake.velocety, lengthDebt: player.snake.lengthDebt}};
                 if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
-            };
+            });
             if (redraw) {
                 this.food.redraw(this.canvas);
                 this.updatePlayers = true;
@@ -162,32 +148,28 @@ module.exports = class {
                 this.updatePlayers = false;
             };
 
-            this.players.forEach((player) => {
+            Object.keys(this.players).forEach((playerId) => {
+                let player = this.players[playerId];
                 player.socket.emit('render', player.snake.snake.length);
             });
             this.specEmit('render', 'Dead');
         }, this.gameSpeed);
     };
     rejoin(id) {
-        this.spectators.forEach((player, index) => {
-            if (player.id == id) {
-                this.spectators = this.spectators.filter((value, filterIndex) => {
-                    return filterIndex != index;
-                });
-                this.updatePlayers = true;
-                if (this.players.length == 0) this.run();
-                this.players.push({
-                    id: player.id,
-                    socket: player.socket,
-                    emit: player.emit,
-                    name: player.name,
-                    settings: player.settings,
-                    snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize, player.name, this.startLength, () => player.socket.emit('foodEat'))
-                });
-                this.playerCount = this.players.length;
-                this.allEmit('playerCount', this.playerCount);
-            };
-        })
+        this.updatePlayers = true;
+        if (Object.keys(this.players).length == 0) this.run();
+        let player = this.spectators[id];
+        this.players[id] = {
+            id: player.id,
+            socket: player.socket,
+            emit: player.emit,
+            name: player.name,
+            settings: player.settings,
+            snake: new Snake(player.settings, this.canvas, () => {this.playerDie(player.id)}, id, this.blockSize, player.name, this.startLength, () => player.socket.emit('foodEat'))
+        };
+        this.playerCount = Object.keys(this.players).length;
+        this.allEmit('playerCount', this.playerCount);
+        delete this.spectators[id];
     };
 };
 
@@ -210,7 +192,8 @@ class Snake {
         this.snake[0].position.x = this.snake[0].x;
         this.snake[0].position.y = this.snake[0].y;
         this.lengthDebt = this.startLength - 1;
-        for (const player of initCanvas.players) {
+        for (const playerId of Object.keys(initCanvas.players)) {
+            let player = initCanvas.players[playerId];
             for (const part of player.snake) {
                 for (const snakePart of this.snake) {
                     if (snakePart.x == part.x && snakePart.y == part.y) {
@@ -268,7 +251,8 @@ class Food {
     };
     redraw(canvas) {
         this.food = [{x: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
-        for (const player of canvas.players) {
+        for (const playerId of Object.keys(canvas.players)) {
+            let player = canvas.players[playerId];
             for (const part of player.snake) {
                 if (this.food.x == part.x && this.food.y == part.y) {
                     return this.redraw(canvas);

@@ -77,7 +77,8 @@ class MultiCanvas {
             this.ctx.drawImage(this.img.food, part.x, part.y, this.gameSize, this.gameSize);
         });
         let queue = [];
-        game.players.forEach((player) => {
+        Object.keys(game.players).forEach((playerId) => {
+            let player = game.players[playerId];
             player.snake.forEach((part, index) => {
                 if (index == 0) {
                     this.ctx.save();

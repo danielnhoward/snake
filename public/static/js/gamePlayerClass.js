@@ -31,7 +31,8 @@ class Game {
             move = false;
             this.recivedData = false;
         };
-        this.game.players.forEach((player, index) => {
+        Object.keys(this.game.players).forEach((playerId) => {
+            let player = this.game.players[playerId];
             if (player.vel.x == 0 && player.vel.y == 0) return;
             let snake, ld;
             if (move) {
@@ -43,23 +44,23 @@ class Game {
                 snake = player.snake;
                 ld = player.lengthDebt;
             }
-            this.game.players[index] = {snake: snake, vel: player.vel, lengthDebt: ld};
+            this.game.players[playerId] = {snake: snake, vel: player.vel, lengthDebt: ld};
         });
         this.canvasClass.drawGame(this.game);
         this.serverGame = this.game;
     };
 
-    runFrames(time) {
-        if (!this.prev) this.prev = time;
-        const delta = time - this.prev;
-        this.serverGame.players.forEach((player, index) => {
-            if (player.vel.x == 0 && player.vel.y == 0) return;
-            // this.serverGame.players[index] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
-            this.serverGame.players[index] = {snake: [{x: 0, y:0, name: 'pog', vel: {x: 0, y:0}}], vel: player.vel, lengthDebt: 0};
-        });
-        this.prev = time;
-        requestAnimationFrame(this.runFrames.bind(this));
-    };
+    // runFrames(time) {
+    //     if (!this.prev) this.prev = time;
+    //     const delta = time - this.prev;
+    //     this.serverGame.players.forEach((player, index) => {
+    //         if (player.vel.x == 0 && player.vel.y == 0) return;
+    //         // this.serverGame.players[index] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
+    //         this.serverGame.players[index] = {snake: [{x: 0, y:0, name: 'pog', vel: {x: 0, y:0}}], vel: player.vel, lengthDebt: 0};
+    //     });
+    //     this.prev = time;
+    //     requestAnimationFrame(this.runFrames.bind(this));
+    // };
 
     setVel(vel) {
         this.serverGame.players.forEach((player, index) => {
