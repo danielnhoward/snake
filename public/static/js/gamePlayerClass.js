@@ -53,20 +53,21 @@ class Game {
     // runFrames(time) {
     //     if (!this.prev) this.prev = time;
     //     const delta = time - this.prev;
-    //     this.serverGame.players.forEach((player, index) => {
+    //     Object.keys(this.serverGame.players).forEach((playerId) => {
+    //         let player = this.serverGame.players[playerId];
     //         if (player.vel.x == 0 && player.vel.y == 0) return;
-    //         // this.serverGame.players[index] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
-    //         this.serverGame.players[index] = {snake: [{x: 0, y:0, name: 'pog', vel: {x: 0, y:0}}], vel: player.vel, lengthDebt: 0};
+    //         this.serverGame.players[playerId] = {snake: moveSnakeFrame(player.snake, delta, this.gameSpeed), vel: player.vel, lengthDebt: 0};
     //     });
     //     this.prev = time;
+    //     // this.canvasClass.drawGame(this.serverGame);
     //     requestAnimationFrame(this.runFrames.bind(this));
     // };
 
-    setVel(vel) {
-        this.serverGame.players.forEach((player, index) => {
-            if (player.snake[0].id == this.id) return this.serverGame.players[index].vel = this.vel[vel];
-        });
-    };
+    // setVel(vel) {
+    //     this.serverGame.players.forEach((player, index) => {
+    //         if (player.snake[0].id == this.id) return this.serverGame.players[index].vel = this.vel[vel];
+    //     });
+    // };
 };
 
 function moveSnake(player, vel, food, ld, onEat) {

@@ -29,7 +29,11 @@ const veloceties = (size) => {
 
     // Forcing https
     app.use((req, res, next) => {
-        req.get('X-Forwarded-Proto') !== 'https' && req.get('Host') == 'snakeee.xyz' ? res.redirect('https://' + req.get('Host') + req.url) : next();
+        req.get('X-Forwarded-Proto') !== 'https' && req.get('Host') == 'snakeee.xyz' ? res.redirect(`https://${req.get('Host')}${req.url}`) : next();
+    });
+
+    app.use((req, res, next) => {
+        req.get('Host') != 'snakeee.xyz' && req.get('Host') != 'localhost' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
     });
 
     // Head Get request
