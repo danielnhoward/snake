@@ -260,7 +260,7 @@ class Settings {
                     };
                 };
 
-                settings.head = value;
+                settings.tail = value;
                 return localStorage.config = JSON.stringify(settings);
             };
         }
@@ -302,7 +302,7 @@ class Settings {
                     };
                 };
 
-                settings.head = value;
+                settings.corner = value;
                 return localStorage.config = JSON.stringify(settings);
             };
         }
@@ -344,7 +344,7 @@ class Settings {
                     };
                 };
 
-                settings.head = value;
+                settings.straight = value;
                 return localStorage.config = JSON.stringify(settings);
             };
         }
@@ -386,7 +386,7 @@ class Settings {
                     };
                 };
 
-                settings.head = value;
+                settings.food = value;
                 return localStorage.config = JSON.stringify(settings);
             };
         }
@@ -428,7 +428,7 @@ class Settings {
                     };
                 };
 
-                settings.head = value;
+                settings.background = value;
                 return localStorage.config = JSON.stringify(settings);
             };
         }

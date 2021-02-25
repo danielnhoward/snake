@@ -47,6 +47,7 @@ class MultiCanvas {
         this.clearCanvas();
     };
     clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.img.background, 0, 0, this.canvas.width, this.canvas.height);
     };
     setImage(id, image) {

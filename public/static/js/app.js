@@ -257,6 +257,7 @@ function reset() {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
                                     settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
+                                    console.log(settings.toJSON())
                                     reset();
                                     return;
                                 };
@@ -470,6 +471,8 @@ document.getElementById('importUpload').oninput = () => {
         document.getElementById('shareImg').src = '/static/img/loading.gif';
         document.getElementById('export').style.cursor = 'deafult';
 
+        let settings = new Settings();
+
         let file = document.getElementById(`importUpload`).files[0];
         let reader = new FileReader();
 
@@ -478,10 +481,9 @@ document.getElementById('importUpload').oninput = () => {
             let config = JSON.parse(atob(ev.target.result.split('base64,')[1]));
             switch(config.v) {
                 case 0:
-                    ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                        settings[field], config.skin[field];
+                    ['head', 'straight', 'tail', 'corner', 'food', 'background'].forEach((field) => {
+                        settings[field] = config.skin[field];
                     });
-                    settings.background = config.background;
                     reset();
                 break;
                 default:

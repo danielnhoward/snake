@@ -36,11 +36,8 @@ const veloceties = (size) => {
         req.get('Host') != 'snakeee.xyz' && req.get('Host') != 'localhost' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
     });
 
-    app.set('trust proxy', true);
-
     // Head Get request
     app.get('/*', (req, res) => {
-        console.log(req.ip)
         let readFile = true;
         let url = req.url.split('?')[0], file;
         if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {

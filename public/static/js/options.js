@@ -1,6 +1,7 @@
 onload = reset;
 
 function reset() {
+    let settings = new Settings();
     /* Build a snake */
     resetCanvas();
     
@@ -65,6 +66,7 @@ function reset() {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
                                     settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
+                                    console.log(settings.toJSON())
                                     reset();
                                     return;
                                 };
@@ -173,9 +175,8 @@ function resetSettings() {
     });
 };
 
-
 function resetCanvas() {
-    let settings = getConfig();
+    let settings = new Settings();
     document.getElementById('presethead').src = settings.head;
     document.getElementById('presetstraight').src = settings.straight;
     document.getElementById('presettail').src = settings.tail;
@@ -190,7 +191,7 @@ function resetCanvas() {
     let snake = [{x:30, y:30, name: '', vel: vel, id: 0, position: {x: 30, y: 30}}];
     let current = -1;
     let lengthDebt = 5;
-    window.canvas = new MultiCanvas('snakePreview', getConfig(), 30);
+    window.canvas = new MultiCanvas('snakePreview', settings, 30);
     canvas.setImage(0, {
         head: settings.head,
         body: settings.straight,
