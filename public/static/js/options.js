@@ -3,12 +3,11 @@ onload = reset;
 function reset() {
     /* Build a snake */
     resetCanvas();
-    let settings = getConfig();
     
     (async () => {
         let snakes = await (await fetch('/snakes.json')).json();
 
-        ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+        ['head', 'straight', 'tail', 'corner', 'food', 'background'].forEach((field) => {
             let html = [
                 '<select class="image-picker" style="color: black;">',
                 '<option value=""></option>',
@@ -29,10 +28,9 @@ function reset() {
                 el.src = settings[field];
                 el.style.cursor = 'pointer';
                 el.onclick = () => {
-                    let settings = getConfig();
                     Swal.fire({
                         title: `<strong>Pick a ${field}</strong>`,
-                        width: 'auto',
+                        width: field == 'background' ? 400 : 'auto',
                         html: html,
                         didOpen: (doc) => {
                             $("select").imagepicker({
@@ -66,9 +64,8 @@ function reset() {
                                     document.querySelectorAll(`#${field}`).forEach((innerEl) => {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
-                                    setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
-                                    resetCanvas();
-                                    settings = getConfig();
+                                    settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
+                                    reset();
                                     return;
                                 };
                             });
@@ -92,8 +89,8 @@ function reset() {
                     img.size = ev.target.size;
                     img.onload = (ev) => {
                         let canvas = document.createElement('canvas');
-                        canvas.width = 60;
-                        canvas.height = 60;
+                        canvas.width = field == 'background' ? 1000 : 60;
+                        canvas.height = field == 'background' ? 1000 : 60;
 
                         let ctx = canvas.getContext('2d');
                         ctx.drawImage(ev.target, 0, 0, canvas.width, canvas.height);
@@ -103,8 +100,8 @@ function reset() {
                             el.src = imgSrc;
                         });
 
-                        setConfigItem(field, imgSrc);
-                        resetCanvas();
+                        settings[field] =  imgSrc;
+                        reset()
 
                     };
                 };
@@ -120,7 +117,6 @@ function reset() {
                     '</select>'
                 );
             });
-            let settings = getConfig();
             Swal.fire({
                 title: `<strong>Pick a Preset</strong>`,
                 width: 'auto',
@@ -153,11 +149,9 @@ function reset() {
                     snakes.forEach((el) => {
                         if (option == el) {
                             ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                                setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
+                                settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
                             });
-                            resetCanvas();
                             reset();
-                            settings = getConfig();
                         }
                     });
                 };

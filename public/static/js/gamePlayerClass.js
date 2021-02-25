@@ -9,7 +9,7 @@ class Game {
             food: []
         };
         this.canvasClass = canvasClass; 
-        this.settings = getConfig();
+        this.settings = new Settings();
         this.gameSpeed = gameSpeed;
         this.gameSize = gameSize;
         this.recivedData = false;

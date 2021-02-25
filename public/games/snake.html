@@ -28,55 +28,66 @@
             body {
                 overscroll-behavior: contain;
             }
+            section {
+                width: 100vw;
+                height: 100vh;
+            }
         </style>
     </head>
     <body style="overflow: hidden; display: inline-block;" class="back">
-        <div class="window" style="left: -100%; z-index: 999;" id="options">
-            <div class="center" style="position: relative;">
-                <div style="width: 80vw; height: 80vh; border: 2px solid black; z-index: 2; position: absolute;">
-                    <img id="close" width="30" height="30" src="/static/img/close-icon.svg" style="cursor: pointer; right: 20px; top: 10px; margin: 10px; z-index: 1; position: inherit;">
-                    <div style="position: relative; width: 100%; height: 100%;">
-                        <iframe id="iframe" style="width: 100%; height: 100%;" src="/snakeBuilder.html"></iframe>
-                    </div>
-                </div>
-                <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" id="listener"></div>
+        <section id="loading">
+            <div class="center" style="text-align: center;">
+                <img width="100" height="100" src="/static/img/pageLoad-icon.svg">
             </div>
-        </div>
-        <div style="top: 0; bottom: 0;" class="window" id="game">
-            <div style="width: 100%; height: 100%; z-index: 99; position: absolute; top: 0; left: 0; pointer-events: none;" id="tint"></div>
-            <div style="position: relative;">
-                <div class="center">
-                    <div class="center-inner">
-                        <div class="game">
-                            <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
+        </section>
+        <section id="gameView" style="display: none;">
+            <div class="window" style="left: -100%; z-index: 999;" id="options">
+                <div class="center" style="position: relative;">
+                    <div style="width: 80vw; height: 80vh; border: 2px solid black; z-index: 2; position: absolute;">
+                        <img id="close" width="30" height="30" src="/static/img/close-icon.svg" style="cursor: pointer; right: 20px; top: 10px; margin: 10px; z-index: 1; position: inherit;">
+                        <div style="position: relative; width: 100%; height: 100%;">
+                            <iframe id="iframe" style="width: 100%; height: 100%;" src="/snakeBuilder.html"></iframe>
                         </div>
-                        <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
-                            <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
-                        </div>
-                        <div class="player-count">
-                            Game ID: <x id="gameId">0000</x><br>
-                            Player Count: <x id="playerCount">0</x><br>
-                            Size: <x id="size">0</x><br><br>
-                            <div id="shareLinks">
-                                <img style="cursor: pointer;" id="facebook" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30">
-                                <img style="cursor: pointer;" id="twitter" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30">
-                                <img style="cursor: pointer;" id="pinterest" title="Share on Pinterest" src="/static/img/social-icons/pinterest.png" width="30" height="30">
-                                <img style="cursor: pointer;" id="whatsapp" title="Share on Whatsapp" src="/static/img/social-icons/whatsapp.png" width="30" height="30">
-                                <img style="cursor: pointer;" id="copy" title="Copy link" src="/static/img/social-icons/copy.png" width="30" height="30" onclick="copy(location.href); copied();">
+                    </div>
+                    <div style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;" id="listener"></div>
+                </div>
+            </div>
+            <div style="top: 0; bottom: 0;" class="window" id="game">
+                <div style="width: 100%; height: 100%; z-index: 99; position: absolute; top: 0; left: 0; pointer-events: none;" id="tint"></div>
+                <div style="position: relative;">
+                    <div class="center">
+                        <div class="center-inner">
+                            <div class="game">
+                                <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
+                            </div>
+                            <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
+                                <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
+                            </div>
+                            <div class="player-count">
+                                Game ID: <x id="gameId">0000</x><br>
+                                Player Count: <x id="playerCount">0</x><br>
+                                Size: <x id="size">0</x><br><br>
+                                <div id="shareLinks">
+                                    <img style="cursor: pointer;" id="facebook" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30">
+                                    <img style="cursor: pointer;" id="twitter" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30">
+                                    <img style="cursor: pointer;" id="pinterest" title="Share on Pinterest" src="/static/img/social-icons/pinterest.png" width="30" height="30">
+                                    <img style="cursor: pointer;" id="whatsapp" title="Share on Whatsapp" src="/static/img/social-icons/whatsapp.png" width="30" height="30">
+                                    <img style="cursor: pointer;" id="copy" title="Copy link" src="/static/img/social-icons/copy.png" width="30" height="30" onclick="copy(location.href); copied();">
+                                </div>
+                            </div>
+                            <div id="customise" style="cursor: pointer; text-align: center;" title="Snake Builder" class="copy">
+                                <img width="20" height="20" src="/static/img/art-icon.png">
+                                <br>
+                                <small>Snake Builder</small>
+                            </div>
+                            <div id="restart" onclick="restart();" class="multi-reset" style="display: none;">
+                                <img width="50" height="50" src="/static/img/restart-icon.svg">
                             </div>
                         </div>
-                        <div id="customise" style="cursor: pointer; text-align: center;" title="Snake Builder" class="copy">
-                            <img width="20" height="20" src="/static/img/art-icon.png">
-                            <br>
-                            <small>Snake Builder</small>
-                        </div>
-                        <div id="restart" onclick="restart();" class="multi-reset" style="display: none;">
-                            <img width="50" height="50" src="/static/img/restart-icon.svg">
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
         <script>
             let sounds = {
                 eat: makeAudio('/static/sound/eat.mp3'),
@@ -85,6 +96,7 @@
 
 
             async function onload() {
+                let settings = new Settings();
                 let gameId = location.pathname.split('/')[2];
                 document.getElementById('gameId').innerHTML = gameId;
                 document.getElementById('facebook').onclick = () => open(`https://www.facebook.com/share.php?u=${location.href}`, 'Share Sankeee on Facebook', 'width=600,height=600');
@@ -108,7 +120,7 @@
                     sounds.back.restart();
                     sounds.back.fade.in(2);
                     window.username = username;
-                    socket.emit('snakeJoinWithName', gameId, username, getConfig());
+                    socket.emit('snakeJoinWithName', gameId, username, settings.toJSON());
                     onresize = () => {
                         if (innerHeight > innerWidth) {
                             document.getElementById('gameCanvas').style.width = '80vw';
@@ -121,7 +133,7 @@
                     };
                     onresize();
                     
-                    let canvas = new MultiCanvas('gameCanvas', getConfig(), gameSize);
+                    let canvas = new MultiCanvas('gameCanvas', settings.toJSON(), gameSize);
                     let game = new Game(canvas, gameSpeed, gameSize, socket.id);
                     socket.on('snakePing', (gamePing) => {
                         game.gameUpdate(gamePing);
@@ -161,7 +173,6 @@
                     document.addEventListener('keydown', (key) => {
                         if (!turning && !key.repeat) {
                             turning = true;
-                            const settings = getConfig();
                             const inpMap = {
                                 [settings.up]: 'up',
                                 [settings.down]: 'down',
@@ -177,7 +188,6 @@
 
 
                     function touchEnd(from, to) {
-                        let settings = getConfig();
                         const mouseDiff = {
                             x: from.x - to.x,
                             y: from.y - to.y
@@ -214,6 +224,11 @@
                             y: ev.changedTouches[0].clientY
                         });
                     });
+
+                    
+                    $('#loading').fadeOut(500, () => {
+                        $('#gameView').fadeIn(500);
+                    });
                 });
                 document.getElementById('customise').onclick = () => {
                     let closed = false;
@@ -228,7 +243,7 @@
                             closed = true;
                             document.getElementById('options').style.left = '-100%';
                             document.getElementById('tint').style.opacity = '0';
-                            socket.emit('snakeJoinWithName', location.pathname.split('/')[2], username, getConfig());
+                            socket.emit('snakeJoinWithName', location.pathname.split('/')[2], username, settings.toJSON());
                             document.getElementById('gameCanvas').click();
                         };
                     };

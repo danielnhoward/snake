@@ -114,12 +114,12 @@ module.exports = class {
             Object.keys(this.players).forEach((playerId) => {
                 this.players[playerId].snake.moveSnake(this.food);
             });
-            Object.keys(this.players).forEach(((playerId, index, playerIds) => {
+            Object.keys(this.players).forEach(((playerId) => {
                 let player = this.players[playerId];
                 if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0) return;
                 if (player.snake.gameEnded()) return player.snake.onDie();
                 let collisionCanvas = [];
-                playerIds.forEach((innerPlayerId) => {
+                Object.keys(this.players).forEach((innerPlayerId) => {
                     let innerPlayer = this.players[innerPlayerId];
                     if (innerPlayer.snake.velocety.x == 0 && innerPlayer.snake.velocety.y == 0) return;
                     let snake = innerPlayer.snake.snake;

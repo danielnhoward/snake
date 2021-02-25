@@ -12,6 +12,7 @@
   "dependencies": {
     "circular-json": "^0.5.9",
     "express": "^4.17.1",
+    "express-ip": "^1.0.4",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
     "mime": "^2.4.6",

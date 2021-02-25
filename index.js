@@ -22,7 +22,7 @@ const veloceties = (size) => {
     };
 };
 
-((express, http, socketIo, fs, commands) => {
+((express, http, socketIo, fs, ip) => {
     const app = express();
     const server = http.createServer(app);
     const io = socketIo(server);
@@ -32,12 +32,15 @@ const veloceties = (size) => {
         req.get('X-Forwarded-Proto') !== 'https' && req.get('Host') == 'snakeee.xyz' ? res.redirect(`https://${req.get('Host')}${req.url}`) : next();
     });
 
-    app.use((req, res, next) => {
-        req.get('Host') != 'snakeee.xyz' && req.get('Host') != 'localhost' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
-    });
+    // app.use((req, res, next) => {
+    //     req.get('Host') != 'snakeee.xyz' && req.get('Host') != 'localhost' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
+    // });
+
+    app.use(ip().getIpInfoMiddleware);
 
     // Head Get request
     app.get('/*', (req, res) => {
+        console.log(req.ipInfo)
         let readFile = true;
         let url = req.url.split('?')[0], file;
         if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
@@ -75,7 +78,7 @@ const veloceties = (size) => {
         })() : (() => {
             /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
         })();
-        readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.redirect('/?a')) : false;
+        readFile ? (fs.existsSync(file) ? res.sendFile(`${__dirname}${file.replace('.', '')}`) : res.status(404).redirect('/?a')) : false;
     });
 
     
@@ -153,7 +156,7 @@ const veloceties = (size) => {
         });
     });
     server.listen(process.env.PORT || 80, () => {console.log(`Listening on port ${process.env.PORT || 80}`)});
-})(require('express'), require('http'), require('socket.io'), require('fs'));
+})(require('express'), require('http'), require('socket.io'), require('fs'), require('express-ip'));
 
 function makeId() {
     let id = '', run = true;

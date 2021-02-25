@@ -68,7 +68,7 @@ function reset() {
         };
     };
 
-    let settings = getConfig();
+    let settings = new Settings();
 
     /* Single Player */
     // document.getElementById('gameSpeed').oninput = () => {
@@ -142,8 +142,8 @@ function reset() {
         document.getElementById('clientGameSpeedMulti').innerHTML = parseInt(document.getElementById('gameSpeedMulti').value) + 100;
 
         let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
-        setConfigItem('gameSpeed', multiSettings.gameSpeed);
-        setConfigItem('gameSize', multiSettings.gameSize);
+        settings.gameSpeed = multiSettings.gameSpeed;
+        settings.gameSize = multiSettings.gameSize;
     };
 
 
@@ -151,26 +151,25 @@ function reset() {
         document.getElementById('clientGameSizeMulti').innerHTML = gameSizes[document.getElementById('gameSizeMulti').value][1];
 
         let multiSettings = setSettings(document.getElementById('gameSpeedMulti').value, gameSizes[document.getElementById('gameSizeMulti').value][0]);
-        setConfigItem('gameSpeed', multiSettings.gameSpeed);
-        setConfigItem('gameSize', multiSettings.gameSize);
+        settings.gameSpeed = multiSettings.gameSpeed;
+        settings.gameSize = multiSettings.gameSize;
     };
 
     document.getElementById('startLength').oninput = () => {
         document.getElementById('clientStartLengthMulti').innerHTML = document.getElementById('startLength').value;
-        setConfigItem('startLength', document.getElementById('startLength').value)
+        settings.startLength = document.getElementById('startLength').value;
     };
 
     document.getElementById('gameSpeedMulti').oninput();
     document.getElementById('gameSizeMulti').oninput();
     document.getElementById('clientStartLengthMulti').innerHTML = 3;
     document.getElementById('startLength').value = 3;
-    setConfigItem('startLength', 3);
+    settings.startLength = 3;
     document.getElementById('startLength').oninput();
     
 
     document.getElementById('multiPlay').onsubmit = (ev) => {
         ev.preventDefault();
-        settings = getConfig();
         location.href = `/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}`;
     };
 
@@ -185,8 +184,8 @@ function reset() {
     ];
     keyInps.forEach((el) => {
         function keyDown(ev) {
-            setConfigItem(el.name, ev.keyCode);
-            setConfigItem(`${el.name}Key`, ev.key);
+            settings[el.name] = ev.keyCode;
+            settings[`${el.name}Key`] = ev.key;
             el.dis.innerHTML = ev.key;
         }
         el.button.addEventListener('keydown', keyDown)
@@ -257,7 +256,7 @@ function reset() {
                                     document.querySelectorAll(`#${field}`).forEach((innerEl) => {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
-                                    setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
+                                    settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
                                     reset();
                                     return;
                                 };
@@ -293,7 +292,7 @@ function reset() {
                             el.src = imgSrc;
                         });
 
-                        setConfigItem(field, imgSrc);
+                        settings[field] =  imgSrc;
                         reset()
 
                     };
@@ -342,7 +341,7 @@ function reset() {
                     snakes.forEach((el) => {
                         if (option == el) {
                             ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                                setConfigItem(field, `/static/img/gameAssets/${el}/${field}.png`);
+                                settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
                             });
                             reset();
                         }
@@ -416,7 +415,7 @@ function resetSettings() {
 
 
 function resetCanvas() {
-    let settings = getConfig();
+    let settings = new Settings();
     document.getElementById('presethead').src = settings.head;
     document.getElementById('presetstraight').src = settings.straight;
     document.getElementById('presettail').src = settings.tail;
@@ -480,13 +479,12 @@ document.getElementById('importUpload').oninput = () => {
             switch(config.v) {
                 case 0:
                     ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
-                        setConfigItem(field, config.skin[field]);
+                        settings[field], config.skin[field];
                     });
-                    setConfigItem('background', config.background);
+                    settings.background = config.background;
                     reset();
                 break;
                 default:
-                    console.log(0)
                     throw new Error('Improper Version');
                 break;
             }
@@ -550,7 +548,7 @@ document.getElementById('export').onclick = (ev) => {
                     document.getElementById('importUpload').click();
                 break;
                 case 2:
-                    let settings = getConfig();
+                    let settings = new Settings();
                     const userConfig = {
                         v: 0,
                         skin: {
