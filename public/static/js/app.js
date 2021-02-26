@@ -359,11 +359,11 @@ function reset() {
                     delete selected;
                     snakes.forEach((el) => {
                         if (option == el) {
-                            ['head', 'straight', 'tail', 'corner', 'food'].forEach((field) => {
+                            ['head', 'straight', 'tail', 'corner', 'food', 'background'].forEach((field) => {
                                 settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
                             });
                             reset();
-                        }
+                        };
                     });
                 };
             });
