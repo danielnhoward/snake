@@ -1,5 +1,11 @@
 $(document).ready(() => {
-    window.socket = io();
+    let servSocket = io();
+    Object.defineProperty(window, 'socket', {
+        enumerable: true,
+        configurable: false,
+        get: () => servSocket,
+        set: (value) => {}
+    });
     socket.on(`serverError`, (data) => {
         Swal.fire({
             icon: 'error',

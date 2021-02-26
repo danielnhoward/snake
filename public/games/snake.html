@@ -89,7 +89,7 @@
             </div>
         </section>
         <script>
-            let sounds = {
+            const sounds = {
                 eat: makeAudio('/static/sound/eat.mp3'),
                 back: makeAudio('/static/sound/music.mp3', 0.1, true, true)
             };
@@ -119,7 +119,12 @@
                     });
                     sounds.back.restart();
                     sounds.back.fade.in(2);
-                    window.username = username;
+                    Object.defineProperty(window, 'username', {
+                        enumerable: true,
+                        configurable: false,
+                        get: () => username,
+                        set: (value) => {}
+                    });
                     socket.emit('snakeJoinWithName', gameId, username, settings.toJSON());
                     onresize = () => {
                         if (innerHeight > innerWidth) {
