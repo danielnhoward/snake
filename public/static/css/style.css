@@ -83,6 +83,10 @@ button.full-screen {
     width: 90%;
 }
 
+img {
+    pointer-events: none;
+}
+
 .game {
     padding: 20px;
     padding-top: 0px;

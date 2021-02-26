@@ -16,6 +16,9 @@ class Game {
         this.id = id;
         this.vel = veloceties(this.gameSize);
         this.run();
+        // this.interval = setInterval(() => {
+        //     this.run();
+        // }, this.gameSpeed);
         // requestAnimationFrame(this.runFrames.bind(this));
     };
 
