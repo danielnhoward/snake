@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
+
+        <meta property="og:url" content="https://snakeee.xyz/"/>
+        <meta property="og:type" content="game"/>
+        <meta property="og:title" content="Join Multiplayer Snake Game"/>
+        <meta property="og:description" content="Join a game of multiplayer snake with your friends!"/>
+        <meta property="og:image" content="https://snakeee.xyz/favicon.ico"/>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/utils.js"></script>
+        <script src="/static/js/settings.js"></script>
+        <script src="/static/js/multiGameClass.js"></script>
+        <script src="/static/js/gamePlayerClass.js"></script>
+        <title>Auth | Snakeee</title>
+    </head>
+    <body style="overflow: hidden; display: inline-block;" class="back">
+        <script>
+            function onload() {
+                Swal.fire({
+                    title: 'Please enter your auth:',
+                    input: 'text',
+                    showCancelButton: true
+                });
+            };
+        </script>
+    </body>
+</html>

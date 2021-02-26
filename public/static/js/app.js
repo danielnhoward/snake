@@ -1,6 +1,13 @@
 const pages = ['/home', '/single', '/multi', '/options'];
 const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee'];
 let onload = reset;
+if (new URLSearchParams(location.search).get('controls')) {
+    $('controls').hide();
+    $('#exitBtn').hide();
+}
+else {
+    addEventListener('popstate', reset);
+};
 
 $('a').click((ev) => {
     ev.preventDefault();
@@ -12,7 +19,6 @@ function hideAll() {
         $(`${el.replace('/', '#')}`).hide();
     });
 };
-addEventListener('popstate', reset);
 
 function reset() {
     hideAll();
@@ -32,7 +38,7 @@ function reset() {
 
     if (location.search) {
         let error = location.search;
-        history.replaceState(null, null, '/');
+        history.replaceState(null, null, location.pathname);
         if (error == '?a') {
             Swal.fire({
                 icon: 'error',
@@ -257,7 +263,6 @@ function reset() {
                                         innerEl.src = `/static/img/gameAssets/${el}/${field}.png`;
                                     });
                                     settings[field] = `/static/img/gameAssets/${el}/${field}.png`;
-                                    console.log(settings.toJSON())
                                     reset();
                                     return;
                                 };

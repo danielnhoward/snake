@@ -138,15 +138,18 @@
                     </div>
         
         
-                    <div class="title">Controls</div>
-                    <button id="upKey" class="main-btn"><span>Up (<x id="upKeyDis"></x>)</span></button>
-                    <br>
-                    <button id="leftKey" class="main-btn"><span>Left (<x id="leftKeyDis"></x>)</span></button>
-                    <button id="rightKey" class="main-btn"><span>Right (<x id="rightKeyDis"></x>)</span></button>
-                    <br>
-                    <button id="downKey" class="main-btn"><span>Down (<x id="downKeyDis"></x>)</span></button>
-                    <br><br><br>
-                    <a><button onclick="Settings.prototype.reset(); reset(); resetSettings(); resetCanvas();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="/home"><button class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
+                    <controls>
+                        <div class="title">Controls</div>
+                        <button id="upKey" class="main-btn"><span>Up (<x id="upKeyDis"></x>)</span></button>
+                        <br>
+                        <button id="leftKey" class="main-btn"><span>Left (<x id="leftKeyDis"></x>)</span></button>
+                        <button id="rightKey" class="main-btn"><span>Right (<x id="rightKeyDis"></x>)</span></button>
+                        <br>
+                        <button id="downKey" class="main-btn"><span>Down (<x id="downKeyDis"></x>)</span></button>
+                        <br>
+                    </controls>
+                    <br><br>
+                    <a><button onclick="Settings.prototype.reset(); reset(); resetSettings(); resetCanvas();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="/home"><button id="exitBtn" class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
                 </div>
                 
             </div>
