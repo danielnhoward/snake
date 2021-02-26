@@ -1,5 +1,5 @@
 module.exports = class {
-    constructor(gameType, gameSpeed, onTimeout, blockSize, startLength) {
+    constructor(gameType, gameSpeed, onTimeout, blockSize, startLength, setOwner) {
         this.type = gameType;
         this.players = {};
         this.playerIds = [];
@@ -16,6 +16,7 @@ module.exports = class {
         this.food = new Food(this.canvas, blockSize);
         this.running = false;
         this.onTimeout = onTimeout;
+        this.setOwner = setOwner;
         this.resetTimeout();
     };
     resetTimeout() {
@@ -77,6 +78,10 @@ module.exports = class {
         this.allEmit('playerCount', this.playerCount);
         socket.emit('initImages', this.settings)
         this.allEmit('setImage', id, {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner});
+        if (!this.ownerId) {
+            this.ownerId = id;
+            this.setOwner(name);
+        };
     };
     playerDisconnect(id) {
         delete this.players[id];

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            margin: 0;
+        }
+        table, tr, td {
+            border: 1px solid black;
+            margin: 10px;
+        }
+        tr, td {
+            padding: 10px;
+        }
+        tr {
+           background: none; 
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        table {
+            border-collapse: collapse;
+        }
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(359deg);
+            }
+        }
+        .rotate {
+            animation: rotation 1s ease-out;
+        }
+    </style>
+</head>
+<body class="back">
+    <div class="center">
+        <div class="center-inner">
+            <div class="fullscreen" onclick="resetTable(true);">
+                <img src="/static/img/restart-icon.svg" width="50" height="50">
+            </div>
+            <div class="game">
+                <table id="games"></table>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function resetTable(click) {
+                let table = '<tr style="font-weight: 700;"><td>Game ID</td><td>Player Count</td></tr>';
+            try {
+                const games = await (await fetch('/public')).json();
+                if (Object.keys(games).length == 0) {
+                    table += `<tr onclick="history.pushState(null, null, '/multi'); location.href = '/multi';" style="text-align: center; cursor: pointer;"><td colspan="2">Looks like there arent any games currently open!<br>Click on here to go an make one!</td></tr>`;
+                }
+                else {
+                    Object.keys(games).forEach((game) => {
+                        table += `<tr onclick="location.href = '/play/${game}/'" style="cursor: pointer;"><td>${game}</td><td>${games[game]}</td></tr>`;
+                    });
+                };
+                if (click) {
+                    document.getElementsByClassName('fullscreen')[0].classList.remove('rotate');
+                    setTimeout(() => {
+                        document.getElementsByClassName('fullscreen')[0].classList.add('rotate');
+                    }, 1);
+                };
+            }
+            catch (err) {
+                    table += `<tr onclick="location.href = '/multi';" style="text-align: center; cursor: pointer;"><td colspan="2">Looks like there was an error when trying to get the games,<br>Click on here to try and make a game!</td></tr>`;
+            };
+            document.getElementById('games').innerHTML = table;
+        };
+        resetTable();
+    </script>
+</body>
+</html>

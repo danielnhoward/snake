@@ -1,5 +1,5 @@
-const pages = ['/home', '/single', '/multi', '/options'];
-const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee'];
+const pages = ['/home', '/single', '/multi', '/options', '/games'];
+const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee', 'Public Games | Snakeee'];
 let onload = reset;
 if (new URLSearchParams(location.search).get('controls')) {
     $('controls').hide();
@@ -7,6 +7,19 @@ if (new URLSearchParams(location.search).get('controls')) {
 }
 else {
     addEventListener('popstate', reset);
+};
+
+function refreshed() {
+    Swal.fire({
+        position: 'bottom-start',
+        icon: 'success',
+        title: 'Refreshed Game List',
+        showConfirmButton: false,
+        timer: 1000,
+        backdrop: false,
+        timerProgressBar: true,
+        allowOutsideClick: false
+    });
 };
 
 $('a').click((ev) => {
@@ -176,7 +189,7 @@ function reset() {
 
     document.getElementById('multiPlay').onsubmit = (ev) => {
         ev.preventDefault();
-        location.href = `/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}`;
+        location.href = `/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}/${document.getElementById('public').checked}`;
     };
 
 

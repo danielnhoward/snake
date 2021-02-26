@@ -24,6 +24,40 @@
         <script src="/static/js/multiGameClass.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <link rel="stylesheet" href="/static/css/style.css">
+
+        <style>
+            body {
+                margin: 0;
+            }
+            table, tr, td {
+                border: 1px solid black;
+                margin: 10px;
+            }
+            tr, td {
+                padding: 10px;
+            }
+            tr {
+               background: none; 
+            }
+            tr:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            table {
+                border-collapse: collapse;
+            }
+            @keyframes rotation {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(359deg);
+                }
+            }
+            .rotate {
+                animation: rotation 1s ease-out;
+            }
+        </style>
+
         <title>Snakeee</title>
     </head>
     <body class="back">
@@ -36,6 +70,7 @@
                         <!-- <a href="/single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br> -->
                         <a href="/multi"><button class="main-btn" type="button"><span>Start a Multiplayer Game</span></button></a><br>
                         <button onclick="joinGame();" class="main-btn" type="button"><span>Join a Multiplayer Game</span></button><br>
+                        <a href="/games"><button class="main-btn" type="button"><span>Join a Public Game</span></button></a><br>
                         <a href="/options"><button class="main-btn" type="button"><span>Snake Builder</span></button></a><br>
                     </div>
                 </div>
@@ -82,6 +117,10 @@
                         <br><div class="slider-hover">
                             <label for="startLength">Start Length: <x id="clientStartLengthMulti">0</x></label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto;" type="range" class="slider" id="startLength" value="3" min="3" max="20">
+                        </div>
+                        <br><div class="publicContainer">
+                            <label for="public">Public</label><div style="height: 5px;"></div>
+                            <input type="checkbox" id="public">
                         </div>
                         <br><br>
                         <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
@@ -150,6 +189,45 @@
                     </controls>
                     <br><br>
                     <a><button onclick="Settings.prototype.reset(); reset(); resetSettings(); resetCanvas();" class="main-btn" type="button"><span><b>Reset All</b></span></button></a><a href="/home"><button id="exitBtn" class="main-btn" type="button"><span><b>Save and Exit</b></span></button></a><br>
+                </div>
+
+                <div class="" style="display: none;" id="games">
+                    <div class="center">
+                        <div class="fullscreen" style="z-index: 99;" onclick="resetTable(true); refreshed();">
+                            <img src="/static/img/restart-icon.svg" width="50" height="50">
+                        </div>
+                        <div class="game">
+                            <table id="gamesTable"></table>
+                        </div>
+                    </div>
+                    <script>
+                        async function resetTable(click) {
+                            let table = '<tr style="font-weight: 700;"><td>Game ID</td><td>Player Count</td><td>Owner</td></tr>';
+                            try {
+                                const games = await (await fetch('/public')).json();
+                                if (Object.keys(games).length == 0) {
+                                    table += `<tr onclick="history.pushState(null, null, '/multi'); reset();" style="text-align: center; cursor: pointer;"><td colspan="3">Looks like there arent any games currently open!<br>Click on here to go an make one!</td></tr>`;
+                                }
+                                else {
+                                    Object.keys(games).forEach((game) => {
+                                        table += `<tr onclick="location.href = '/play/${game}/'" style="cursor: pointer;"><td>${game}</td><td>${games[game][0]}</td><td>${games[game][1]}</td></tr>`;
+                                    });
+                                };
+                                if (click) {
+                                    document.getElementsByClassName('fullscreen')[0].classList.remove('rotate');
+                                    setTimeout(() => {
+                                        document.getElementsByClassName('fullscreen')[0].classList.add('rotate');
+                                    }, 10);
+                                };
+                            }
+                            catch (err) {
+                                table += `<tr onclick="history.pushState(null, null, '/multi'); reset();" style="text-align: center; cursor: pointer;"><td colspan="3">Looks like there was an error when trying to get the games,<br>Click on here to try and make a game!</td></tr>`;
+                            };
+                            document.getElementById('gamesTable').innerHTML = table;
+                        };
+                        resetTable();
+                        setInterval(resetTable, 1000);
+                    </script>
                 </div>
                 
             </div>

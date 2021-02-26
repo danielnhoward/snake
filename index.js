@@ -1,6 +1,7 @@
 const Game = require('./gameClass.js');
 let games = {};
 let connectedPlayers = {};
+let publicGames = {};
 const veloceties = (size) => {
     return {
         up: {
@@ -42,7 +43,7 @@ const veloceties = (size) => {
         let url = req.url.split('?')[0], file;
         if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
             readFile = false;
-            res.redirect(`/play/${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]))}`);
+            res.redirect(`/play/${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
         }
         else if (req.url.startsWith('/play')) {
             let gameId = req.url.split('/')[2];
@@ -69,8 +70,12 @@ const veloceties = (size) => {
                     res.json({exists: false, id: id});
                 }
             };
+        }
+        else if (req.url.includes('public')) {
+            readFile = false;
+            res.json(publicGames);
         };
-        (url == '/multi' || url == '/options' || url == '/home') ? (() => {
+        (url == '/multi' || url == '/options' || url == '/home' || url == '/games') ? (() => {
             file = './public/index.html';
         })() : (() => {
             /\./.test(url) ? file = `./public${url}` : file = `./public${url}/index.html`;
@@ -96,6 +101,7 @@ const veloceties = (size) => {
                 if (games[gameId].playerIds.includes(socket.id)) return socket.emit('redirect', '/?d');
                 games[gameId].addPlayer(socket.id, socket, name.substring(0, 10), settings);
                 connectedPlayers[socket.id] = gameId;
+                if (gameId in publicGames) publicGames[gameId][0] = games[gameId].playerCount;
             }
             catch(err) {
                 console.error(err);
@@ -105,8 +111,10 @@ const veloceties = (size) => {
         socket.on('disconnect', () => {
             try {
                 if (socket.id in connectedPlayers) {
-                    games[connectedPlayers[socket.id]].playerDisconnect(socket.id);
+                    let gameId = connectedPlayers[socket.id];
+                    games[gameId].playerDisconnect(socket.id);
                     delete connectedPlayers[socket.id];
+                    if (gameId in publicGames) publicGames[gameId][0] = games[gameId].playerCount;
                 };
             }
             catch(err) {
@@ -116,8 +124,10 @@ const veloceties = (size) => {
         socket.on('playerDisconnect', () => {
             try {
                 if (socket.id in connectedPlayers) {
-                    games[connectedPlayers[socket.id]].playerDisconnect(socket.id);
+                    let gameId = connectedPlayers[socket.id];
+                    games[gameId].playerDisconnect(socket.id);
                     delete connectedPlayers[socket.id];
+                    if (gameId in publicGames) publicGames[gameId][0] = games[gameId].playerCount;
                 };
             }
             catch(err) {
@@ -128,6 +138,7 @@ const veloceties = (size) => {
             try {
                 if (!(gameId in games)) return socket.emit('redirect', '/?c');
                 games[gameId].rejoin(socket.id);
+                if (gameId in publicGames) publicGames[gameId][0] = games[gameId].playerCount;
             }
             catch(err) {
                 console.error(err);
@@ -164,8 +175,9 @@ function makeId() {
     return id.toLocaleString('en-US', {minimumIntegerDigits: 4, useGrouping:false});
 };
 
-function makeSnakeGame(speed, size, startLength) {
+function makeSnakeGame(speed, size, startLength, public) {
     const gameId = makeId();
-    games[gameId] = new Game('snake', speed, () => {delete games[gameId]}, size, startLength);
+    if (public) publicGames[gameId] = [0, 'Unkown'];
+    games[gameId] = new Game('snake', speed, public ? () => {delete games[gameId]; delete publicGames[gameId]} : () => {delete games[gameId];}, size, startLength, public ? (name) => {publicGames[gameId][1] = name;} : () => {});
     return gameId;
-}
+};

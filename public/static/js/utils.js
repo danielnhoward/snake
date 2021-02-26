@@ -18,6 +18,7 @@ $(document).ready(() => {
         });
     });
     socket.on('redirect', (loc) => {
+        document.querySelector('body').onbeforeunload = () => {};
         location.replace(loc);
     });
     if (typeof(onload) == 'function') {
