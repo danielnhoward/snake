@@ -197,23 +197,23 @@ class Snake {
         this.snake[0].position.x = this.snake[0].x;
         this.snake[0].position.y = this.snake[0].y;
         this.lengthDebt = this.startLength - 1;
-        for (const playerId of Object.keys(initCanvas.players)) {
+        Object.keys(initCanvas.players).forEach((playerId) => {
             let player = initCanvas.players[playerId];
-            for (const part of player.snake) {
-                for (const snakePart of this.snake) {
+            player.snake.forEach((part) => {
+                this.snake.forEach((snakePart) => {
                     if (snakePart.x == part.x && snakePart.y == part.y) {
                         return this.initSnake(initCanvas);
                     };
-                };
-            };
-        };
-        for (const part of initCanvas.food) {
-            for (const snakePart of this.snake) {
-                if (snakePart.x == part.x && snakePart.y == part.y) {
+                });
+            });
+        });
+        initCanvas.food.forEach((food) => {
+            this.snake.forEach((snakePart) => {
+                if (snakePart.x == food.x && snakePart.y == food.y) {
                     return this.initSnake(initCanvas);
                 };
-            };
-        };
+            });
+        });
     };
     moveSnake(food) {
         this.turning = false;
@@ -256,13 +256,13 @@ class Food {
     };
     redraw(canvas) {
         this.food = [{x: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
-        for (const playerId of Object.keys(canvas.players)) {
+        Object.keys(canvas.players).forEach((playerId) => {
             let player = canvas.players[playerId];
-            for (const part of player.snake) {
-                if (this.food.x == part.x && this.food.y == part.y) {
+            player.snake.forEach((part) => {
+                if (this.food[0].x == part.x && this.food[0].y == part.y) {
                     return this.redraw(canvas);
                 };
-            };
-        };
+            });
+        });
     };
 };
