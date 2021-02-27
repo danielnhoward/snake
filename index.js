@@ -92,7 +92,7 @@ const veloceties = (size) => {
             }
             catch(err) {
                 console.error(err);
-                socket.emit('serverError', {err: err.name, mes: err.message});
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
         socket.on('snakeJoinWithName', (gameId, name, settings) => {
@@ -105,7 +105,7 @@ const veloceties = (size) => {
             }
             catch(err) {
                 console.error(err);
-                socket.emit('serverError', {err: err.name, mes: err.message});
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
         socket.on('disconnect', () => {
@@ -118,7 +118,8 @@ const veloceties = (size) => {
                 };
             }
             catch(err) {
-                return;
+                console.error(err);
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
         socket.on('playerDisconnect', () => {
@@ -132,6 +133,7 @@ const veloceties = (size) => {
             }
             catch(err) {
                 console.error(err);
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
         socket.on('snakeRejoin', (gameId) => {
@@ -142,6 +144,7 @@ const veloceties = (size) => {
             }
             catch(err) {
                 console.error(err);
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
         socket.on('snakeMove', (gameId, dir) => {
@@ -159,7 +162,7 @@ const veloceties = (size) => {
             }
             catch(err) {
                 console.error(err);
-                socket.emit('serverError', {err: err.name, mes: err.message});
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
     });

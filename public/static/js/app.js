@@ -1,5 +1,5 @@
 const pages = ['/home', '/single', '/multi', '/options', '/games'];
-const titles = ['Snakeee', 'Single Player | Snakeee', 'Multi Player | Snakeee', 'Options | Snakeee', 'Public Games | Snakeee'];
+const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Public Games | Snake'];
 let onload = reset;
 if (new URLSearchParams(location.search).get('controls')) {
     $('controls').hide();
@@ -37,7 +37,7 @@ function reset() {
     hideAll();
     if (pages.includes(location.pathname) || location.pathname == '/') {
         if (location.pathname == '/') {
-            document.title = 'Snakeee';
+            document.title = 'Snake';
             $('#home').show();
         }
         else {
@@ -587,7 +587,7 @@ document.getElementById('export').onclick = (ev) => {
                     a.download = `${Date.now()}.snakeee`;
                     a.click();
                 break;
-            }
+            };
         };
     });
 };

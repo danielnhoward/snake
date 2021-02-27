@@ -161,10 +161,22 @@ class MultiCanvas {
                         }
                     };
                     if (differences.before.x == differences.after.x || differences.before.y == differences.after.y) {
-                        if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y || part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
+                        if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y) {
                             this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x, part.position.y, this.gameSize, this.gameSize);
                         }
-                        else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y || part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
+                        else if (part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
+                            this.ctx.translate(part.position.x + this.gameSize/2, part.position.y + this.gameSize/2);
+                            this.ctx.rotate(180*Math.PI/180);
+                            this.ctx.translate(-(part.position.x + this.gameSize/2), -(part.position.y + this.gameSize/2));
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                        }
+                        else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y) {
+                            this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                            this.ctx.rotate(270*Math.PI/180);
+                            this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x + this.gameSize, part.position.y, this.gameSize, this.gameSize);
+                        }
+                        else if (part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
                             this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
                             this.ctx.rotate(90*Math.PI/180);
                             this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));

@@ -58,13 +58,13 @@
             }
         </style>
 
-        <title>Snakeee</title>
+        <title></title>
     </head>
     <body class="back">
         <div class="container" style="padding-right: 0px; padding-left: 0px;">
             <div class="center">
                 <div style="display: none;" id="home" class="content">
-                    <div class="title">Snakeee</div>
+                    <div style="font-size: 75px;" class="title">Snake</div>
                     <br>
                     <div id="buttons" style="animation: back-text 10s ease infinite;"> 
                         <!-- <a href="/single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br> -->
@@ -104,7 +104,7 @@
                     <!--<div style="position: absolute; top: 10px; left: 10px; margin: 20px; border: none;" onclick="showPopup(true);">
                         <img src="/static/img/help-icon.svg" width="50" height="50">
                     </div>-->
-                    <div class="title">Play Multi Player</div>
+                    <div class="title">Play Multiplayer Snake</div>
                     <form id="multiPlay" style="text-align: center;">
                         <div class="slider-hover">
                             <label for="gameSpeedMulti">Game Speed: <x id="clientGameSpeedMulti">100</x>%</label><div style="height: 5px;"></div>
@@ -225,8 +225,10 @@
                             };
                             document.getElementById('gamesTable').innerHTML = table;
                         };
-                        resetTable();
-                        setInterval(resetTable, 1000);
+                        if (!new URLSearchParams(location.search).get('controls')) {
+                            resetTable();
+                            setInterval(resetTable, 10000);
+                        };
                     </script>
                 </div>
                 

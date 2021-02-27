@@ -16,6 +16,7 @@ $(document).ready(() => {
             allowEnterKey: false,
             showConfirmButton: false
         });
+        console.error(data);
     });
     socket.on('redirect', (loc) => {
         document.querySelector('body').onbeforeunload = () => {};
