@@ -11,6 +11,7 @@ async function onload() {
     };
     socket.on('showAd', (id) => {
         window.adCode = id;
+        onFinish();
     });
     socket.emit('ad', sessionStorage.adCode, () => {onFinish(true);});
 };
