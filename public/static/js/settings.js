@@ -1,5 +1,6 @@
 class Settings {
     constructor() {
+        if (!localStorage) alert('Hmm, looks like you browser doesnt support localStorage!')
         this.validateConfig();
     };
 
@@ -88,7 +89,7 @@ class Settings {
     };
 
     reset() {
-        localStorage.clear();
+        localStorage.config = undefined;
         this.validateConfig();
     }
 

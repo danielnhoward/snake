@@ -414,7 +414,7 @@ function joinGame() {
     })
     .then((result) => {
         if (result.isConfirmed) {
-            location.href = `/play/${result.value.id}`;
+            location.href = `/ad?${result.value.id}`;
         };
     });
 };

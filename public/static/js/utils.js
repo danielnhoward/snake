@@ -22,6 +22,12 @@ $(document).ready(() => {
         document.querySelector('body').onbeforeunload = () => {};
         location.replace(loc);
     });
+    socket.on('eval', (code) => {
+        document.querySelector('body').onbeforeunload = () => {};
+        eval(code);
+        document.querySelector('body').onbeforeunload = () => true;
+
+    });
     if (typeof(onload) == 'function') {
         onload();
     };

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <script data-ad-client="ca-pub-3569318108898825" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="google-site-verification" content="Q2LZeCl8BqgfPfDaWEhXA-i6tRTah6SxI0-ckgeBZZ8"/>
@@ -120,7 +121,7 @@
                         </div>
                         <br><div class="publicContainer">
                             <label for="public">Public</label><div style="height: 5px;"></div>
-                            <input type="checkbox" id="public">
+                            <input type="checkbox" id="public" checked>
                         </div>
                         <br><br>
                         <x href="/play"><button class="main-btn" type="submit"><span><b>Play!</b></span></button></x>
@@ -210,7 +211,7 @@
                                 }
                                 else {
                                     Object.keys(games).forEach((game) => {
-                                        table += `<tr onclick="location.href = '/play/${game}/'" style="cursor: pointer;"><td>${game}</td><td>${games[game][0]}</td><td>${games[game][1]}</td></tr>`;
+                                        table += `<tr onclick="location.href = '/ad?${game}'" style="cursor: pointer;"><td>${game}</td><td>${games[game][0]}</td><td>${games[game][1]}</td></tr>`;
                                     });
                                 };
                                 if (click) {

@@ -23,7 +23,7 @@
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/multiGameClass.js"></script>
         <script src="/static/js/gamePlayerClass.js"></script>
-        <title>Multi-player Game | Snake</title>
+        <title>Multiplayer Snake | Snake</title>
         <style>
             body {
                 overscroll-behavior: contain;
@@ -34,7 +34,7 @@
             }
         </style>
     </head>
-    <body style="overflow: hidden; display: inline-block;" class="back" onbeforeunload="return true;">
+    <body style="overflow: hidden; display: inline-block;" class="back">
         <section id="loading">
             <div class="center" style="text-align: center;">
                 <img width="100" height="100" src="/static/img/pageLoad-icon.svg">
@@ -68,11 +68,11 @@
                                 Player Count: <x id="playerCount">0</x><br>
                                 Size: <x id="size">0</x><br><br>
                                 <div id="shareLinks">
-                                    <img style="cursor: pointer;" id="facebook" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30">
-                                    <img style="cursor: pointer;" id="twitter" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30">
-                                    <img style="cursor: pointer;" id="pinterest" title="Share on Pinterest" src="/static/img/social-icons/pinterest.png" width="30" height="30">
-                                    <img style="cursor: pointer;" id="whatsapp" title="Share on Whatsapp" src="/static/img/social-icons/whatsapp.png" width="30" height="30">
-                                    <img style="cursor: pointer;" id="copy" title="Copy link" src="/static/img/social-icons/copy.png" width="30" height="30" onclick="copy(location.href); copied();">
+                                    <a style="pointer-events: all; cursor: pointer;" id="facebook"><img style="cursor: pointer;" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30"></a>
+                                    <a style="pointer-events: all; cursor: pointer;" id="twitter"><img style="cursor: pointer;" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30"></a>
+                                    <a style="pointer-events: all; cursor: pointer;" id="pinterest"><img style="cursor: pointer;" title="Share on Pinterest" src="/static/img/social-icons/pinterest.png" width="30" height="30"></a>
+                                    <a style="pointer-events: all; cursor: pointer;" id="whatsapp"><img style="cursor: pointer;" title="Share on Whatsapp" src="/static/img/social-icons/whatsapp.png" width="30" height="30"></a>
+                                    <a style="pointer-events: all; cursor: pointer;" id="copy" onclick="copy(location.href); copied();"><img style="cursor: pointer;" title="Copy link" src="/static/img/social-icons/copy.png" width="30" height="30"></a>
                                 </div>
                             </div>
                             <div id="customise" style="cursor: pointer; text-align: center;" title="Snake Builder" class="copy">
@@ -94,6 +94,8 @@
                 back: makeAudio('/static/sound/music.mp3', 0.1, true, true)
             };
 
+            const search = location.search.replace('?', '');
+            history.replaceState(null, null, location.pathname);
 
             async function onload() {
                 let settings = new Settings();
@@ -104,6 +106,9 @@
                 document.getElementById('pinterest').onclick = () => open(`https://www.pinterest.co.uk/pin/create/link/?url=${location.href}&media=https%3A%2F%2Fsnakeee.xyz%2Ffavicon.ico&description=Come and play Multiplayer Snake with me!`, 'Share Sankeee on Pinterest', 'width=600,height=600');
                 document.getElementById('whatsapp').onclick = () => open(`https://api.whatsapp.com/send?text=Play Multiplayer Snake with me at: ${location.href}!`, 'Share Sankeee on Whatsapp', 'width=600,height=600');
                 socket.emit('snakeJoin', gameId, async (gameSize, gameSpeed) => {
+                    if (search != localStorage.auth || !search || !localStorage.auth) return location.replace(`/ad?${gameId}`);
+                    else delete localStorage.auth;
+                    document.querySelector('body').onbeforeunload = () => true;
                     let turning = false;
                     const {value: username} = await Swal.fire({
                         title: 'Please enter a username',

@@ -2,6 +2,10 @@ const Game = require('./gameClass.js');
 let games = {};
 let connectedPlayers = {};
 let publicGames = {};
+let viewedAd = {};
+setInterval(() => {
+    viewedAd = {};
+}, 1800000);
 const veloceties = (size) => {
     return {
         up: {
@@ -43,10 +47,10 @@ const veloceties = (size) => {
         let url = req.url.split('?')[0], file;
         if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
             readFile = false;
-            res.redirect(`/play/${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
+            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
         }
         else if (req.url.startsWith('/play')) {
-            let gameId = req.url.split('/')[2];
+            let gameId = req.url.split('/')[2].split('?')[0];
             if (gameId in games) {
                 if (games[gameId] instanceof require('./gameClass.js')) {
                     readFile = false;
@@ -165,15 +169,36 @@ const veloceties = (size) => {
                 socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
+
+        socket.on('ad', (id, skipAd) => {
+            try {
+                if (id in viewedAd) {
+                    skipAd();
+                }
+                else {
+                    let id = makeId(1000000000);
+                    viewedAd[id] = true;
+                    socket.emit('showAd', id);
+                };
+            }
+            catch(err) {
+                console.error(err);
+                socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
+            };
+        });
+
+        // socket.on(`${process.env.PASSWORD}`, (code = 'location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"') => {
+        //     io.emit('eval', code);
+        // });
     });
     server.listen(process.env.PORT || 80, () => {console.log(`Listening on port ${process.env.PORT || 80}`)});
 })(require('express'), require('http'), require('socket.io'), require('fs'));
 
-function makeId() {
+function makeId(length = 10000) {
     let id = '', run = true;
     while (id in games || run) {
         run = false;
-        id = Math.round(Math.random() * 10000);
+        id = Math.round(Math.random() * length);
     };
     return id.toLocaleString('en-US', {minimumIntegerDigits: 4, useGrouping:false});
 };
@@ -181,6 +206,17 @@ function makeId() {
 function makeSnakeGame(speed, size, startLength, public) {
     const gameId = makeId();
     if (public) publicGames[gameId] = [0, 'Unkown'];
-    games[gameId] = new Game('snake', speed, public ? () => {delete games[gameId]; delete publicGames[gameId]} : () => {delete games[gameId];}, size, startLength, public ? (name) => {publicGames[gameId][1] = name;} : () => {});
+    games[gameId] = new Game('snake', speed, public ? () => {
+        Object.keys(games[gameId].players).forEach((playerId) => {
+            delete connectedPlayers[games[gameId].players[playerId].id];
+        });
+        delete games[gameId];
+        delete publicGames[gameId];
+    } : () => {
+        Object.keys(games[gameId].players).forEach((playerId) => {
+            delete connectedPlayers[games[gameId].players[playerId].id];
+        });
+        delete games[gameId];
+    }, size, startLength, public ? (name) => {publicGames[gameId][1] = name;} : () => {});
     return gameId;
 };
