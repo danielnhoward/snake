@@ -1,4 +1,4 @@
-$(document).ready(() => {
+document.addEventListener('DOMContentLoaded', () => {
     let servSocket = io();
     Object.defineProperty(window, 'socket', {
         enumerable: true,
@@ -22,12 +22,13 @@ $(document).ready(() => {
         document.querySelector('body').onbeforeunload = () => {};
         location.replace(loc);
     });
-    socket.on('eval', (code) => {
-        document.querySelector('body').onbeforeunload = () => {};
-        eval(code);
-        document.querySelector('body').onbeforeunload = () => true;
+    // socket.on('eval', (code) => {
+    //     document.querySelector('body').onbeforeunload = () => {};
+    //     eval(code);
+    //     document.querySelector('body').onbeforeunload = () => true;
 
-    });
+    // });
+    alertCookies();
     if (typeof(onload) == 'function') {
         onload();
     };
@@ -40,4 +41,16 @@ function copy(str) {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+};
+
+function alertCookies() {
+    if (!new URLSearchParams(location.search).get('controls')) {
+        if (!localStorage.acceptedCookies) {
+            (async () => {
+                let div = document.createElement('div');
+                div.innerHTML = await (await fetch('/static/html/cookies.html')).text();
+                document.body.appendChild(div);
+            })();
+        };
+    };
 };

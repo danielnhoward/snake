@@ -22,11 +22,14 @@ function refreshed() {
     });
 };
 
-$('a').click((ev) => {
-    ev.preventDefault();
-    history.pushState(null, null, ev.currentTarget.href);
-    reset();
+document.querySelectorAll('a').forEach((el) => {
+    el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        history.pushState(null, null, ev.currentTarget.href);
+        reset();
+    });
 });
+
 function hideAll() {
     pages.forEach((el) => {
         $(`${el.replace('/', '#')}`).hide();

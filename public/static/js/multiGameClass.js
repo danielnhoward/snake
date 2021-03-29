@@ -64,17 +64,23 @@ class MultiCanvas {
     };
     setImage(id, image) {
         try {
-            let dragon = (image.head == '/static/img/gameAssets/Big-Red/head.png' && image.tail == '/static/img/gameAssets/Big-Red/tail.png' && image.body == '/static/img/gameAssets/Big-Red/straight.png' && image.corner == '/static/img/gameAssets/Big-Red/corner.png')
+            let redDragon = (image.head == '/static/img/gameAssets/Big-Red/head.png' && image.tail == '/static/img/gameAssets/Big-Red/tail.png' && image.body == '/static/img/gameAssets/Big-Red/straight.png' && image.corner == '/static/img/gameAssets/Big-Red/corner.png');
+            let blueDragon = (image.head == '/static/img/gameAssets/Blue-Dragon/head.png' && image.tail == '/static/img/gameAssets/Blue-Dragon/tail.png' && image.body == '/static/img/gameAssets/Blue-Dragon/straight.png' && image.corner == '/static/img/gameAssets/Blue-Dragon/corner.png');
             this.images[id] = {
                 head: createImg(image.head),
                 straight: createImg(image.body),
                 tail: createImg(image.tail),
                 corner: createImg(image.corner)
             };
-            if (dragon) {
-                this.images[id].dragon = dragon;
+            if (redDragon) {
+                this.images[id].dragon = redDragon;
                 this.images[id].cornerWings = createImg('/static/img/gameAssets/Big-Red/corner-wing.png');
                 this.images[id].straightWings = createImg('/static/img/gameAssets/Big-Red/straight-wing.png');
+            }
+            else if (blueDragon) {
+                this.images[id].dragon = blueDragon;
+                this.images[id].cornerWings = createImg('/static/img/gameAssets/Blue-Dragon/corner-wing.png');
+                this.images[id].straightWings = createImg('/static/img/gameAssets/Blue-Dragon/straight-wing.png');
             };
         }
         catch(err) {
