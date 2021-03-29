@@ -23,6 +23,7 @@ function refreshed() {
 };
 
 document.querySelectorAll('a').forEach((el) => {
+    if (el.hasAttribute('nonclick')) return;
     el.addEventListener('click', (ev) => {
         ev.preventDefault();
         history.pushState(null, null, ev.currentTarget.href);
