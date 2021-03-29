@@ -45,9 +45,9 @@ const veloceties = (size) => {
     app.get('/*', (req, res) => {
         let readFile = true;
         let url = req.url.split('?')[0], file;
-        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
+        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5])) && Number.isInteger(parseInt(req.url.split('/')[7]))) {
             readFile = false;
-            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
+            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`, parseInt(req.url.split('/')[7]));
         }
         else if (req.url.startsWith('/play')) {
             let gameId = req.url.split('/')[2].split('?')[0];
@@ -203,7 +203,7 @@ function makeId(length = 10000) {
     return id.toLocaleString('en-US', {minimumIntegerDigits: 4, useGrouping:false});
 };
 
-function makeSnakeGame(speed, size, startLength, public) {
+function makeSnakeGame(speed, size, startLength, public, food) {
     const gameId = makeId();
     if (public) publicGames[gameId] = [0, 'Unkown'];
     games[gameId] = new Game('snake', speed, public ? () => {
@@ -217,6 +217,6 @@ function makeSnakeGame(speed, size, startLength, public) {
             delete connectedPlayers[games[gameId].players[playerId].id];
         });
         delete games[gameId];
-    }, size, startLength, public ? (name) => {publicGames[gameId][1] = name;} : () => {});
+    }, size, startLength, public ? (name) => {publicGames[gameId][1] = name;} : () => {}, food);
     return gameId;
 };

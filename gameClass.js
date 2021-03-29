@@ -1,5 +1,5 @@
 module.exports = class {
-    constructor(gameType, gameSpeed, onTimeout, blockSize, startLength, setOwner) {
+    constructor(gameType, gameSpeed, onTimeout, blockSize, startLength, setOwner, foodCount) {
         this.type = gameType;
         this.players = {};
         this.playerIds = [];
@@ -9,11 +9,15 @@ module.exports = class {
         this.gameSpeed = gameSpeed;
         this.startLength = startLength;
         this.settings = {};
+        this.foodCount = foodCount;
         this.canvas = {
             players: {},
             food: []
         };
-        this.food = new Food(this.canvas, blockSize);
+        this.food = this.food.push(new Food(this.canvas, blockSize));
+        // for (let i = 0; i < this.foodCount; i++) {
+        //     this.food.push(new Food(this.canvas, blockSize));
+        // };
         this.running = false;
         this.onTimeout = onTimeout;
         this.setOwner = setOwner;
