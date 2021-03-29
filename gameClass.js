@@ -14,7 +14,7 @@ module.exports = class {
             players: {},
             food: []
         };
-        this.food = this.food.push(new Food(this.canvas, blockSize));
+        this.food = new Food(this.canvas, blockSize);
         // for (let i = 0; i < this.foodCount; i++) {
         //     this.food.push(new Food(this.canvas, blockSize));
         // };

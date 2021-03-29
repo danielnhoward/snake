@@ -45,9 +45,9 @@ const veloceties = (size) => {
     app.get('/*', (req, res) => {
         let readFile = true;
         let url = req.url.split('?')[0], file;
-        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5])) && Number.isInteger(parseInt(req.url.split('/')[7]))) {
+        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
             readFile = false;
-            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`, parseInt(req.url.split('/')[7]));
+            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
         }
         else if (req.url.startsWith('/play')) {
             let gameId = req.url.split('/')[2].split('?')[0];
