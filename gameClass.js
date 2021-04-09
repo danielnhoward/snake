@@ -151,7 +151,7 @@ module.exports = class {
                 });
                 collisionCanvas.forEach((part) => {
                     if (player.snake.snake[0].x == part.x && player.snake.snake[0].y == part.y) {
-                        this.players[part.id].snake.addLength(player.snake.snake.length * player.snake.lengthDebt);
+                        this.players[part.id].snake.addLength(player.snake.snake.length + player.snake.lengthDebt);
                         return player.snake.onDie();
                     };
                 });

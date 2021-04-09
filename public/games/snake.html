@@ -60,7 +60,7 @@
                             <div class="game">
                                 <canvas id="gameCanvas" width="1000" height="1000" style="width: 50vh; height: 50vh; padding: 15px;">Your browser doesn't support canvases!</canvas>
                             </div>
-                            <div onclick="toggleFullScreen();" class="fullscreen" nontouch>
+                            <div onclick="goFullscreen();" class="fullscreen" nontouch>
                                 <img title="Full Screen" src="/static/img/fullscreen-icon.svg" width="50" height="50" nontouch>
                             </div>
                             <div class="player-count">
@@ -289,14 +289,6 @@
                         document.getElementById('ping').innerHTML = value;
                     });
                 }, 10000);
-            };
-            function toggleFullScreen() {
-                if (document.webkitIsFullScreen || document.mozFullScreen || document.fullscreen || false) {
-                    document.exitFullscreen();
-                }
-                else {
-                    document.documentElement.requestFullscreen();
-                };
             };
             function restart() {
                 $('#restart').hide();

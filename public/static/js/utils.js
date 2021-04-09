@@ -66,8 +66,31 @@ function alertCookies() {
             (async () => {
                 let div = document.createElement('div');
                 div.innerHTML = await (await fetch('/static/html/cookies.html')).text();
-                document.body.appendChild(div);
+                document.body.prepend(div);
+                // document.body.style.marginBottom = '100px';
             })();
         };
+    };
+};
+
+function goFullscreen(id) {
+    var element = document.getElementById(id) || document.documentElement;
+
+    var isInFullScreen = (document.fullscreenElement && document.fullscreenElement !== null) ||
+        (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
+        (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
+        (document.msFullscreenElement && document.msFullscreenElement !== null);
+
+    if (!isInFullScreen) {
+        if (element.requestFullscreen) element.requestFullscreen();
+        else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
+        else if (element.webkitRequestFullScreen) element.webkitRequestFullScreen();
+        else if (element.msRequestFullscreen) element.msRequestFullscreen();
+    } 
+    else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
     };
 };

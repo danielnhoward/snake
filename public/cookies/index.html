@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <meta property="og:url" content="https://snakeee.xyz/"/>
+        <meta property="og:type" content="game"/>
+        <meta property="og:title" content="Join Multiplayer Snake Game"/>
+        <meta property="og:description" content="Join a game of multiplayer snake with your friends!"/>
+        <meta property="og:image" content="https://snakeee.xyz/favicon.ico"/>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/static/js/utils.js"></script>
+        <title>Cookies | Snake</title>
+        <style>
+            tr, td {
+                border: black 1px solid;
+                padding: 10px;
+            }
+        </style>
+
+    </head>
+    <body class="back">
+        <div class="center container">
+            <div class="title">Cookies</div>
+            <p>To make Sankeee work, we use cookies and localStorage so we can save data on your device for web sockets and saving your options.</p>
+            <div class="header">What are cookies?</div>
+            <p>A “cookie” is a string of information which assigns you a unique identifier that we store on your computer. Your browser then provides that unique identifier to use each time you submit a query to the Site.</p>
+            <div class="header">Types of cookies</div>
+            <div class="headerTwo">Our Cookies</div>
+            <p>Our cookies are “first-party cookies”, and can be either permanent or temporary. These are necessary cookies, without which the Site won't work properly or be able to provide certain features and functionalities. Some of these may be manually disabled in your browser, but may affect the functionality of the Site.</p>
+            <div class="header">Controling cookies</div>
+            <p>
+                Most browsers are set to accept cookies by default. However, you can remove or reject cookies in your browser’s settings. Please be aware that such action could affect the availability and functionality of the Site. 
+
+                For more information on how to control cookies, check your browser or device’s settings for how you can control or reject cookies, or visit the following links:
+                
+                <ul>
+                    <li><a href="https://support.apple.com/kb/ph19214?locale=en_US">Apple Safari</a></li>
+                    <li><a href="https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DDesktop&hl=en">Google Chrome</a></li>
+                    <li><a href="https://privacy.microsoft.com/en-us/windows-10-microsoft-edge-and-privacy">Microsoft Edge</a></li>
+                    <li><a href="https://support.microsoft.com/en-gb/help/17442/windows-internet-explorer-delete-manage-cookies">Microsoft Internet Explorer</a></li>
+                    <li><a href="https://support.mozilla.org/en-US/kb/enable-and-disable-cookies-website-preferences">Mozilla Firefox</a></li>
+                    <li><a href="http://www.opera.com/help/tutorials/security/cookies/">Opera</a></li>
+                    <li><a href="https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DAndroid&hl=en&oco=1">Android (Chrome)</a></li>
+                    <li><a href="https://help.blackberry.com/en/blackberry-classic/10.3.1/help/mwa1334238823957.html">Blackberry</a></li>
+                    <li><a href="https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DiOS&hl=en&oco=1">Iphone or Ipad (Chrome)</a></li>
+                    <li><a href="https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DAndroid&hl=en&oco=1">Iphone or Ipad (Safari)</a></li>
+                </ul>
+                
+                In addition, you may opt-out of some third-party cookies through the <a href="http://optout.networkadvertising.org/#!/">Network Advertising Initiative’s Opt-Out Tool</a>.
+            </p>
+
+            <div class="header">Cookies that we use</div>
+            <p>
+                <table style="width: 350px;">
+                    <tr>
+                        <td>Name</td>
+                        <td>io</td>
+                    </tr>
+                    <tr>
+                        <td>Reason</td>
+                        <td>io is needed to work with <a href="https://socket.io">Socket.io</a>. The server uses Socket.io so it can create a WebSocket connection to your device to send and recieve data. This cookie is needed since Socket.io will not recognise your device without it.</td>
+                    </tr>
+                    <tr>
+                        <td>Expires</td>
+                        <td>Session</td>
+                    </tr>
+                </table>
+                <br>
+                <table style="width: 350px;">
+                    <tr>
+                        <td>Name</td>
+                        <td>config (localStorage)</td>
+                    </tr>
+                    <tr>
+                        <td>Reason</td>
+                        <td>config is needed in localStorage so we can save you preferneces for your snake on your device. This allows us to save you settings on your device for next time you play! The config element contains multiple elements like you controls and pictures. They are all saved in a single JSON object.</td>
+                    </tr>
+                    <tr>
+                        <td>Expires</td>
+                        <td>Never</td>
+                    </tr>
+                </table>
+
+            </p>
+
+            <button style="margin-bottom: 20px;" onclick="history.back();" class="main-btn"><span>Go back</span></button>
+        </div>
+    </body>
+</html>
