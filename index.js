@@ -38,19 +38,21 @@ const veloceties = (size) => {
     });
 
     app.use((req, res, next) => {
-        req.get('Host') != 'snakeee.xyz' && req.get('Host') != 'localhost' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
+        req.get('Host') == 'snakeee.herokuapp.com' ? res.redirect(`https://snakeee.xyz${req.url}`) : next();
     });
 
     // Head Get request
     app.get('/*', (req, res) => {
         let readFile = true;
-        let url = req.url.split('?')[0], file;
-        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(req.url.split('/')[3])) && Number.isInteger(parseInt(req.url.split('/')[4])) && Number.isInteger(parseInt(req.url.split('/')[5]))) {
+        let url = req.url.split('?')[0]
+        let file;
+        let splitUrl = req.url.split('/');
+        if (req.url.includes('start') && req.url.includes('snake') && Number.isInteger(parseInt(splitUrl[3])) && Number.isInteger(parseInt(splitUrl[4])) && Number.isInteger(parseInt(splitUrl[5])) && Number.isInteger(parseInt(splitUrl[7]))) {
             readFile = false;
-            res.redirect(`/ad?${makeSnakeGame(req.url.split('/')[3], parseInt(req.url.split('/')[4]), parseInt(req.url.split('/')[5]), req.url.split('/')[6] == 'true')}`);
+            res.redirect(`/ad?${makeSnakeGame(splitUrl[3], parseInt(splitUrl[4]), parseInt(splitUrl[5]), splitUrl[6] == 'true', splitUrl[7])}`);
         }
         else if (req.url.startsWith('/play')) {
-            let gameId = req.url.split('/')[2].split('?')[0];
+            let gameId = splitUrl[2].split('?')[0];
             if (gameId in games) {
                 if (games[gameId] instanceof require('./gameClass.js')) {
                     readFile = false;
@@ -78,6 +80,26 @@ const veloceties = (size) => {
         else if (req.url.includes('public')) {
             readFile = false;
             res.json(publicGames);
+        }
+        else if (splitUrl[1] == 'images' && splitUrl[2] in games) {
+            if (splitUrl[3] in games[splitUrl[2]].players) {
+                if (splitUrl[4] == 'head' || splitUrl[4] == 'straight' || splitUrl[4] == 'corner' || splitUrl[4] == 'tail') {
+                    readFile = false;
+                    if (games[splitUrl[2]].players[splitUrl[3]].settings[splitUrl[4]].startsWith('/static/img/gameAssets/')) {
+                        res.sendFile(`${__dirname}/public${games[splitUrl[2]].players[splitUrl[3]].settings[splitUrl[4]]}`);
+                    }
+                    else {
+                        let img = games[splitUrl[2]].players[splitUrl[3]].settings[splitUrl[4]].split(',')[1];
+                        img = Buffer.from(img, 'base64');
+
+                        res.writeHead(200, {
+                            'Content-Type': 'image/png',
+                            'Content-Length': img.length
+                        });
+                        res.end(img);
+                    };
+                };
+            };
         };
         (url == '/multi' || url == '/options' || url == '/home' || url == '/games') ? (() => {
             file = './public/index.html';
@@ -151,7 +173,7 @@ const veloceties = (size) => {
                 socket.emit('serverError', {err: err.name, mes: err.message, stack: err.stack});
             };
         });
-        socket.on('snakeMove', (gameId, dir) => {
+        socket.on('snakeMove', (gameId, dir, snake) => {
             try {
                 if (!(socket.id in games[gameId].players)) return;
                 const size = games[gameId].blockSize;
@@ -160,7 +182,9 @@ const veloceties = (size) => {
                     games[gameId].resetTimeout();
                     player.snake.turning = true;
                     if (player.snake.velocety.x != veloceties(size)[dir].x && player.snake.velocety.y != veloceties(size)[dir].y) player.snake.velocety = veloceties(size)[dir];
-                    else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0 && dir != 'left') player.snake.velocety = veloceties(size)[dir];
+                    else if (player.snake.velocety.x == 0 && player.snake.velocety.y == 0  && dir != 'left') player.snake.velocety = veloceties(size)[dir];
+                    // games[gameId].ignorePlayers.push(socket.id);
+                    // games[gameId].players[socket.id].snake.snake = snake;
                     games[gameId].updatePlayers = true;
                 };
             }
@@ -190,6 +214,10 @@ const veloceties = (size) => {
         // socket.on(`${process.env.PASSWORD}`, (code = 'location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"') => {
         //     io.emit('eval', code);
         // });
+
+        socket.on('clientPing', () => {
+            socket.emit('serverPong');
+        });
     });
     server.listen(process.env.PORT || 80, () => {console.log(`Listening on port ${process.env.PORT || 80}`)});
 })(require('express'), require('http'), require('socket.io'), require('fs'));

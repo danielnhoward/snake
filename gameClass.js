@@ -14,14 +14,25 @@ module.exports = class {
             players: {},
             food: []
         };
-        this.food = new Food(this.canvas, blockSize);
-        // for (let i = 0; i < this.foodCount; i++) {
-        //     this.food.push(new Food(this.canvas, blockSize));
-        // };
+        this.ignorePlayers = [];
+        // this.food = new Food(this.canvas, blockSize);
+
+        this.food = [];
+        for (let i = 0; i < this.foodCount; i++) {
+            this.food.push(new Food(this.canvas, blockSize, () => delete this.food[i]));
+        };
+
         this.running = false;
         this.onTimeout = onTimeout;
         this.setOwner = setOwner;
         this.resetTimeout();
+    };
+    getAllFood() {
+        let foodArr = [];
+        this.food.forEach((food) => {
+            foodArr.push(food.food[0]);
+        });
+        return foodArr;
     };
     resetTimeout() {
         if (this.timeout) clearTimeout(this.timeout);
@@ -36,11 +47,13 @@ module.exports = class {
             args.push(arguments[i]);
         };
         Object.keys(this.players).forEach((playerId) => {
+            if (this.ignorePlayers.includes(playerId)) return;
             this.players[playerId].socket.emit(func, ...args);
         });
         Object.keys(this.spectators).forEach((playerId) => {
             this.spectators[playerId].socket.emit(func, ...args);
         });
+        this.ignorePlayers = [];
     };
     aliveEmit(func, data) {
         let args = [];
@@ -68,7 +81,7 @@ module.exports = class {
             emit: socket.emit,
             name: name,
             settings: settings,
-            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength, () => socket.emit('foodEat'))
+            snake: new Snake(settings, this.canvas, () => {this.playerDie(id)}, id, this.blockSize, name, this.startLength, () => socket.emit('foodEat'), () => {socket.emit('over')})
         };
         this.playerIds.push(id);
         this.playerCount = Object.keys(this.players).length;
@@ -80,7 +93,7 @@ module.exports = class {
         };
         this.updatePlayers = true;
         this.allEmit('playerCount', this.playerCount);
-        socket.emit('initImages', this.settings)
+        socket.emit('initImages', this.settings, this.timming);
         this.allEmit('setImage', id, {head: settings.head, tail: settings.tail, body: settings.straight, corner: settings.corner});
         if (!this.ownerId) {
             this.ownerId = id;
@@ -112,6 +125,8 @@ module.exports = class {
         };
     };
     run() {
+        this.timming = Date.now();
+        this.allEmit('newTimming', this.timming);
         this.running = true;
         this.updatePlayers = true;
         this.interval = setInterval(() => {
@@ -119,7 +134,7 @@ module.exports = class {
                 players: {},
                 food: []
             };
-            let redraw = false;
+            let redraw = [];
             Object.keys(this.players).forEach((playerId) => {
                 this.players[playerId].snake.moveSnake(this.food);
             });
@@ -136,7 +151,7 @@ module.exports = class {
                 });
                 collisionCanvas.forEach((part) => {
                     if (player.snake.snake[0].x == part.x && player.snake.snake[0].y == part.y) {
-                        this.players[part.id].snake.addLength(player.snake.snake.length);
+                        this.players[part.id].snake.addLength(player.snake.snake.length * player.snake.lengthDebt);
                         return player.snake.onDie();
                     };
                 });
@@ -144,13 +159,17 @@ module.exports = class {
             Object.keys(this.players).forEach((playerId) => {
                 let player = this.players[playerId];
                 this.canvas.players = {...this.canvas.players, [playerId]: {snake: player.snake.snake, vel: player.snake.velocety, lengthDebt: player.snake.lengthDebt}};
-                if (player.snake.snake[0].x == this.food.food[0].x && player.snake.snake[0].y == this.food.food[0].y) redraw = true;
+                this.food.forEach((food, foodIndex) => {
+                    if (player.snake.snake[0].x == food.food[0].x && player.snake.snake[0].y == food.food[0].y) redraw.push(foodIndex);
+                });
             });
-            if (redraw) {
-                this.food.redraw(this.canvas);
+            if (redraw.length != 0) {
+                redraw.forEach((food) => {
+                    this.food[food].redraw(this.canvas);
+                });
                 this.updatePlayers = true;
             };
-            this.canvas.food = this.food.food;
+            this.canvas.food = this.getAllFood();
 
             if (this.updatePlayers) {
                 this.allEmit('snakePing', this.canvas);
@@ -183,10 +202,11 @@ module.exports = class {
 };
 
 class Snake {
-    constructor(settings, initCanvas, onDie, id, blockSize, name, startLength, foodEat) {
+    constructor(settings, initCanvas, onDie, id, blockSize, name, startLength, foodEat, error) {
         this.settings = settings;
         this.onDie = onDie;
         this.foodEat = foodEat;
+        this.error = error;
         this.turning = false;
         this.velocety = {x: 0, y: 0};
         this.id = id;
@@ -197,36 +217,44 @@ class Snake {
         this.initSnake(initCanvas);
     };
     initSnake(initCanvas) {
-        this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, name: this.name, vel: {x: this.blockSize, y:0}, id: this.id, position: {}}];
-        this.snake[0].position.x = this.snake[0].x;
-        this.snake[0].position.y = this.snake[0].y;
-        this.lengthDebt = this.startLength - 1;
-        Object.keys(initCanvas.players).forEach((playerId) => {
-            let player = initCanvas.players[playerId];
-            player.snake.forEach((part) => {
+        try {
+            this.snake = [{x: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * 700))/this.blockSize) * this.blockSize, name: this.name, vel: {x: this.blockSize, y:0}, id: this.id, position: {}}];
+            this.snake[0].position.x = this.snake[0].x;
+            this.snake[0].position.y = this.snake[0].y;
+            this.lengthDebt = this.startLength - 1;
+            Object.keys(initCanvas.players).forEach((playerId) => {
+                let player = initCanvas.players[playerId];
+                player.snake.forEach((part) => {
+                    this.snake.forEach((snakePart) => {
+                        if (snakePart.x == part.x && snakePart.y == part.y) {
+                            return this.initSnake(initCanvas);
+                        };
+                    });
+                });
+            });
+            initCanvas.food.forEach((food) => {
                 this.snake.forEach((snakePart) => {
-                    if (snakePart.x == part.x && snakePart.y == part.y) {
+                    if (snakePart.x == food.x && snakePart.y == food.y) {
                         return this.initSnake(initCanvas);
                     };
                 });
             });
-        });
-        initCanvas.food.forEach((food) => {
-            this.snake.forEach((snakePart) => {
-                if (snakePart.x == food.x && snakePart.y == food.y) {
-                    return this.initSnake(initCanvas);
-                };
-            });
-        });
+        }
+        catch(err) {
+            console.log(0)
+            this.error();
+        };
     };
     moveSnake(food) {
         this.turning = false;
         if (this.velocety.x == 0 && this.velocety.y == 0) return;
         this.snake.unshift({x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y, name: this.name, vel: this.velocety, id: this.id, position: {x:this.snake[0].x + this.velocety.x, y:this.snake[0].y + this.velocety.y}});
-        if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) {
-            this.lengthDebt++;
-            this.foodEat();
-        };
+        food.forEach((food) => {
+            if (this.snake[0].x == food.food[0].x && this.snake[0].y == food.food[0].y) {
+                this.lengthDebt++;
+                this.foodEat();
+            };
+        });
         if (this.lengthDebt == 0) {
             this.snake.pop();
         }
@@ -254,19 +282,25 @@ class Snake {
 };
 
 class Food {
-    constructor(initCanvas, blockSize) {
+    constructor(initCanvas, blockSize, onError) {
         this.blockSize = blockSize;
+        this.onError = onError;
         this.redraw(initCanvas);
     };
     redraw(canvas) {
-        this.food = [{x: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, colour: {border: '#2b9348', body: '#4BB500'}}];
-        Object.keys(canvas.players).forEach((playerId) => {
-            let player = canvas.players[playerId];
-            player.snake.forEach((part) => {
-                if (this.food[0].x == part.x && this.food[0].y == part.y) {
-                    return this.redraw(canvas);
-                };
+        try {
+            this.food = [{x: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize, y: Math.round((Math.round(Math.random() * (1000 - this.blockSize)))/this.blockSize) * this.blockSize}];
+            Object.keys(canvas.players).forEach((playerId) => {
+                let player = canvas.players[playerId];
+                player.snake.forEach((part) => {
+                    if (this.food[0].x == part.x && this.food[0].y == part.y) {
+                        return this.redraw(canvas);
+                    };
+                });
             });
-        });
+        }
+        catch(err) {
+            this.onError();
+        };
     };
 };

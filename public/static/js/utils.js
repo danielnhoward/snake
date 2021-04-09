@@ -32,6 +32,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof(onload) == 'function') {
         onload();
     };
+
+    let callback = (ping) => console.log(ping);
+    let startTime = 0;
+
+    socket.on('serverPong', () => {
+        callback(Date.now() - startTime);
+        callback = (ping) => console.log(ping);
+    });
+    Object.defineProperty(window, 'ping', {
+        enumerable: true,
+        configurable: false,
+        value: (pingCallback) => {
+            if (pingCallback) callback = pingCallback;
+            startTime = Date.now();
+            socket.emit('clientPing')
+        }
+    });
 });
 
 function copy(str) {

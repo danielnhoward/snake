@@ -136,6 +136,10 @@
                             <label for="startLength">Start Length: <x id="clientStartLengthMulti">0</x></label><div style="height: 5px;"></div>
                             <input style="width: 200px; margin: auto;" type="range" class="slider" id="startLength" value="3" min="3" max="20">
                         </div>
+                        <br><div class="slider-hover">
+                            <label for="foodCount">Food Count: <x id="clientFoodCount">0</x></label><div style="height: 5px;"></div>
+                            <input style="width: 200px; margin: auto;" type="range" class="slider" id="foodCount" value="1" min="1" max="20">
+                        </div>
                         <br><div class="publicContainer">
                             <label for="public">Public</label><div style="height: 5px;"></div>
                             <input type="checkbox" id="public" checked>
@@ -211,11 +215,12 @@
 
                 <div class="" style="display: none;" id="games">
                     <div class="center">
-                        <div class="fullscreen" style="z-index: 99; cursor: pointer;" onclick="resetTable(true); refreshed();">
+                        <div class="multi-reset" style="z-index: 99; cursor: pointer;" onclick="resetTable(true); refreshed();">
                             <img src="/static/img/restart-icon.svg" width="50" height="50">
                         </div>
                         <div class="game">
                             <table id="gamesTable"></table>
+                            <small style="text-align: center;"><b>Click on a game to join!</b></small>
                         </div>
                     </div>
                     <script>
@@ -232,9 +237,9 @@
                                     });
                                 };
                                 if (click) {
-                                    document.getElementsByClassName('fullscreen')[0].classList.remove('rotate');
+                                    document.getElementsByClassName('multi-reset')[0].classList.remove('rotate');
                                     setTimeout(() => {
-                                        document.getElementsByClassName('fullscreen')[0].classList.add('rotate');
+                                        document.getElementsByClassName('multi-reset')[0].classList.add('rotate');
                                     }, 10);
                                 };
                             }

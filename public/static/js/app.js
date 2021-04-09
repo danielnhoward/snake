@@ -4,6 +4,7 @@ let onload = reset;
 if (new URLSearchParams(location.search).get('controls')) {
     $('controls').hide();
     $('#exitBtn').hide();
+    document.querySelector('div').style.display = 'none';
 }
 else {
     addEventListener('popstate', reset);
@@ -183,8 +184,15 @@ function reset() {
         settings.startLength = document.getElementById('startLength').value;
     };
 
+    document.getElementById('foodCount').oninput = () => {
+        document.getElementById('clientFoodCount').innerHTML = document.getElementById('foodCount').value;
+    };
+
     document.getElementById('gameSpeedMulti').oninput();
     document.getElementById('gameSizeMulti').oninput();
+    document.getElementById('foodCount').value = 1;
+    document.getElementById('clientFoodCount').innerHTML = 1;
+    document.getElementById('foodCount').oninput();
     document.getElementById('clientStartLengthMulti').innerHTML = 3;
     document.getElementById('startLength').value = 3;
     settings.startLength = 3;
@@ -193,7 +201,8 @@ function reset() {
 
     document.getElementById('multiPlay').onsubmit = (ev) => {
         ev.preventDefault();
-        location.href = `/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}/${document.getElementById('public').checked}`;
+        console.log(`/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}/${document.getElementById('public').checked}/${document.getElementById('foodCount').value}`)
+        location.href = `/start/snake/${settings.gameSpeed}/${settings.gameSize}/${settings.startLength}/${document.getElementById('public').checked}/${document.getElementById('foodCount').value}`;
     };
 
 

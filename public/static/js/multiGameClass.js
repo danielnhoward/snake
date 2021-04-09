@@ -44,6 +44,7 @@ class MultiCanvas {
         this.veloceties = veloceties(gameSize);
         this.canvas = document.getElementById(id);
         this.ctx = this.canvas.getContext('2d');
+        this.ctx.imageSmoothingEnabled = false;   
         this.clearCanvas();
     };
     resetImg() {
@@ -101,56 +102,56 @@ class MultiCanvas {
             player.snake.forEach((part, index) => {
                 if (index == 0) {
                     this.ctx.save();
-                    queue.push([part.name, part.position.x + this.gameSize / 3, part.position.y - 15]);
+                    queue.push([part.name, part.x + this.gameSize / 3, part.y - 15]);
                     if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y) {
-                        this.ctx.drawImage(this.images[part.id].head, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].head, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(180*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].head, part.position.x + this.gameSize, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(270*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].head, part.position.x + this.gameSize, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     }
                     else if (part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(90*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].head, part.position.x, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].head, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     };
                     this.ctx.restore();
                 }
                 else if (index == player.snake.length - 1) {
                     this.ctx.save();
                     let differences = {
-                        x: part.position.x - player.snake[index - 1].x,
-                        y: part.position.y - player.snake[index - 1].y
+                        x: part.position.x - player.snake[index - 1].position.x,
+                        y: part.position.y - player.snake[index - 1].position.y
                     };
                     if (differences.y == this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(180*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].tail, part.position.x + this.gameSize, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.y == -this.gameSize) {
-                        this.ctx.drawImage(this.images[part.id].tail, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].tail, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (differences.x == this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(90*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].tail, part.position.x, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.x == -this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(270*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].tail, part.position.x + this.gameSize, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].tail, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     };
                     this.ctx.restore();
                 }
@@ -158,57 +159,57 @@ class MultiCanvas {
                     this.ctx.save();
                     let differences = {
                         before: {
-                            x: part.position.x - player.snake[index - 1].x,
-                            y: part.position.y - player.snake[index - 1].y
+                            x: part.position.x - player.snake[index - 1].position.x,
+                            y: part.position.y - player.snake[index - 1].position.y
                         },
                         after: {
-                            x: part.position.x - player.snake[index + 1].x,
-                            y: part.position.y - player.snake[index + 1].y
+                            x: part.position.x - player.snake[index + 1].position.x,
+                            y: part.position.y - player.snake[index + 1].position.y
                         }
                     };
                     if (differences.before.x == differences.after.x || differences.before.y == differences.after.y) {
                         if (part.vel.x == this.veloceties.up.x && part.vel.y == this.veloceties.up.y) {
-                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x, part.y, this.gameSize, this.gameSize);
                         }
                         else if (part.vel.x == this.veloceties.down.x && part.vel.y == this.veloceties.down.y) {
-                            this.ctx.translate(part.position.x + this.gameSize/2, part.position.y + this.gameSize/2);
+                            this.ctx.translate(part.x + this.gameSize/2, part.y + this.gameSize/2);
                             this.ctx.rotate(180*Math.PI/180);
-                            this.ctx.translate(-(part.position.x + this.gameSize/2), -(part.position.y + this.gameSize/2));
-                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                            this.ctx.translate(-(part.x + this.gameSize/2), -(part.y + this.gameSize/2));
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x, part.y, this.gameSize, this.gameSize);
                         }
                         else if (part.vel.x == this.veloceties.left.x && part.vel.y == this.veloceties.left.y) {
-                            this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                            this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                             this.ctx.rotate(270*Math.PI/180);
-                            this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x + this.gameSize, part.position.y, this.gameSize, this.gameSize);
+                            this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                         }
                         else if (part.vel.x == this.veloceties.right.x && part.vel.y == this.veloceties.right.y) {
-                            this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                            this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                             this.ctx.rotate(90*Math.PI/180);
-                            this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.position.x, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                            this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                            this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].straightWings : this.images[part.id].straight, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                         };
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(90*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.position.x, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == this.gameSize || differences.before.y == this.gameSize && differences.after.x == -this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(180*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.position.x + this.gameSize, part.position.y + this.gameSize, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x + this.gameSize, part.y + this.gameSize, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == this.gameSize) {
-                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.position.x, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x, part.y, this.gameSize, this.gameSize);
                     }
                     else if (differences.before.x == -this.gameSize && differences.after.y == -this.gameSize || differences.before.y == -this.gameSize && differences.after.x == -this.gameSize) {
-                        this.ctx.translate(part.position.x + this.gameSize, part.position.y + this.gameSize);
+                        this.ctx.translate(part.x + this.gameSize, part.y + this.gameSize);
                         this.ctx.rotate(270*Math.PI/180);
-                        this.ctx.translate(-(part.position.x + this.gameSize), -(part.position.y + this.gameSize));
-                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.position.x + this.gameSize, part.position.y, this.gameSize, this.gameSize);
+                        this.ctx.translate(-(part.x + this.gameSize), -(part.y + this.gameSize));
+                        this.ctx.drawImage(this.images[part.id].dragon && index == 1 ? this.images[part.id].cornerWings : this.images[part.id].corner, part.x + this.gameSize, part.y, this.gameSize, this.gameSize);
                     };
                     this.ctx.restore();
                 };
