@@ -319,9 +319,9 @@ input[type="color"] {
 .headerTwo {
     font-size: 30px;
 }
-p {
+/* p {
     text-align: start;
-}
+} */
 li {
     list-style: none;
 }
@@ -329,4 +329,88 @@ li {
 
 table {
     border-collapse: collapse;
+}
+
+
+.animBtn {
+    display: inline-block;
+    position: relative;
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin: 0px 30px;
+    height: 30px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+}
+
+
+.animBtn::before, .animBtn::after{
+    content:"";
+    width: calc(100% + 20px);
+    /* width: 2px; */
+    height: 5px;
+    position: absolute;
+    transition: all 0.5s ease-in;
+    background: black;
+    opacity: 0;
+}
+.animBtn::before {
+    top: -10px;
+    left: -10px;
+}
+.animBtn::after {
+    bottom: -10px;
+    left: -10px;
+}
+
+.animBtn span#buttonSpan::before, .animBtn span#buttonSpan::after {
+    content:"";
+    height: calc(100% + 20px);
+    /* height: 2px; */
+    width: 5px;
+    position: absolute;
+    transition: all 0.5s ease-in;
+    background: black;
+    opacity: 0;
+}
+.animBtn span#buttonSpan::before {
+    right: -10px;
+    top: -10px;
+}
+.animBtn span#buttonSpan::after {
+    left: -10px;
+    top: -10px;
+}
+
+
+.animBtn:hover::before, .animBtn:hover::after, .animBtn:hover span#buttonSpan::before, .animBtn:hover span#buttonSpan::after {
+    opacity: 1;
+}
+
+.animBtn:hover span#buttonSpan::before, .animBtn:hover span#buttonSpan::after {
+    height: 100%;
+    width: 2px;
+}
+.animBtn:hover::before, .animBtn:hover::after {
+    width: 100%;
+    height: 2px;
+}
+
+.animBtn:hover span#buttonSpan::before {
+    right: 0px;
+    top: 0px;
+}
+.animBtn:hover span#buttonSpan::after {
+    left: 0px;
+    top: 0px;
+}
+.animBtn:hover::before {
+    top: 0px;
+    left: 0px;
+}
+.animBtn:hover::after {
+    bottom: 0px;
+    left: 0px;
 }

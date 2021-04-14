@@ -94,3 +94,9 @@ function goFullscreen(id) {
         else if (document.msExitFullscreen) document.msExitFullscreen();
     };
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.animBtn').forEach((el) => {
+        el.innerHTML = `<span id="buttonSpan">${el.innerHTML}</span>`;
+    });
+});

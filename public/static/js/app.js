@@ -1,6 +1,12 @@
 const pages = ['/home', '/single', '/multi', '/options', '/games'];
 const titles = ['Snake', 'Single Player | Snake', 'Multi Player | Snake', 'Options | Snake', 'Public Games | Snake'];
-let onload = reset;
+let onload = () => {
+    document.getElementById('cursorStart').onmouseover = document.getElementById('cursorStart').onfocus = () => document.getElementById('headImg').style.top = '2px';
+    document.getElementById('cursorJoin').onmouseover = document.getElementById('cursorJoin').onfocus = () => document.getElementById('headImg').style.top = '36px';
+    document.getElementById('cursorPublic').onmouseover = document.getElementById('cursorPublic').onfocus = () => document.getElementById('headImg').style.top = '70px';
+    document.getElementById('cursorBuilder').onmouseover = document.getElementById('cursorBuilder').onfocus = () => document.getElementById('headImg').style.top = '104px';
+    reset();
+};
 if (new URLSearchParams(location.search).get('controls')) {
     $('controls').hide();
     $('#exitBtn').hide();
@@ -146,6 +152,7 @@ function reset() {
     //     location.href = '/singleSnake';
     // };
 
+    document.getElementById('headImg').src = settings.head;
 
     /* Multi player */
     function setSettings(gameSpeed, gameSize) {

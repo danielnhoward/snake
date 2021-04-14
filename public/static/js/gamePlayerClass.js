@@ -39,8 +39,21 @@ class Game {
 
     gameUpdate(canvas)  {
         this.game = canvas;
-        this.smoothGame = canvas;
+        this.setSmoothGame(canvas);
         this.recivedData = true;
+    };
+
+    setSmoothGame(canvas) {
+        // console.log(1,canvas)
+        // Object.keys(canvas.players).forEach((playerId) => {
+        //     canvas.players[playerId].snake.forEach((part, index) => {
+        //         console.log(part.vel, part.vel.x * -1, part.vel.y * -1)
+        //         canvas.players[playerId].snake[index].x += (part.vel.x * -1);
+        //         canvas.players[playerId].snake[index].y += (part.vel.y * -1);
+        //     });
+        // });
+        // console.log(2,canvas)
+        return canvas;
     };
 
     checkPlayer(id, coords, dir, inncorrect) {
@@ -82,13 +95,14 @@ class Game {
             this.game.players[playerId] = {snake: snake, vel: player.vel, lengthDebt: ld};
         });
         this.canvasClass.drawGame(this.game);
-        this.smoothGame = JSON.parse(JSON.stringify(this.game));
+        this.smoothGame = this.game;
     };
 
     runFrames(time) {
         requestAnimationFrame(this.runFrames.bind(this));
         if (!this.prev) this.prev = time;
         const delta = time - this.prev;
+        document.getElementById('fps').innerHTML = Math.floor(1000 / delta);
         Object.keys(this.smoothGame.players).forEach((playerId) => {
             let player = this.smoothGame.players[playerId];
             if (player.vel.x == 0 && player.vel.y == 0) return;

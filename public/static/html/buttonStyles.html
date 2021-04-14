@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button styles | Snakeee</title>
+
+    <style>
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .center-inner {
+            display: block;
+        }
+
+        .animBtn {
+            display: inline-block;
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 18px;
+            margin: 0px 30px;
+            height: 30px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in;
+        }
+
+
+        .animBtn::before, .animBtn::after{
+            content:"";
+            width: calc(100% + 20px);
+            /* width: 2px; */
+            height: 2px;
+            position: absolute;
+            transition: all 0.2s ease-in;
+            background: black;
+            opacity: 0;
+        }
+        .animBtn::before {
+            top: -10px;
+            left: -10px;
+        }
+        .animBtn::after {
+            bottom: -10px;
+            left: -10px;
+        }
+
+        .animBtn span#buttonSpan::before, .animBtn span#buttonSpan::after {
+            content:"";
+            height: calc(100% + 20px);
+            /* height: 2px; */
+            width: 2px;
+            position: absolute;
+            transition: all 0.2s linear;
+            background: black;
+            opacity: 0;
+        }
+        .animBtn span#buttonSpan::before {
+            right: -10px;
+            top: -10px;
+        }
+        .animBtn span#buttonSpan::after {
+            left: -10px;
+            top: -10px;
+        }
+
+
+        .animBtn:hover {
+            /* letter-spacing: 3px; */
+            /* font-size: xx-large; */
+        }
+
+        .animBtn:hover::before, .animBtn:hover::after, .animBtn:hover span#buttonSpan::before, .animBtn:hover span#buttonSpan::after {
+            opacity: 1;
+ 
+        }
+
+        .animBtn:hover span#buttonSpan::before, .animBtn:hover span#buttonSpan::after {
+            height: 100%;
+        }
+        .animBtn:hover::before, .animBtn:hover::after {
+            width: 100%;
+        }
+        
+        .animBtn:hover span#buttonSpan::before {
+            right: 0px;
+            top: 0px;
+        }
+        .animBtn:hover span#buttonSpan::after {
+            left: 0px;
+            top: 0px;
+        }
+        .animBtn:hover::before {
+            top: 0px;
+            left: 0px;
+        }
+        .animBtn:hover::after {
+            bottom: 0px;
+            left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="center">
+        <div class="center-inner" style="text-align: center;">
+            <div class="absolute-button">
+                <button class="animBtn" type="button">Click me!</button><br>
+                <button class="animBtn" type="button">Click me!</button><br>
+                <button class="animBtn" type="button">Click me!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.animBtn').forEach((el) => {
+                el.innerHTML = `<span id="buttonSpan">${el.innerHTML}</span>`;
+            });
+        });
+    </script>
+</body>
+</html>

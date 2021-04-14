@@ -67,7 +67,8 @@
                                 Game ID: <x id="gameId">0000</x><br>
                                 Player Count: <x id="playerCount">0</x><br>
                                 Size: <x id="size">0</x><br>
-                                Ping: <x id="ping">0</x><br><br>
+                                Ping: <x id="ping">0</x><br>
+                                FPS: <x id="fps">0</x><br><br>
                                 <div id="shareLinks">
                                     <a style="pointer-events: all; cursor: pointer;" id="facebook"><img style="cursor: pointer;" title="Share on Facebook" src="/static/img/social-icons/facebook.png" width="30" height="30"></a>
                                     <a style="pointer-events: all; cursor: pointer;" id="twitter"><img style="cursor: pointer;" title="Share on Twitter" src="/static/img/social-icons/twitter.png" width="30" height="30"></a>
@@ -147,7 +148,6 @@
                     let canvas = new MultiCanvas('gameCanvas', settings, gameSize);
                     let game = new Game(canvas, gameSpeed, gameSize, socket.id);
                     socket.on('snakePing', (gamePing) => {
-                        console.log('ping')
                         game.gameUpdate(gamePing);
                     });
                     socket.on('snakeDeath', () => {

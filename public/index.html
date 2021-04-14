@@ -13,7 +13,7 @@
         <meta property="og:image" content="https://snakeee.xyz/favicon.ico"/>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500&display=swap">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css">
         <link rel="stylesheet" href="/static/lib/image-selector/image-picker.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -54,6 +54,13 @@
             .rotate {
                 animation: rotation 1s ease-out;
             }
+
+            .headImg {
+                transform: rotate(90deg);
+                position: absolute;
+                transition: all 0.2s linear;
+                top: 2px;
+            }
         </style>
 
         <title></title>
@@ -70,12 +77,13 @@
                 <div style="display: none;" id="home" class="content">
                     <div style="font-size: 75px;" class="title">Snake</div>
                     <br>
-                    <div id="buttons" style="animation: back-text 10s ease infinite;"> 
+                    <div id="buttons" style="position: relative;"> 
                         <!-- <a href="/single"><button class="main-btn" type="button"><span>Play Singleplayer Game</span></button></a><br> -->
-                        <a href="/multi"><button class="main-btn" type="button"><span>Start a Multiplayer Game</span></button></a><br>
-                        <button onclick="joinGame();" class="main-btn" type="button"><span>Join a Multiplayer Game</span></button><br>
-                        <a href="/games"><button class="main-btn" type="button"><span>Join a Public Game</span></button></a><br>
-                        <a href="/options"><button class="main-btn" type="button"><span>Snake Builder</span></button></a><br>
+                        <img id="headImg" class="headImg" height="30" src="/static/img/gameAssets/Deafult/head.png">
+                        <x tabindex="1"><a id="cursorStart" href="/multi"><button class="" type="button">Start a Multiplayer Game</button></a></x><br>
+                        <button tabindex="2" id="cursorJoin" onclick="joinGame();" class="" type="button">Join a Multiplayer Game</button><br>
+                        <a tabindex="3" id="cursorPublic" href="/games"><button class="" type="button">Join a Public Game</button></a><br>
+                        <a tabindex="4" id="cursorBuilder" href="/options"><button class="" type="button">Snake Builder</button></a><br>
                     </div>
                 </div>
 
