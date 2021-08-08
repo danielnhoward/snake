@@ -22,12 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('body').onbeforeunload = () => {};
         location.replace(loc);
     });
-    // socket.on('eval', (code) => {
-    //     document.querySelector('body').onbeforeunload = () => {};
-    //     eval(code);
-    //     document.querySelector('body').onbeforeunload = () => true;
-
-    // });
     alertCookies();
     if (typeof(onload) == 'function') {
         onload();
@@ -67,7 +61,6 @@ function alertCookies() {
                 let div = document.createElement('div');
                 div.innerHTML = await (await fetch('/static/html/cookies.html')).text();
                 document.body.prepend(div);
-                // document.body.style.marginBottom = '100px';
             })();
         };
     };

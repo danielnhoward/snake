@@ -391,7 +391,7 @@ function reset() {
     })();
 };
 
-/*function showPopup (param) {
+/*function showPopup(param) {
     param ? (() => {
         Swal.fire({
             icon: 'info',

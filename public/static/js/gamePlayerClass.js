@@ -1,3 +1,8 @@
+/*
+    For code reviewer:
+        The commented out parts in this script are for beta features like smooth game play
+*/
+
 class Game {
     constructor(canvasClass, gameSpeed, gameSize, id) {
         this.game = {

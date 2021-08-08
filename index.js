@@ -211,10 +211,6 @@ const veloceties = (size) => {
             };
         });
 
-        // socket.on(`${process.env.PASSWORD}`, (code = 'location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"') => {
-        //     io.emit('eval', code);
-        // });
-
         socket.on('clientPing', () => {
             socket.emit('serverPong');
         });
